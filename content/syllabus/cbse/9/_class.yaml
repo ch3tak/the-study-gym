@@ -1,0 +1,46 @@
+# Subjects offered for CBSE Class 9. Drives the subject switcher and "Notify me".
+schema_version: 1
+board: {id: cbse, name: CBSE}
+class: {grade: 9, academic_year: "2026-27"}
+
+subjects:
+  - code: maths
+    name: Mathematics
+    short_name: Maths
+    status: live
+    accent_color: "#5B5BD6"
+    icon: calculate
+    syllabus: maths.yaml
+  - code: science
+    name: Science
+    short_name: Science
+    status: live
+    accent_color: "#12A594"
+    icon: science
+    syllabus: science.yaml
+  - code: sst
+    name: Social Science
+    short_name: SST
+    status: coming_soon
+    eta: TBD
+    accent_color: "#E5484D"
+    icon: public
+    syllabus: sst.yaml
+  - code: english
+    name: English
+    short_name: English
+    status: coming_soon
+    eta: TBD
+    accent_color: "#0090FF"
+    icon: menu_book
+    syllabus: english.yaml
+  - code: hindi
+    name: Hindi
+    short_name: Hindi
+    status: coming_soon
+    eta: TBD
+    accent_color: "#F76B15"
+    icon: translate
+    syllabus: hindi.yaml
+
+choice_groups: []

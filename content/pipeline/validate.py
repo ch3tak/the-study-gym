@@ -16,7 +16,7 @@ import yaml
 
 from .issues import Issues
 from .questions import QUESTIONS_ROOT, load_file, validate_bank
-from .syllabus import CONTENT_ROOT, SYLLABUS_ROOT, Syllabus, load, syllabus_path
+from .syllabus import CONTENT_ROOT, SYLLABUS_ROOT, Syllabus, check_cross_references, load, syllabus_path
 from .types import REGISTRY
 
 REPO_ROOT = CONTENT_ROOT.parent
@@ -54,6 +54,7 @@ def load_all_syllabi(issues: Issues) -> dict[tuple[str, int, str], Syllabus]:
         syl = load(path, issues, known)
         if syl:
             result[(syl.board, syl.grade, syl.subject)] = syl
+    check_cross_references(list(result.values()), issues)
     return result
 
 

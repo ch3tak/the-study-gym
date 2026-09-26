@@ -137,6 +137,24 @@ def test_unbalanced_latex_is_caught(syllabus, golden):
     assert "unbalanced $" in messages(run(syllabus, q))
 
 
+def test_class9_golden_files_are_clean():
+    for subject in ("maths", "science"):
+        issues = Issues()
+        syl = load(syllabus_path("cbse", 9, subject), issues, set(REGISTRY))
+        qs = load_file(QUESTIONS_ROOT / "cbse" / "9" / subject / "golden.yaml", issues)
+        validate_bank([("golden", q) for q in qs], syl, issues)
+        assert issues.errors == [], subject
+
+
+def test_science_numeric_without_unit_is_caught():
+    issues = Issues()
+    syl = load(syllabus_path("cbse", 9, "science"), issues, set(REGISTRY))
+    qs = {q["id"]: q for q in load_file(QUESTIONS_ROOT / "cbse" / "9" / "science" / "golden.yaml", issues)}
+    q = copy.deepcopy(qs["q_c9_acceleration_0001"])
+    del q["unit"]
+    assert "unit: required" in messages(run(syl, q))
+
+
 def test_unknown_field_is_caught(syllabus, golden):
     q = golden["q_quad_discriminant_0001"]
     q["hint1"] = "old-style field"

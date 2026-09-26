@@ -14,7 +14,7 @@
 | Question | Decision |
 |---|---|
 | End-state scope | **All core subjects for a board + class**, starting with CBSE Classes 9–10: Maths, Science, Social Science, English, Hindi (Course A/B). Other boards and classes follow. |
-| Alpha scope | **CBSE Class 10 Mathematics only**, but built on a subject-agnostic architecture from day one |
+| Alpha scope | **CBSE Class 9 Mathematics and Science** (2026-27 NCF syllabus; decided 26 Sep 2026, replacing "Class 10 Maths only"). The Class 10 Maths syllabus stays in the repo as a sample. Built on a subject-agnostic architecture from day one. Sections below that assume a Class 10 board-exam launch need revisiting. |
 | Expansion order | Maths → Science → Social Science → English → Hindi (rationale in §2A) |
 | Builder | Founder solo with Claude as pair-programmer, using **Flutter** |
 | Budget before revenue | Bootstrapped, **under ₹50,000** |

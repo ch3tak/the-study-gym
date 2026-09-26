@@ -1,0 +1,1309 @@
+# CBSE Class 9 Mathematics (041), 2026-27: the curriculum spine.
+#
+# Source: CBSE Secondary Curriculum 2026-27, Mathematics Class IX
+# (docs/sources/cbse-2026-27-class9-maths.pdf). This is the new NCF-SE 2023
+# syllabus with the new NCERT textbook; it differs substantially from earlier
+# years (sequences and GPs, slope-intercept form, Brahmagupta's formula,
+# pyramids, empirical probability are in; zeroes of polynomials and the
+# remainder theorem are not listed).
+#
+# Ids are permanent and globally unique, hence the `c9.` prefix. Rename the
+# `name`, never the `id`; retire with `retired: true`.
+
+schema_version: 1
+board: cbse
+class: 9
+subject: maths
+name: Mathematics
+academic_year: "2026-27"
+status: live
+total_marks: 80          # annual theory paper; internal assessment (20) is out of scope
+default_half_life_days: 2
+
+sources:
+  - "CBSE Secondary Curriculum 2026-27, Mathematics Class IX (cbseacademic.nic.in)"
+  - "NCERT Mathematics Textbook for Class IX (2026-27 edition)"
+
+units:
+  - {id: number_system,          name: Number System,            marks: 7}
+  - {id: algebra,                name: Algebra,                  marks: 20}
+  - {id: coordinate_geometry,    name: Coordinate Geometry,      marks: 4}
+  - {id: geometry,               name: Geometry,                 marks: 25}
+  - {id: mensuration,            name: Mensuration,              marks: 14}
+  - {id: statistics_probability, name: Statistics and Probability, marks: 10}
+
+external_concepts:
+  - {id: c8.pythagoras, name: Pythagoras theorem, pending: true}
+  - {id: c8.exponents,  name: Laws of exponents,  pending: true}
+
+chapters:
+
+  # ---------------------------------------------------------------------------
+  - id: number_system
+    name: Number System
+    unit: number_system
+    board_weight_marks: 7
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.num.rational_intro
+        name: Rational numbers
+        description: "Numbers of the form p/q with integers p, q and q ≠ 0; every integer is rational."
+        prerequisites: []
+        misconceptions:
+          - id: c9.num.rat.integers_not_rational
+            description: "Thinks integers like −3 or 0 are not rational numbers"
+            detect: "distractor"
+          - id: c9.num.rat.zero_denominator
+            description: "Accepts a fraction with denominator 0 as rational"
+            detect: "distractor"
+      - id: c9.num.rational_number_line
+        name: Rational numbers on the number line
+        description: "Locate fractions and negative rationals on the number line by dividing unit lengths."
+        prerequisites: [c9.num.rational_intro]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: c9.num.line.negative_direction
+            description: "Places −3/4 between −1 and −2, or to the right of 0"
+            detect: "distractor"
+      - id: c9.num.density
+        name: Density of rational numbers
+        description: "Between any two rational numbers there are infinitely many rationals; the average (a+b)/2 lies between a and b."
+        prerequisites: [c9.num.rational_intro]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.num.dens.none_between
+            description: "Thinks there is no rational number between consecutive-looking fractions like 1/3 and 1/2"
+            detect: "distractor"
+          - id: c9.num.dens.finite
+            description: "Believes only finitely many rationals lie between two rationals"
+            detect: "distractor"
+      - id: c9.num.rationals_between
+        name: Finding rationals between two rationals
+        description: "Find rationals between two given rationals using averages or equivalent fractions with a common denominator."
+        prerequisites: [c9.num.density]
+        misconceptions:
+          - id: c9.num.btw.outside_range
+            description: "Gives a number that is not actually between the two (e.g. compares numerators only)"
+            detect: "answer outside interval"
+      - id: c9.num.decimal_expansion
+        name: Decimal expansions of rational numbers
+        description: "Rational numbers have terminating or non-terminating recurring decimals; terminating iff the denominator (in lowest terms) has only 2s and 5s."
+        prerequisites: [c9.num.rational_intro]
+        misconceptions:
+          - id: c9.num.dec.not_lowest_terms
+            description: "Judges terminating/recurring from a denominator not in lowest terms (e.g. 3/6)"
+            detect: "distractor"
+          - id: c9.num.dec.recurring_irrational
+            description: "Thinks a non-terminating recurring decimal is irrational"
+            detect: "distractor"
+      - id: c9.num.recurring_to_fraction
+        name: Recurring decimals as fractions
+        description: "Convert decimals like 0.333…, 1.272727… or 0.4777… into p/q form."
+        prerequisites: [c9.num.decimal_expansion]
+        misconceptions:
+          - id: c9.num.rec.wrong_power
+            description: "Multiplies by 10 when the repeating block has two digits (should be 100)"
+            detect: "distractor"
+          - id: c9.num.rec.as_terminating
+            description: "Treats 0.333… as 333/1000"
+            detect: "answer = truncated decimal"
+      - id: c9.num.irrational_intro
+        name: Irrational numbers
+        description: "Numbers that cannot be written as p/q; their decimals are non-terminating and non-recurring (e.g. √2, π)."
+        prerequisites: [c9.num.decimal_expansion]
+        misconceptions:
+          - id: c9.num.irr.pi_22_7
+            description: "Thinks π equals 22/7 exactly, so π is rational"
+            detect: "distractor"
+          - id: c9.num.irr.all_roots
+            description: "Thinks every square root is irrational (e.g. √49)"
+            detect: "distractor"
+      - id: c9.num.irrationality_proof
+        name: Proving √2 and √3 are irrational
+        description: "Proof by contradiction: assume p/q in lowest terms and show p and q share a factor."
+        prerequisites: [c9.num.irrational_intro]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.num.proof.not_lowest_terms
+            description: "Forgets to assume p/q is in lowest terms, so there is no contradiction"
+            detect: "distractor"
+          - id: c9.num.proof.assumes_result
+            description: "Begins the proof by assuming the number is irrational"
+            detect: "distractor"
+      - id: c9.num.sqrt_spiral
+        name: The square root spiral
+        description: "Construct √2, √3, √4, … by successive right triangles with a unit side; locate √n on the number line."
+        prerequisites: [c9.num.irrational_intro, c8.pythagoras]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.num.spiral.adds_lengths
+            description: "Thinks the next hypotenuse is the previous one plus 1 (√n + 1)"
+            detect: "distractor"
+      - id: c9.num.real_numbers
+        name: Real numbers and operations
+        description: "Real numbers are all rationals and irrationals; results of adding or multiplying rationals and irrationals."
+        prerequisites: [c9.num.irrational_intro]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.num.real.sum_irrational
+            description: "Thinks the sum of two irrationals is always irrational (√2 + (−√2) = 0)"
+            detect: "distractor"
+          - id: c9.num.real.product_irrational
+            description: "Thinks the product of two irrationals is always irrational (√3 × √3 = 3)"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: polynomials
+    name: Introduction to Polynomials
+    unit: algebra
+    board_weight_marks: 4
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, expression, assertion_reason, case_based]
+    concepts:
+      - id: c9.poly.algebraic_expressions
+        name: Algebraic expressions
+        description: "Terms, coefficients, constants and like terms in an algebraic expression."
+        prerequisites: []
+        misconceptions:
+          - id: c9.poly.expr.coefficient_sign
+            description: "Drops the sign when naming a coefficient (coefficient of x in 5 − 3x is 3)"
+            detect: "answer = -correct"
+          - id: c9.poly.expr.unlike_terms_added
+            description: "Combines unlike terms such as 2x + 3x² = 5x³"
+            detect: "distractor"
+      - id: c9.poly.definition
+        name: What is a polynomial
+        description: "A polynomial has only whole-number powers of the variable; expressions with 1/x or √x are not polynomials."
+        prerequisites: [c9.poly.algebraic_expressions]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.poly.def.sqrt_coefficient
+            description: "Thinks √2·x is not a polynomial because of the √2 coefficient"
+            detect: "distractor"
+          - id: c9.poly.def.negative_power
+            description: "Accepts x + 1/x as a polynomial"
+            detect: "distractor"
+      - id: c9.poly.degree
+        name: Degree, terms and coefficients
+        description: "Identify the degree, number of terms and coefficients of a polynomial."
+        prerequisites: [c9.poly.definition]
+        misconceptions:
+          - id: c9.poly.deg.counts_terms
+            description: "Gives the number of terms instead of the highest power"
+            detect: "answer = number of terms"
+          - id: c9.poly.deg.first_term
+            description: "Takes the power of the first written term as the degree"
+            detect: "distractor"
+      - id: c9.poly.evaluate
+        name: Value of a polynomial
+        description: "Find p(a) by substituting x = a."
+        prerequisites: [c9.poly.degree]
+        misconceptions:
+          - id: c9.poly.eval.negative_square
+            description: "Computes (−2)² as −4 when substituting"
+            detect: "distractor"
+      - id: c9.poly.linear_patterns
+        name: Linear patterns
+        description: "Recognise patterns that grow by a constant amount and write them as linear polynomials an + b."
+        prerequisites: [c9.poly.degree]
+        misconceptions:
+          - id: c9.poly.pattern.uses_first_term
+            description: "Writes the rule as (first term)·n instead of (difference)·n + constant"
+            detect: "distractor"
+      - id: c9.poly.linear_growth_decay
+        name: Modelling linear growth and decay
+        description: "Model situations like taxi fares or a draining tank with linear polynomials, and interpret the constant and rate."
+        prerequisites: [c9.poly.linear_patterns]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.poly.growth.decay_sign
+            description: "Uses a positive rate for a decreasing quantity"
+            detect: "distractor"
+          - id: c9.poly.growth.fixed_cost_missed
+            description: "Leaves out the fixed starting amount"
+            detect: "answer = rate*n"
+      - id: c9.poly.slope_intercept
+        name: Slope and y-intercept of y = ax + b
+        description: "Read the slope a and y-intercept b from y = ax + b and interpret them."
+        prerequisites: [c9.poly.linear_growth_decay]
+        misconceptions:
+          - id: c9.poly.slope.swap
+            description: "Swaps slope and intercept"
+            detect: "distractor"
+          - id: c9.poly.slope.sign_intercept
+            description: "Reads the intercept of y = 3x − 4 as 4"
+            detect: "answer = -correct"
+      - id: c9.poly.linear_graph
+        name: Visualising linear relationships
+        description: "Plot a linear relationship from a table and recognise that the points lie on a straight line."
+        prerequisites: [c9.poly.slope_intercept]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: c9.poly.graph.steeper_bigger_intercept
+            description: "Thinks a larger intercept means a steeper line"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: sequences_progressions
+    name: Sequences and Progressions
+    unit: algebra
+    board_weight_marks: 6
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, expression, assertion_reason, case_based]
+    concepts:
+      - id: c9.seq.patterns
+        name: Number patterns and sequences
+        description: "Identify the pattern in a sequence and predict the next few terms."
+        prerequisites: []
+        misconceptions:
+          - id: c9.seq.pat.assumes_constant_difference
+            description: "Assumes every sequence adds a constant, even when it multiplies"
+            detect: "distractor"
+      - id: c9.seq.explicit_rule
+        name: Explicit (general) rule
+        description: "Find terms from a rule like aₙ = 3n − 1, and find the rule for a given sequence."
+        prerequisites: [c9.seq.patterns]
+        misconceptions:
+          - id: c9.seq.exp.index_offset
+            description: "Starts counting from n = 0 instead of n = 1"
+            detect: "answer equals the next/previous term"
+      - id: c9.seq.recursive_rule
+        name: Recursive rule
+        description: "Generate terms from a recursive rule such as aₙ = aₙ₋₁ + aₙ₋₂ (Virahanka–Fibonacci numbers)."
+        prerequisites: [c9.seq.patterns]
+        misconceptions:
+          - id: c9.seq.rec.uses_n
+            description: "Substitutes n into the recursive rule instead of using previous terms"
+            detect: "distractor"
+          - id: c9.seq.rec.one_back_only
+            description: "Uses only the previous term when the rule needs the two before it"
+            detect: "distractor"
+      - id: c9.seq.ap_identify
+        name: Identifying an arithmetic progression
+        description: "A sequence with a constant difference between consecutive terms; find a and d."
+        prerequisites: [c9.seq.patterns]
+        misconceptions:
+          - id: c9.seq.ap.difference_reversed
+            description: "Computes d as a₁ − a₂"
+            detect: "answer = -d"
+          - id: c9.seq.ap.first_difference_only
+            description: "Checks only the first difference before calling it an AP"
+            detect: "distractor"
+      - id: c9.seq.ap_nth_term
+        name: nth term of an AP
+        description: "Use aₙ = a + (n − 1)d; find a term, or which term equals a given number."
+        prerequisites: [c9.seq.ap_identify, c9.seq.explicit_rule]
+        misconceptions:
+          - id: c9.seq.apn.uses_n
+            description: "Uses a + nd instead of a + (n − 1)d"
+            detect: "answer = correct + d"
+      - id: c9.seq.ap_graph
+        name: Visualising an AP
+        description: "The terms of an AP plotted against n lie on a straight line whose slope is d."
+        prerequisites: [c9.seq.ap_nth_term, c9.poly.slope_intercept]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.seq.apg.slope_is_a
+            description: "Thinks the slope of the graph is the first term"
+            detect: "distractor"
+      - id: c9.seq.sum_natural
+        name: Sum of the first n natural numbers
+        description: "1 + 2 + … + n = n(n + 1)/2, and simple applications."
+        prerequisites: [c9.seq.ap_identify]
+        misconceptions:
+          - id: c9.seq.sum.forgot_half
+            description: "Uses n(n + 1) without halving"
+            detect: "answer = 2*correct"
+          - id: c9.seq.sum.n_minus_1
+            description: "Uses n(n − 1)/2"
+            detect: "distractor"
+      - id: c9.seq.gp_identify
+        name: Identifying a geometric progression
+        description: "A sequence with a constant ratio between consecutive terms; find a and r."
+        prerequisites: [c9.seq.patterns]
+        misconceptions:
+          - id: c9.seq.gp.ratio_inverted
+            description: "Computes r as a₁/a₂"
+            detect: "answer = 1/r"
+          - id: c9.seq.gp.difference_for_ratio
+            description: "Finds the difference instead of the ratio"
+            detect: "distractor"
+      - id: c9.seq.gp_nth_term
+        name: nth term of a GP
+        description: "Use aₙ = a·rⁿ⁻¹."
+        prerequisites: [c9.seq.gp_identify, c8.exponents]
+        misconceptions:
+          - id: c9.seq.gp.power_n
+            description: "Uses a·rⁿ instead of a·rⁿ⁻¹"
+            detect: "answer = correct*r"
+          - id: c9.seq.gp.linear_thinking
+            description: "Multiplies a by n·r (treats the growth as linear)"
+            detect: "distractor"
+          - id: c9.seq.gp.multiplies_then_powers
+            description: "Computes (a·r)ⁿ⁻¹ instead of a·rⁿ⁻¹"
+            detect: "distractor"
+      - id: c9.seq.gp_applications
+        name: GPs in real life and fractals
+        description: "Doubling, halving, compound growth and fractals such as the Sierpinski triangle modelled as GPs."
+        prerequisites: [c9.seq.gp_nth_term]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.seq.gpapp.counts_stages_wrong
+            description: "Counts the starting figure as stage 1 when it is stage 0 (or vice versa)"
+            detect: "answer off by one factor of r"
+      - id: c9.seq.tower_of_hanoi
+        name: Tower of Hanoi
+        description: "The minimum number of moves for n discs is 2ⁿ − 1, from the recursion Mₙ = 2Mₙ₋₁ + 1."
+        prerequisites: [c9.seq.recursive_rule, c9.seq.gp_nth_term]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.seq.hanoi.power_only
+            description: "Gives 2ⁿ moves (forgets the − 1)"
+            detect: "answer = correct + 1"
+          - id: c9.seq.hanoi.linear
+            description: "Thinks moves grow linearly (2n − 1)"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: algebraic_identities
+    name: Exploring Algebraic Identities
+    unit: algebra
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, expression, assertion_reason, case_based]
+    concepts:
+      - id: c9.iden.standard
+        name: Standard identities
+        description: "(a + b)², (a − b)², (a + b)(a − b) and (x + a)(x + b)."
+        prerequisites: [c9.poly.algebraic_expressions]
+        misconceptions:
+          - id: c9.iden.square_distributes
+            description: "Writes (a + b)² = a² + b² (drops 2ab)"
+            detect: "answer missing middle term"
+          - id: c9.iden.minus_middle_sign
+            description: "Writes (a − b)² = a² + 2ab − b² or a² − b²"
+            detect: "distractor"
+      - id: c9.iden.geometric_models
+        name: Identities as area models
+        description: "Explain identities with square and rectangle area diagrams and algebra tiles."
+        prerequisites: [c9.iden.standard]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: c9.iden.geo.misses_rectangles
+            description: "Counts only one of the two ab rectangles in the (a + b)² square"
+            detect: "distractor"
+      - id: c9.iden.evaluate_using
+        name: Mental calculation with identities
+        description: "Compute values like 103², 99 × 101 or 48² using identities."
+        prerequisites: [c9.iden.standard]
+        misconceptions:
+          - id: c9.iden.eval.forgets_cross_term
+            description: "Computes 103² as 100² + 3²"
+            detect: "answer = 10009"
+      - id: c9.iden.three_term_square
+        name: (a + b + c)²
+        description: "(a + b + c)² = a² + b² + c² + 2ab + 2bc + 2ca and applications."
+        prerequisites: [c9.iden.standard]
+        misconceptions:
+          - id: c9.iden.abc.missing_pairs
+            description: "Includes only some of the three 2ab-type terms"
+            detect: "distractor"
+      - id: c9.iden.cube_identities
+        name: Cube identities
+        description: "(a ± b)³, a³ ± b³, and a³ + b³ + c³ − 3abc = (a + b + c)(a² + b² + c² − ab − bc − ca)."
+        prerequisites: [c9.iden.standard]
+        verify: "Confirm which cube identities the 2026-27 NCERT chapter includes under 'More identities'."
+        misconceptions:
+          - id: c9.iden.cube.distributes
+            description: "Writes (a + b)³ = a³ + b³"
+            detect: "distractor"
+          - id: c9.iden.cube.abc_zero_case
+            description: "Misses that a + b + c = 0 gives a³ + b³ + c³ = 3abc"
+            detect: "distractor"
+      - id: c9.iden.factorise_identities
+        name: Factorising with identities
+        description: "Factorise expressions like 9x² − 25, x² − 10x + 25 or 8x³ − 27 using identities."
+        prerequisites: [c9.iden.standard]
+        misconceptions:
+          - id: c9.iden.sign_error
+            description: "Gets the sign inside the factor wrong, e.g. (3x + 2)² for 9x² − 12x + 4"
+            detect: "wrong_answers"
+          - id: c9.iden.diff_squares_as_square
+            description: "Factorises a² − b² as (a − b)²"
+            detect: "distractor"
+      - id: c9.iden.factorise_quadratic
+        name: Factorising quadratic expressions
+        description: "Factorise ax² + bx + c by splitting the middle term or with algebra tiles."
+        prerequisites: [c9.iden.factorise_identities]
+        misconceptions:
+          - id: c9.iden.quad.split_sum_product
+            description: "Chooses numbers whose sum is c and product is b (roles swapped)"
+            detect: "distractor"
+          - id: c9.iden.quad.ignores_a
+            description: "Ignores a ≠ 1 and uses only b and c to split"
+            detect: "distractor"
+      - id: c9.iden.rational_expressions
+        name: Simplifying rational expressions
+        description: "Simplify expressions like (x² − 9)/(x − 3) by factorising and cancelling common factors."
+        prerequisites: [c9.iden.factorise_identities]
+        misconceptions:
+          - id: c9.iden.rat.cancels_terms
+            description: "Cancels terms across a sum, e.g. (x + 3)/x = 3"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: linear_equations
+    name: Linear Equations in Two Variables
+    unit: algebra
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.lin.equation_two_variables
+        name: Linear equations in two variables
+        description: "Write ax + by + c = 0 from practical situations; such an equation has infinitely many solutions; check whether a pair is a solution."
+        prerequisites: [c9.poly.linear_patterns]
+        misconceptions:
+          - id: c9.lin.eq.unique_solution
+            description: "Thinks a single linear equation in two variables has exactly one solution"
+            detect: "distractor"
+          - id: c9.lin.eq.order_swap
+            description: "Substitutes (x, y) in the wrong order when checking a solution"
+            detect: "distractor"
+      - id: c9.lin.graph
+        name: Graph of a linear equation
+        description: "Find points, plot them and draw the line; every point on the line is a solution."
+        prerequisites: [c9.lin.equation_two_variables]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: c9.lin.graph.axis_intercepts
+            description: "Finds the x-intercept by putting x = 0"
+            detect: "distractor"
+      - id: c9.lin.slope_intercept_form
+        name: Slope-intercept form
+        description: "Rewrite ax + by + c = 0 as y = mx + c and read the slope and intercept."
+        prerequisites: [c9.lin.equation_two_variables, c9.poly.slope_intercept]
+        misconceptions:
+          - id: c9.lin.si.forgets_divide
+            description: "Moves terms but forgets to divide by the coefficient of y"
+            detect: "answer off by factor b"
+      - id: c9.lin.discrete_graphs
+        name: Graphs when x and y take only certain values
+        description: "When variables are counts (whole numbers), the graph is a set of points, not a full line."
+        prerequisites: [c9.lin.graph]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.lin.disc.joins_points
+            description: "Joins the points into a line even when fractional values make no sense"
+            detect: "distractor"
+      - id: c9.lin.pair_graphical
+        name: Solving a pair graphically
+        description: "Plot two lines and read the solution from their point of intersection."
+        prerequisites: [c9.lin.graph]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: c9.lin.pair.reads_intercept
+            description: "Reads an axis intercept as the solution instead of the intersection"
+            detect: "distractor"
+      - id: c9.lin.consistency
+        name: Nature of solutions
+        description: "Intersecting lines give one solution, parallel lines none, coincident lines infinitely many; consistent vs inconsistent pairs."
+        prerequisites: [c9.lin.pair_graphical, c9.lin.slope_intercept_form]
+        misconceptions:
+          - id: c9.lin.cons.parallel_infinite
+            description: "Mixes up parallel (no solution) and coincident (infinitely many) lines"
+            detect: "distractor"
+          - id: c9.lin.cons.same_slope_same_line
+            description: "Thinks equal slopes always mean the same line"
+            detect: "distractor"
+      - id: c9.lin.substitution
+        name: Substitution method
+        description: "Express one variable from one equation and substitute into the other."
+        prerequisites: [c9.lin.equation_two_variables]
+        misconceptions:
+          - id: c9.lin.sub.same_equation
+            description: "Substitutes back into the same equation and gets 0 = 0"
+            detect: "distractor"
+          - id: c9.lin.sub.no_distribute
+            description: "Doesn't multiply every term inside the brackets after substituting"
+            detect: "distractor"
+      - id: c9.lin.elimination
+        name: Elimination method
+        description: "Multiply to match a coefficient, then add or subtract to eliminate a variable."
+        prerequisites: [c9.lin.equation_two_variables]
+        misconceptions:
+          - id: c9.lin.elim.partial_multiply
+            description: "Multiplies only some terms of an equation"
+            detect: "distractor"
+          - id: c9.lin.elim.wrong_operation
+            description: "Adds when it should subtract, so the variable doesn't cancel"
+            detect: "distractor"
+      - id: c9.lin.word_problems
+        name: Modelling with a pair of equations
+        description: "Set up and solve a pair of linear equations for costs, ages, numbers and mixtures; interpret the answer."
+        prerequisites: [c9.lin.substitution, c9.lin.elimination]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.lin.word.reversed_relation
+            description: "Translates 'a is 5 more than b' as b = a + 5"
+            detect: "distractor"
+          - id: c9.lin.word.answers_wrong_variable
+            description: "Reports the other variable than the one asked for"
+            detect: "answer = other variable"
+
+  # ---------------------------------------------------------------------------
+  - id: coordinate_geometry
+    name: Coordinate Geometry
+    unit: coordinate_geometry
+    board_weight_marks: 4
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.coord.cartesian_plane
+        name: The Cartesian plane
+        description: "Axes, origin, quadrants, signs of coordinates, and plotting points."
+        prerequisites: []
+        misconceptions:
+          - id: c9.coord.cart.order_swap
+            description: "Plots (x, y) as (y, x)"
+            detect: "distractor"
+          - id: c9.coord.cart.quadrant_signs
+            description: "Gets the sign pattern of a quadrant wrong (e.g. (−, +) in quadrant IV)"
+            detect: "distractor"
+      - id: c9.coord.floor_plans
+        name: Locations on a grid
+        description: "Describe positions and relative positions with coordinates, e.g. a floor plan or map grid."
+        prerequisites: [c9.coord.cartesian_plane]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: c9.coord.plan.counts_squares
+            description: "Counts grid squares instead of grid lines to read coordinates"
+            detect: "answer off by one"
+      - id: c9.coord.distance
+        name: Distance between two points
+        description: "√((x₂ − x₁)² + (y₂ − y₁)²)."
+        prerequisites: [c9.coord.cartesian_plane, c8.pythagoras]
+        misconceptions:
+          - id: c9.coord.dist.no_sqrt
+            description: "Forgets the square root"
+            detect: "answer = correct^2"
+          - id: c9.coord.dist.adds_coordinates
+            description: "Adds the coordinates instead of subtracting"
+            detect: "distractor"
+      - id: c9.coord.collinearity
+        name: Collinear points
+        description: "Three points are collinear if the two shorter distances add up to the longest."
+        prerequisites: [c9.coord.distance]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.coord.col.any_two
+            description: "Checks that two of the distances are equal instead of adding up"
+            detect: "distractor"
+      - id: c9.coord.midpoint
+        name: Midpoint of a segment
+        description: "((x₁ + x₂)/2, (y₁ + y₂)/2)."
+        prerequisites: [c9.coord.cartesian_plane]
+        misconceptions:
+          - id: c9.coord.mid.difference
+            description: "Halves the difference of the coordinates instead of the sum"
+            detect: "distractor"
+      - id: c9.coord.right_triangle_check
+        name: Checking for a right triangle
+        description: "Use distances and the converse of Pythagoras to decide whether a triangle is right-angled."
+        prerequisites: [c9.coord.distance]
+        question_types_allowed: [mcq, case_based, assertion_reason]
+        misconceptions:
+          - id: c9.coord.right.longest_not_hypotenuse
+            description: "Doesn't use the longest side as the hypotenuse in the check"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: euclid_geometry
+    name: "Introduction to Euclid's Geometry: Axioms and Postulates"
+    unit: geometry
+    board_weight_marks: 3
+    board_weight_is_estimate: true
+    default_question_types: [mcq, assertion_reason, case_based]
+    concepts:
+      - id: c9.euclid.history
+        name: History of geometry
+        description: "Geometry's growth from practical needs in India (Sulbasutras), Egypt and Greece; Baudhayana's construction of a square."
+        prerequisites: []
+        misconceptions:
+          - id: c9.euclid.hist.greece_only
+            description: "Thinks geometry began only in Greece with Euclid"
+            detect: "distractor"
+      - id: c9.euclid.definitions
+        name: Definitions and undefined terms
+        description: "Point, line and surface are taken as intuitive; Euclid's definitions build on them."
+        prerequisites: []
+        misconceptions:
+          - id: c9.euclid.def.point_has_size
+            description: "Thinks a point has a small size or a line has width"
+            detect: "distractor"
+      - id: c9.euclid.axioms
+        name: Axioms
+        description: "Common notions such as 'things equal to the same thing are equal to one another' and axioms of measurement."
+        prerequisites: [c9.euclid.definitions]
+        misconceptions:
+          - id: c9.euclid.ax.axiom_needs_proof
+            description: "Thinks an axiom must be proved"
+            detect: "distractor"
+          - id: c9.euclid.ax.axiom_vs_postulate
+            description: "Confuses axioms (general) with postulates (specific to geometry)"
+            detect: "distractor"
+      - id: c9.euclid.postulates
+        name: Euclid's five postulates
+        description: "State the five postulates, including the parallel postulate, and apply them in simple arguments."
+        prerequisites: [c9.euclid.axioms]
+        misconceptions:
+          - id: c9.euclid.post.many_lines
+            description: "Thinks more than one line passes through two distinct points"
+            detect: "distractor"
+      - id: c9.euclid.parallelism
+        name: Parallel lines
+        description: "Definition of parallel lines and equivalent versions of the fifth postulate."
+        prerequisites: [c9.euclid.postulates]
+        misconceptions:
+          - id: c9.euclid.par.equal_length
+            description: "Thinks parallel lines must have equal length"
+            detect: "distractor"
+      - id: c9.euclid.simple_constructions
+        name: Justifying simple constructions
+        description: "Justify constructions (e.g. an equilateral triangle on a segment) step by step with axioms and postulates."
+        prerequisites: [c9.euclid.postulates]
+        misconceptions:
+          - id: c9.euclid.cons.unjustified_step
+            description: "Accepts a step that relies on measuring rather than a stated axiom or postulate"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: lines_angles
+    name: Lines and Angles
+    unit: geometry
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.lines.rays_angles
+        name: Rays and types of angles
+        description: "Rays, angles between rays from a common point; acute, right, obtuse, straight and reflex angles."
+        prerequisites: []
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.lines.rays.reflex_obtuse
+            description: "Calls a reflex angle obtuse"
+            detect: "distractor"
+      - id: c9.lines.angle_pairs
+        name: Pairs of angles
+        description: "Complementary, supplementary and adjacent angles."
+        prerequisites: [c9.lines.rays_angles]
+        misconceptions:
+          - id: c9.lines.pairs.comp_supp_swap
+            description: "Uses 180° for complementary or 90° for supplementary"
+            detect: "distractor"
+      - id: c9.lines.linear_pair
+        name: Linear pair theorem
+        description: "Adjacent angles on a straight line add to 180°, and the converse."
+        prerequisites: [c9.lines.angle_pairs]
+        misconceptions:
+          - id: c9.lines.lp.any_adjacent
+            description: "Thinks any two adjacent angles form a linear pair"
+            detect: "distractor"
+      - id: c9.lines.vertically_opposite
+        name: Vertically opposite angles
+        description: "When two lines intersect, vertically opposite angles are equal."
+        prerequisites: [c9.lines.linear_pair]
+        misconceptions:
+          - id: c9.lines.vo.supplementary
+            description: "Thinks vertically opposite angles add to 180°"
+            detect: "distractor"
+      - id: c9.lines.parallel_transversal
+        name: Parallel lines and a transversal
+        description: "Corresponding angles are equal, alternate interior angles are equal, co-interior angles add to 180°."
+        prerequisites: [c9.lines.linear_pair, c9.euclid.parallelism]
+        misconceptions:
+          - id: c9.lines.pt.cointerior_equal
+            description: "Thinks co-interior angles are equal"
+            detect: "distractor"
+          - id: c9.lines.pt.non_parallel
+            description: "Applies the angle rules when the lines are not parallel"
+            detect: "distractor"
+      - id: c9.lines.parallel_criteria
+        name: Proving lines parallel
+        description: "Converses of the transversal angle results; transitivity of parallelism."
+        prerequisites: [c9.lines.parallel_transversal]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.lines.pc.converse_assumed
+            description: "Uses the result to prove itself (assumes the lines are parallel)"
+            detect: "distractor"
+      - id: c9.lines.triangle_angles
+        name: Angle reasoning in triangles
+        description: "Angle sum is 180°; a triangle has at least two acute angles, cannot have two obtuse angles, nor all angles below 60°."
+        prerequisites: [c9.lines.parallel_transversal]
+        misconceptions:
+          - id: c9.lines.tri.two_obtuse
+            description: "Thinks a triangle can have two obtuse angles"
+            detect: "distractor"
+          - id: c9.lines.tri.exterior_angle
+            description: "Takes an exterior angle as the sum of all three interior angles"
+            detect: "distractor"
+      - id: c9.lines.proof_by_contradiction
+        name: Proof by contradiction in geometry
+        description: "Follow a geometric argument that assumes the opposite and reaches a contradiction."
+        prerequisites: [c9.lines.triangle_angles]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.lines.pbc.wrong_assumption
+            description: "Assumes the conclusion instead of its negation"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: triangles
+    name: "Triangles: Congruence Theorems"
+    unit: geometry
+    board_weight_marks: 6
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.tri.rigidity
+        name: Rigidity of triangles
+        description: "A triangle is rigid unlike a quadrilateral, which is why it gives strength to structures."
+        prerequisites: []
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.tri.rig.quad_rigid
+            description: "Thinks a four-sided frame is as rigid as a triangular one"
+            detect: "distractor"
+      - id: c9.tri.congruence_correspondence
+        name: Congruence and correspondence
+        description: "Congruent triangles match vertex to vertex; ΔABC ≅ ΔPQR fixes which parts are equal."
+        prerequisites: [c9.lines.triangle_angles]
+        misconceptions:
+          - id: c9.tri.corr.order_ignored
+            description: "Pairs the wrong vertices, ignoring the order in ΔABC ≅ ΔPQR"
+            detect: "distractor"
+      - id: c9.tri.congruence_criteria
+        name: SAS, ASA, SSS, AAS and RHS
+        description: "Decide which criterion proves two triangles congruent from the given information."
+        prerequisites: [c9.tri.congruence_correspondence]
+        misconceptions:
+          - id: c9.tri.crit.non_included_angle
+            description: "Calls it SAS when the angle is not between the two sides"
+            detect: "distractor"
+          - id: c9.tri.crit.aaa
+            description: "Thinks AAA proves congruence"
+            detect: "distractor"
+      - id: c9.tri.ssa_invalid
+        name: Why SSA fails
+        description: "SSA is not a congruence condition in general (except the right-angle case, RHS); use counterexamples."
+        prerequisites: [c9.tri.congruence_criteria]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.tri.ssa.valid
+            description: "Accepts SSA as a valid congruence criterion"
+            detect: "distractor"
+      - id: c9.tri.isosceles
+        name: Isosceles triangle properties
+        description: "Angles opposite equal sides are equal, and the converse."
+        prerequisites: [c9.tri.congruence_criteria]
+        misconceptions:
+          - id: c9.tri.iso.wrong_angles
+            description: "Takes the equal angles as the ones next to the unequal side's opposite vertex"
+            detect: "distractor"
+      - id: c9.tri.converse_propositions
+        name: Propositions and converses
+        description: "Form the converse of a statement and use counterexamples to show some converses are false."
+        prerequisites: []
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.tri.conv.always_true
+            description: "Assumes the converse of a true statement is always true"
+            detect: "distractor"
+      - id: c9.tri.congruence_applications
+        name: Using congruence to find lengths and angles
+        description: "Prove triangles congruent, then use CPCT to find unknown sides or angles."
+        prerequisites: [c9.tri.congruence_criteria, c9.tri.isosceles]
+        misconceptions:
+          - id: c9.tri.app.cpct_before_proof
+            description: "Uses CPCT before establishing congruence"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: quadrilaterals
+    name: 4-gons (Quadrilaterals)
+    unit: geometry
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.quadl.definition_types
+        name: 4-gons and their types
+        description: "A precise definition of a 4-gon; trapezium, parallelogram, rectangle, rhombus, square and kite."
+        prerequisites: [c9.lines.parallel_transversal]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.quadl.def.square_not_rectangle
+            description: "Thinks a square is not a rectangle (or not a rhombus)"
+            detect: "distractor"
+      - id: c9.quadl.parallelogram_properties
+        name: Properties of parallelograms
+        description: "Opposite sides and opposite angles equal, adjacent angles supplementary, diagonals bisect each other."
+        prerequisites: [c9.quadl.definition_types, c9.tri.congruence_criteria]
+        misconceptions:
+          - id: c9.quadl.prop.diagonals_equal
+            description: "Thinks the diagonals of every parallelogram are equal"
+            detect: "distractor"
+          - id: c9.quadl.prop.adjacent_equal
+            description: "Thinks adjacent angles of a parallelogram are equal"
+            detect: "distractor"
+      - id: c9.quadl.parallelogram_criteria
+        name: Proving a 4-gon is a parallelogram
+        description: "Characterisations: both pairs of opposite sides equal, one pair equal and parallel, diagonals bisecting each other."
+        prerequisites: [c9.quadl.parallelogram_properties]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.quadl.crit.one_pair_equal
+            description: "Thinks one pair of equal opposite sides is enough"
+            detect: "distractor"
+      - id: c9.quadl.midpoint_theorem
+        name: Midpoint theorem
+        description: "The segment joining the midpoints of two sides of a triangle is parallel to the third side and half as long."
+        prerequisites: [c9.quadl.parallelogram_properties]
+        misconceptions:
+          - id: c9.quadl.mid.equal_not_half
+            description: "Takes the midpoint segment as equal to the third side"
+            detect: "answer = 2*correct"
+      - id: c9.quadl.midpoint_converse
+        name: Converse of the midpoint theorem
+        description: "A line through the midpoint of one side parallel to another side bisects the third side."
+        prerequisites: [c9.quadl.midpoint_theorem]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.quadl.midc.needs_parallel
+            description: "Applies the converse without the parallel condition"
+            detect: "distractor"
+      - id: c9.quadl.medians_centroid
+        name: Medians and the centroid
+        description: "The medians of a triangle are concurrent and divide each other in the ratio 2 : 1 from the vertex."
+        prerequisites: [c9.quadl.midpoint_theorem]
+        misconceptions:
+          - id: c9.quadl.cent.ratio_reversed
+            description: "Uses 1 : 2 from the vertex instead of 2 : 1"
+            detect: "distractor"
+          - id: c9.quadl.cent.halves
+            description: "Thinks the centroid is the midpoint of each median"
+            detect: "distractor"
+      - id: c9.quadl.midpoint_quadrilateral
+        name: The midpoint 4-gon
+        description: "Joining the midpoints of the sides of any 4-gon gives a parallelogram."
+        prerequisites: [c9.quadl.midpoint_theorem]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.quadl.mq.same_shape
+            description: "Thinks the midpoint figure has the same shape as the original 4-gon"
+            detect: "distractor"
+      - id: c9.quadl.coordinates
+        name: Parallelograms on the coordinate plane
+        description: "Find the midpoint of a side, or the fourth vertex of a parallelogram from the other three, using coordinates."
+        prerequisites: [c9.quadl.parallelogram_properties, c9.coord.midpoint]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.quadl.coord.adjacent_as_diagonal
+            description: "Treats two adjacent vertices as ends of a diagonal"
+            detect: "distractor"
+      - id: c9.quadl.symmetry
+        name: Symmetry of 4-gons
+        description: "Reflection and rotation symmetries of special 4-gons; central symmetry of a parallelogram; tiling."
+        prerequisites: [c9.quadl.definition_types]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.quadl.sym.parallelogram_lines
+            description: "Thinks a general parallelogram has lines of symmetry along its diagonals"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: circles
+    name: Circles
+    unit: geometry
+    board_weight_marks: 6
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.circ.terms
+        name: Parts of a circle
+        description: "Centre, radius, diameter, chord, arc, segment and sector."
+        prerequisites: []
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.circ.terms.sector_segment
+            description: "Confuses a sector (bounded by two radii) with a segment (bounded by a chord)"
+            detect: "distractor"
+      - id: c9.circ.circumcircle
+        name: Circle through three points
+        description: "A unique circle passes through three non-collinear points; the circumcentre lies inside, on or outside for acute, right and obtuse triangles."
+        prerequisites: [c9.circ.terms]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.circ.cc.collinear
+            description: "Thinks a circle can pass through three collinear points"
+            detect: "distractor"
+          - id: c9.circ.cc.right_triangle
+            description: "Doesn't know the circumcentre of a right triangle is the midpoint of the hypotenuse"
+            detect: "distractor"
+      - id: c9.circ.equal_chords_angles
+        name: Equal chords and central angles
+        description: "Equal chords subtend equal angles at the centre, and conversely."
+        prerequisites: [c9.circ.terms, c9.tri.congruence_criteria]
+        misconceptions:
+          - id: c9.circ.eqc.angle_proportional
+            description: "Thinks a chord twice as long subtends twice the angle"
+            detect: "distractor"
+      - id: c9.circ.perpendicular_chord
+        name: Perpendicular from the centre to a chord
+        description: "The perpendicular from the centre bisects a chord and vice versa; find chord lengths with Pythagoras."
+        prerequisites: [c9.circ.terms, c8.pythagoras]
+        misconceptions:
+          - id: c9.circ.perp.full_chord
+            description: "Uses the full chord instead of half the chord in the right triangle"
+            detect: "distractor"
+          - id: c9.circ.perp.adds_squares
+            description: "Adds squares where subtraction is needed"
+            detect: "distractor"
+      - id: c9.circ.chord_distance
+        name: Chords and distance from the centre
+        description: "Equal chords are equidistant from the centre (and conversely); the longer chord is nearer the centre; the diameter is the longest chord."
+        prerequisites: [c9.circ.perpendicular_chord]
+        misconceptions:
+          - id: c9.circ.dist.longer_farther
+            description: "Thinks a longer chord is farther from the centre"
+            detect: "distractor"
+      - id: c9.circ.angle_at_centre
+        name: Angle at the centre
+        description: "The angle subtended by an arc at the centre is double the angle at any point on the remaining part of the circle."
+        prerequisites: [c9.circ.equal_chords_angles]
+        misconceptions:
+          - id: c9.circ.centre.halves
+            description: "Halves the inscribed angle instead of doubling it (or vice versa)"
+            detect: "answer = correct/4 or 4*correct"
+      - id: c9.circ.same_segment
+        name: Angles in the same segment; angle in a semicircle
+        description: "Angles in the same segment are equal; the angle in a semicircle is 90°."
+        prerequisites: [c9.circ.angle_at_centre]
+        misconceptions:
+          - id: c9.circ.seg.opposite_segment
+            description: "Equates angles that are in opposite segments"
+            detect: "distractor"
+      - id: c9.circ.cyclic_quadrilateral
+        name: Cyclic 4-gons
+        description: "Opposite angles of a cyclic 4-gon add to 180°, and conversely; deciding when four points are concyclic."
+        prerequisites: [c9.circ.same_segment]
+        misconceptions:
+          - id: c9.circ.cyc.opposite_equal
+            description: "Thinks opposite angles of a cyclic 4-gon are equal"
+            detect: "distractor"
+          - id: c9.circ.cyc.adjacent_supplementary
+            description: "Applies the 180° rule to adjacent angles"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: area_perimeter
+    name: "Mensuration: Area and Perimeter"
+    unit: mensuration
+    board_weight_marks: 8
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.area.perimeter
+        name: Perimeter of shapes
+        description: "Perimeter as the length of the boundary of polygons and composite shapes."
+        prerequisites: []
+        misconceptions:
+          - id: c9.area.per.counts_inner
+            description: "Includes internal edges of a composite shape in its perimeter"
+            detect: "answer too large"
+      - id: c9.area.circumference_pi
+        name: Circumference and π
+        description: "C/d is the same for all circles; π is irrational; historical approximations (Archimedes, Aryabhata, Zu Chongzhi)."
+        prerequisites: [c9.circ.terms, c9.num.irrational_intro]
+        misconceptions:
+          - id: c9.area.circ.radius_for_diameter
+            description: "Uses πr for the circumference (or 2πd)"
+            detect: "answer = half or double"
+      - id: c9.area.arc_length
+        name: Length of an arc
+        description: "Arc length = (θ/360°) × 2πr."
+        prerequisites: [c9.area.circumference_pi]
+        misconceptions:
+          - id: c9.area.arc.divides_180
+            description: "Divides by 180 instead of 360"
+            detect: "answer = 2*correct"
+      - id: c9.area.basic_areas
+        name: Areas of rectangles, parallelograms and triangles
+        description: "Area formulas; a median divides a triangle into two triangles of equal area."
+        prerequisites: []
+        misconceptions:
+          - id: c9.area.basic.slant_height
+            description: "Uses the slanted side instead of the perpendicular height"
+            detect: "distractor"
+          - id: c9.area.basic.triangle_half
+            description: "Forgets the ½ in the triangle's area"
+            detect: "answer = 2*correct"
+      - id: c9.area.herons_formula
+        name: Heron's formula
+        description: "Area = √(s(s − a)(s − b)(s − c)) with s the semi-perimeter."
+        prerequisites: [c9.area.basic_areas]
+        misconceptions:
+          - id: c9.area.heron.perimeter_for_s
+            description: "Uses the full perimeter instead of the semi-perimeter"
+            detect: "distractor"
+          - id: c9.area.heron.no_sqrt
+            description: "Forgets to take the square root"
+            detect: "answer = correct^2"
+      - id: c9.area.squaring_rectangle
+        name: Squaring a rectangle
+        description: "The classical problem of constructing a square of equal area; Baudhayana's Sulbasutra method."
+        prerequisites: [c9.area.basic_areas, c9.euclid.history]
+        question_types_allowed: [mcq, numeric, assertion_reason]
+        misconceptions:
+          - id: c9.area.sq.side_average
+            description: "Takes the square's side as the average of the rectangle's sides"
+            detect: "answer = (l+b)/2"
+      - id: c9.area.circle_area
+        name: Area of a circle
+        description: "Area = πr²; how the formula is derived by rearranging sectors."
+        prerequisites: [c9.area.circumference_pi]
+        misconceptions:
+          - id: c9.area.carea.uses_diameter
+            description: "Uses the diameter in place of the radius"
+            detect: "answer = 4*correct"
+          - id: c9.area.carea.uses_2pir
+            description: "Uses 2πr for area"
+            detect: "distractor"
+      - id: c9.area.sector_segment
+        name: Sectors and segments
+        description: "Sector area = (θ/360°) × πr²; segment = sector − triangle."
+        prerequisites: [c9.area.circle_area, c9.area.arc_length]
+        misconceptions:
+          - id: c9.area.sec.segment_adds
+            description: "Adds the triangle to the sector to get a segment"
+            detect: "answer = sector + triangle"
+      - id: c9.area.brahmagupta
+        name: Brahmagupta's formula
+        description: "Area of a cyclic 4-gon = √((s − a)(s − b)(s − c)(s − d)); Heron's formula is the case d = 0."
+        prerequisites: [c9.area.herons_formula, c9.circ.cyclic_quadrilateral]
+        misconceptions:
+          - id: c9.area.brahm.not_cyclic
+            description: "Applies Brahmagupta's formula to a 4-gon that is not cyclic"
+            detect: "distractor"
+          - id: c9.area.brahm.extra_s
+            description: "Multiplies by an extra s as in Heron's formula"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: surface_area_volume
+    name: "Mensuration: Surface Area and Volume"
+    unit: mensuration
+    board_weight_marks: 6
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, case_based]
+    concepts:
+      - id: c9.sav.cuboid_cube
+        name: Cuboids and cubes
+        description: "Surface area 2(lb + bh + hl) and volume lbh; a cube as a special cuboid."
+        prerequisites: [c9.area.basic_areas]
+        misconceptions:
+          - id: c9.sav.cub.lateral_vs_total
+            description: "Gives the lateral surface area when the total is asked"
+            detect: "distractor"
+          - id: c9.sav.cub.forgets_2
+            description: "Leaves out the factor 2 in the surface area"
+            detect: "answer = correct/2"
+      - id: c9.sav.cylinder
+        name: Right circular cylinders
+        description: "Curved surface 2πrh, total surface 2πr(r + h), volume πr²h."
+        prerequisites: [c9.area.circle_area]
+        misconceptions:
+          - id: c9.sav.cyl.curved_for_total
+            description: "Uses the curved surface area when the total is asked"
+            detect: "distractor"
+      - id: c9.sav.cone
+        name: Right circular cones
+        description: "Slant height l = √(r² + h²), curved surface πrl, volume ⅓πr²h."
+        prerequisites: [c9.sav.cylinder, c8.pythagoras]
+        misconceptions:
+          - id: c9.sav.cone.no_third
+            description: "Forgets the ⅓ in the volume"
+            detect: "answer = 3*correct"
+          - id: c9.sav.cone.height_for_slant
+            description: "Uses h where l is needed"
+            detect: "distractor"
+      - id: c9.sav.pyramid
+        name: Pyramids
+        description: "Base and apex; surface area as base + triangular faces; volume = ⅓ × base area × height."
+        prerequisites: [c9.sav.cuboid_cube]
+        misconceptions:
+          - id: c9.sav.pyr.no_third
+            description: "Forgets the ⅓ in the volume"
+            detect: "answer = 3*correct"
+          - id: c9.sav.pyr.vertical_for_slant
+            description: "Uses the vertical height for the triangular faces' height"
+            detect: "distractor"
+      - id: c9.sav.sphere_hemisphere
+        name: Spheres and hemispheres
+        description: "Sphere: 4πr², (4/3)πr³. Hemisphere: curved 2πr², total 3πr², volume (2/3)πr³."
+        prerequisites: [c9.area.circle_area]
+        misconceptions:
+          - id: c9.sav.sph.hemisphere_total
+            description: "Uses 2πr² for the hemisphere's total surface (forgets the flat face)"
+            detect: "distractor"
+          - id: c9.sav.sph.r_squared_volume
+            description: "Uses r² instead of r³ in the volume"
+            detect: "distractor"
+      - id: c9.sav.scaling
+        name: Changing dimensions
+        description: "How surface area (×k²) and volume (×k³) change when dimensions scale by k."
+        prerequisites: [c9.sav.cuboid_cube, c9.sav.sphere_hemisphere]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.sav.scale.linear
+            description: "Thinks doubling the radius doubles the volume"
+            detect: "answer = 2x"
+      - id: c9.sav.units
+        name: Units and conversions
+        description: "cm² vs cm³; 1 L = 1000 cm³; 1 m³ = 1000 L."
+        prerequisites: [c9.sav.cuboid_cube]
+        misconceptions:
+          - id: c9.sav.units.m3_cm3
+            description: "Converts m³ to cm³ by multiplying by 100"
+            detect: "answer off by 10^4"
+
+  # ---------------------------------------------------------------------------
+  - id: statistics
+    name: Statistics
+    unit: statistics_probability
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.stat.investigation
+        name: Statistical investigation
+        description: "Pose a statistical question, collect and organise data in frequency tables."
+        prerequisites: []
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: c9.stat.inv.non_statistical
+            description: "Picks a question with one fixed answer as a statistical question"
+            detect: "distractor"
+      - id: c9.stat.graphs
+        name: Graphical representation of data
+        description: "Read and choose between bar graphs, histograms and other displays."
+        prerequisites: [c9.stat.investigation]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.stat.graph.scale_ignored
+            description: "Reads bar heights without checking the axis scale"
+            detect: "distractor"
+      - id: c9.stat.stacked_bar
+        name: Stacked and 100% stacked bar graphs
+        description: "Read and interpret stacked bar graphs and 100% stacked bar graphs."
+        prerequisites: [c9.stat.graphs]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: c9.stat.stack.top_as_value
+            description: "Reads the top of a segment as its value instead of its height"
+            detect: "distractor"
+          - id: c9.stat.stack.percent_as_count
+            description: "Treats percentages in a 100% stacked bar as counts"
+            detect: "distractor"
+      - id: c9.stat.central_tendency
+        name: Mean, median and mode
+        description: "Compute the mean, median and mode of ungrouped data and frequency tables."
+        prerequisites: [c9.stat.investigation]
+        misconceptions:
+          - id: c9.stat.ct.median_unsorted
+            description: "Takes the middle value without sorting the data"
+            detect: "distractor"
+          - id: c9.stat.ct.even_count_median
+            description: "Picks one middle value for an even count instead of averaging the two"
+            detect: "distractor"
+      - id: c9.stat.weighted_average
+        name: Weighted average
+        description: "Compute and apply weighted averages (marks with weightage, average price of a mixture)."
+        prerequisites: [c9.stat.central_tendency]
+        misconceptions:
+          - id: c9.stat.wa.simple_average
+            description: "Averages the values without their weights"
+            detect: "answer = simple mean"
+      - id: c9.stat.choose_measure
+        name: Choosing a measure
+        description: "Decide which of mean, median or mode best represents the data (outliers, categories)."
+        prerequisites: [c9.stat.central_tendency]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.stat.choose.mean_with_outlier
+            description: "Chooses the mean even when an extreme value distorts it"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: probability
+    name: Introduction to Probability
+    unit: statistics_probability
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: c9.prob.randomness_scale
+        name: Randomness and the probability scale
+        description: "Describe likelihood with words and on a 0-to-1 scale; impossible, unlikely, even, likely, certain."
+        prerequisites: []
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: c9.prob.scale.above_one
+            description: "Accepts a probability greater than 1 or negative"
+            detect: "distractor"
+          - id: c9.prob.scale.gamblers_fallacy
+            description: "Thinks after several heads a tail is 'due'"
+            detect: "distractor"
+      - id: c9.prob.empirical
+        name: Empirical probability
+        description: "Estimate probability from experiments or data: favourable trials ÷ total trials."
+        prerequisites: [c9.prob.randomness_scale]
+        misconceptions:
+          - id: c9.prob.emp.uses_theoretical
+            description: "Gives the theoretical value when the data gives a different estimate"
+            detect: "distractor"
+          - id: c9.prob.emp.wrong_total
+            description: "Divides by the number of outcome types instead of the number of trials"
+            detect: "distractor"
+      - id: c9.prob.theoretical
+        name: Theoretical probability
+        description: "Sample space and events; P(E) = favourable ÷ total equally likely outcomes."
+        prerequisites: [c9.prob.randomness_scale]
+        misconceptions:
+          - id: c9.prob.theo.odds
+            description: "Uses favourable ÷ unfavourable"
+            detect: "answer = f/(n-f)"
+          - id: c9.prob.theo.complement
+            description: "Computes P(not E) as 1 + P(E) or forgets to subtract from 1"
+            detect: "distractor"
+      - id: c9.prob.tree_tables
+        name: Tree diagrams and tables
+        description: "List outcomes of two-stage experiments (two coins, a coin and a die) with trees and tables."
+        prerequisites: [c9.prob.theoretical]
+        misconceptions:
+          - id: c9.prob.tree.unordered
+            description: "Counts HT and TH as one outcome"
+            detect: "denominator 3 for two coins"
+          - id: c9.prob.tree.adds_stages
+            description: "Adds the number of outcomes at each stage instead of multiplying"
+            detect: "answer = m + n"
+      - id: c9.prob.empirical_vs_theoretical
+        name: Comparing empirical and theoretical
+        description: "Empirical estimates approach the theoretical probability as the number of trials grows."
+        prerequisites: [c9.prob.empirical, c9.prob.theoretical]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: c9.prob.cmp.must_match
+            description: "Expects a small experiment to match the theoretical probability exactly"
+            detect: "distractor"

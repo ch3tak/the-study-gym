@@ -22,14 +22,42 @@ def test_output_schema_is_strict():
 
 def test_plan_writes_requests(tmp_path, monkeypatch):
     monkeypatch.setattr(generate, "OUT_ROOT", tmp_path)
-    rc = generate.main(["plan", "--chapter", "quadratic_equations", "--types", "mcq", "--difficulty", "2",
-                        "--count", "3", "--run", "t"])
+    rc = generate.main(["plan", "--subject", "cbse/10/maths_standard", "--chapter", "quadratic_equations",
+                        "--types", "mcq", "--difficulty", "2", "--count", "3", "--run", "t"])
     assert rc == 0
     lines = (tmp_path / "t" / "requests.jsonl").read_text(encoding="utf-8").splitlines()
     first = json.loads(lines[0])
     assert first["params"]["model"] == "claude-sonnet-5"
     assert "Write 3 mcq questions at difficulty 2" in first["params"]["messages"][0]["content"]
     assert len({json.loads(l)["custom_id"] for l in lines}) == len(lines)
+
+
+def test_every_profile_has_syllabus_and_golden_examples():
+    from content.pipeline import subjects
+    from content.pipeline.syllabus import syllabus_path
+
+    for key, profile in subjects.PROFILES.items():
+        board, grade, code = key.split("/")
+        assert syllabus_path(board, int(grade), code).exists(), key
+        assert profile.golden.exists(), key
+        assert set(profile.generatable) <= set(generate.GENERATABLE), key
+
+
+def test_science_plan_uses_science_profile(tmp_path, monkeypatch):
+    monkeypatch.setattr(generate, "OUT_ROOT", tmp_path)
+    rc = generate.main(["plan", "--subject", "cbse/9/science", "--chapter", "motion", "--run", "s"])
+    assert rc == 0
+    reqs = [json.loads(l) for l in (tmp_path / "s" / "requests.jsonl").read_text(encoding="utf-8").splitlines()]
+    assert {r["meta"]["type"] for r in reqs} <= {"mcq", "numeric", "assertion_reason"}
+    system = reqs[0]["params"]["system"][0]["text"]
+    assert "Class 9 Science" in system and "Gravitation" in system
+    assert all(len(r["custom_id"]) <= 64 for r in reqs)
+
+
+def test_custom_id_is_capped():
+    cid = generate.custom_id_for("c9." + "x" * 80, "assertion_reason", 3)
+    assert len(cid) <= 64
+    assert cid != generate.custom_id_for("c9." + "x" * 81, "assertion_reason", 3)
 
 
 def test_to_question_round_trips_through_validator():

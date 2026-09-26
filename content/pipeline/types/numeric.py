@@ -33,6 +33,8 @@ class Numeric(QuestionType):
         tol = float(q.get("tolerance", 0))
         if tol < 0:
             ctx.error("tolerance: must be >= 0")
+        if ctx.syllabus.numeric_requires_unit and not str(q.get("unit", "")).strip():
+            ctx.error("unit: required in this subject (use \"none\" for a dimensionless answer)")
 
         for wrong, mid in (q.get("wrong_answers") or {}).items():
             ctx.check_misconception(mid, f"wrong_answers[{wrong}]")

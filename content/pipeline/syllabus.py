@@ -18,9 +18,11 @@ SLUG = re.compile(r"^[a-z0-9_]+$")
 STATUSES = {"live", "coming_soon", "hidden"}
 
 _TOP_REQUIRED = {"schema_version", "board", "class", "subject", "name", "status", "total_marks", "chapters"}
-_TOP_OPTIONAL = {"academic_year", "default_half_life_days", "sources", "units", "external_concepts"}
+_TOP_OPTIONAL = {"academic_year", "default_half_life_days", "sources", "units", "external_concepts", "question_rules"}
+_QUESTION_RULES = {"numeric_requires_unit"}
+_EXTERNAL_KEYS = {"id", "name", "pending"}
 _CHAPTER_REQUIRED = {"id", "name", "board_weight_marks", "concepts"}
-_CHAPTER_OPTIONAL = {"unit", "board_weight_is_estimate", "default_question_types", "verify"}
+_CHAPTER_OPTIONAL = {"unit", "board_weight_is_estimate", "default_question_types", "verify", "chapter_number"}
 _CONCEPT_REQUIRED = {"id", "name", "description", "prerequisites", "misconceptions"}
 _CONCEPT_OPTIONAL = {"question_types_allowed", "verify", "retired"}
 _MISCONCEPTION_KEYS = {"id", "description", "detect"}
@@ -42,9 +44,17 @@ class Syllabus:
     grade: int
     subject: str
     status: str
+    name: str = ""
+    numeric_requires_unit: bool = False
     concepts: dict[str, Concept] = field(default_factory=dict)
-    external_concepts: set[str] = field(default_factory=set)
+    # Prerequisites from other syllabi (usually an earlier class). id -> pending:
+    # pending ones point at a syllabus we haven't authored yet.
+    external_concepts: dict[str, bool] = field(default_factory=dict)
     misconceptions: dict[str, str] = field(default_factory=dict)  # misconception id -> concept id
+
+    @property
+    def where(self) -> str:
+        return f"content/syllabus/{self.board}/{self.grade}/{self.subject}.yaml"
 
     def concept(self, concept_id: str) -> Concept | None:
         return self.concepts.get(concept_id)
@@ -79,9 +89,14 @@ def load(path: Path, issues: Issues, known_types: set[str]) -> Syllabus | None:
         grade=int(data.get("class", 0)),
         subject=str(data.get("subject")),
         status=str(data.get("status")),
+        name=str(data.get("name", "")),
     )
+    rules = data.get("question_rules") or {}
+    check_keys(rules, f"{where}#question_rules", issues, required=set(), optional=_QUESTION_RULES)
+    syl.numeric_requires_unit = bool(rules.get("numeric_requires_unit", False))
     for ext in data.get("external_concepts") or []:
-        syl.external_concepts.add(ext["id"])
+        check_keys(ext, f"{where}#external_concepts", issues, required={"id", "name"}, optional=_EXTERNAL_KEYS)
+        syl.external_concepts[ext.get("id", "")] = bool(ext.get("pending", False))
 
     units = {u["id"]: u["marks"] for u in data.get("units") or []}
     if units and sum(units.values()) != data.get("total_marks"):
@@ -167,6 +182,32 @@ def load(path: Path, issues: Issues, known_types: set[str]) -> Syllabus | None:
         issues.error(where, "prerequisite cycle: " + " -> ".join(cycle))
 
     return syl
+
+
+def check_cross_references(syllabi: list[Syllabus], issues: Issues) -> None:
+    """Checks that need every syllabus at once: ids are global keys in the
+    database, and external prerequisites must point at real concepts."""
+    concept_owner: dict[str, Syllabus] = {}
+    misconception_owner: dict[str, Syllabus] = {}
+    for syl in syllabi:
+        for cid in syl.concepts:
+            if cid in concept_owner:
+                issues.error(syl.where, f"concept id '{cid}' also used in {concept_owner[cid].where}")
+            concept_owner[cid] = syl
+        for mid in syl.misconceptions:
+            if mid in misconception_owner:
+                issues.error(syl.where, f"misconception id '{mid}' also used in {misconception_owner[mid].where}")
+            misconception_owner[mid] = syl
+
+    for syl in syllabi:
+        for ext_id, pending in syl.external_concepts.items():
+            owner = concept_owner.get(ext_id)
+            if owner is syl:
+                issues.error(syl.where, f"external concept '{ext_id}' is defined in this same syllabus")
+            elif owner is None and not pending:
+                issues.error(syl.where, f"external concept '{ext_id}' not found in any syllabus (mark it pending: true if its class isn't authored yet)")
+            elif owner is not None and pending:
+                issues.error(syl.where, f"external concept '{ext_id}' now exists in {owner.where}; drop pending: true")
 
 
 def _find_cycles(graph: dict[str, list[str]]) -> list[list[str]]:

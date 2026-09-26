@@ -37,22 +37,25 @@ units:
   - {id: mensuration,           name: Mensuration,                  marks: 10}
   - {id: statistics_probability, name: Statistics & Probability,    marks: 11}
 
-# Prerequisites from earlier classes. Referenced by id; authored with the Class 9 syllabus.
+# Prerequisites from earlier classes (content/syllabus/cbse/9/maths.yaml).
+# Class 8 ones are pending until that syllabus is authored.
 external_concepts:
-  - {id: c9.num.irrationals,        name: Irrational numbers}
-  - {id: c9.num.exponents,          name: Laws of exponents for real numbers}
-  - {id: c9.poly.zeroes,            name: Zeroes of a polynomial}
-  - {id: c9.poly.factorisation,     name: Factorisation of polynomials}
-  - {id: c9.poly.identities,        name: Algebraic identities}
-  - {id: c9.lin.one_equation,       name: Linear equations in two variables}
-  - {id: c9.coord.plotting,         name: Plotting points on the Cartesian plane}
-  - {id: c9.geo.congruence,         name: Congruence of triangles}
-  - {id: c9.geo.angles_lines,       name: Lines and angles}
-  - {id: c9.geo.circles,            name: Circles (chords, angles)}
-  - {id: c9.geo.pythagoras,         name: Pythagoras theorem}
-  - {id: c9.mens.areas,             name: Areas of plane figures}
-  - {id: c9.mens.surface_volume,    name: Surface areas and volumes of basic solids}
-  - {id: c9.stat.ungrouped,         name: Mean, median, mode of ungrouped data}
+  - {id: c9.num.irrational_intro,        name: Irrational numbers}
+  - {id: c9.poly.evaluate,               name: Value of a polynomial}
+  - {id: c9.iden.factorise_quadratic,    name: Factorising quadratic expressions}
+  - {id: c9.iden.standard,               name: Standard identities}
+  - {id: c9.lin.equation_two_variables,  name: Linear equations in two variables}
+  - {id: c9.coord.cartesian_plane,       name: The Cartesian plane}
+  - {id: c9.tri.congruence_criteria,     name: Congruence criteria}
+  - {id: c9.lines.parallel_transversal,  name: Parallel lines and a transversal}
+  - {id: c9.circ.terms,                  name: Parts of a circle}
+  - {id: c9.area.basic_areas,            name: "Areas of rectangles, parallelograms and triangles"}
+  - {id: c9.sav.cylinder,                name: Right circular cylinders}
+  - {id: c9.sav.cone,                    name: Right circular cones}
+  - {id: c9.sav.sphere_hemisphere,       name: Spheres and hemispheres}
+  - {id: c9.stat.central_tendency,       name: "Mean, median and mode"}
+  - {id: c8.pythagoras,                  name: Pythagoras theorem, pending: true}
+  - {id: c8.exponents,                   name: Laws of exponents, pending: true}
 
 chapters:
 
@@ -119,7 +122,7 @@ chapters:
       - id: real.irrational_proof
         name: Proving irrationality of √2, √3, √5
         description: Proof by contradiction using "if p divides a², then p divides a".
-        prerequisites: [c9.num.irrationals, real.fta]
+        prerequisites: [c9.num.irrational_intro, real.fta]
         question_types_allowed: [mcq, assertion_reason, case_based]
         misconceptions:
           - id: real.irr.assumes_conclusion
@@ -143,7 +146,7 @@ chapters:
       - id: real.classify_numbers
         name: Classifying rational and irrational numbers
         description: Decide whether a given expression is rational or irrational after simplifying.
-        prerequisites: [c9.num.irrationals]
+        prerequisites: [c9.num.irrational_intro]
         question_types_allowed: [mcq, assertion_reason]
         misconceptions:
           - id: real.classify.root_always_irrational
@@ -164,7 +167,7 @@ chapters:
       - id: poly.degree_types
         name: Degree and types of polynomials
         description: Identify linear, quadratic and cubic polynomials and their degree.
-        prerequisites: [c9.poly.zeroes]
+        prerequisites: [c9.poly.evaluate]
         question_types_allowed: [mcq]
         misconceptions:
           - id: poly.deg.counts_terms
@@ -173,7 +176,7 @@ chapters:
       - id: poly.zeroes_graph
         name: Geometric meaning of zeroes
         description: The zeroes of p(x) are the x-coordinates where y = p(x) meets the x-axis; count zeroes from a graph.
-        prerequisites: [c9.poly.zeroes, c9.coord.plotting]
+        prerequisites: [c9.poly.evaluate, c9.coord.cartesian_plane]
         question_types_allowed: [mcq, case_based]
         misconceptions:
           - id: poly.graph.y_intercept
@@ -194,7 +197,7 @@ chapters:
       - id: poly.find_zeroes_quadratic
         name: Finding zeroes of a quadratic polynomial
         description: Find zeroes by splitting the middle term or factorising.
-        prerequisites: [c9.poly.factorisation]
+        prerequisites: [c9.iden.factorise_quadratic]
         misconceptions:
           - id: poly.fz.sign_flip
             description: "Gives roots with the wrong sign (reads (x−2) as zero −2)"
@@ -239,7 +242,7 @@ chapters:
       - id: poly.symmetric_expressions
         name: Expressions in α and β
         description: Evaluate α² + β², 1/α + 1/β, etc. using sum and product without finding the zeroes.
-        prerequisites: [poly.sum_product_zeroes, c9.poly.identities]
+        prerequisites: [poly.sum_product_zeroes, c9.iden.standard]
         misconceptions:
           - id: poly.sym.square_sum
             description: "Takes α² + β² = (α + β)²"
@@ -267,7 +270,7 @@ chapters:
       - id: lin.form_equations
         name: Forming equations from situations
         description: Translate a word problem into a pair of linear equations.
-        prerequisites: [c9.lin.one_equation]
+        prerequisites: [c9.lin.equation_two_variables]
         misconceptions:
           - id: lin.form.reversed_relation
             description: "Reverses \"a is 3 more than b\" into b = a + 3"
@@ -278,7 +281,7 @@ chapters:
       - id: lin.graphical_solution
         name: Graphical method
         description: Solve by plotting both lines and reading their intersection.
-        prerequisites: [c9.lin.one_equation, c9.coord.plotting]
+        prerequisites: [c9.lin.equation_two_variables, c9.coord.cartesian_plane]
         question_types_allowed: [mcq, case_based]
         misconceptions:
           - id: lin.graph.axis_swap
@@ -315,7 +318,7 @@ chapters:
       - id: lin.substitution
         name: Substitution method
         description: Express one variable from one equation and substitute into the other.
-        prerequisites: [c9.lin.one_equation]
+        prerequisites: [c9.lin.equation_two_variables]
         misconceptions:
           - id: lin.sub.same_equation
             description: "Substitutes back into the same equation, getting 0 = 0"
@@ -326,7 +329,7 @@ chapters:
       - id: lin.elimination
         name: Elimination method
         description: Multiply to equalise a coefficient, then add or subtract to eliminate a variable.
-        prerequisites: [c9.lin.one_equation]
+        prerequisites: [c9.lin.equation_two_variables]
         misconceptions:
           - id: lin.elim.partial_multiply
             description: "Multiplies only one side or one term of an equation"
@@ -355,7 +358,7 @@ chapters:
       - id: lin.check_solution
         name: Checking a solution
         description: Verify whether an ordered pair satisfies both equations.
-        prerequisites: [c9.lin.one_equation]
+        prerequisites: [c9.lin.equation_two_variables]
         question_types_allowed: [mcq]
         misconceptions:
           - id: lin.check.one_equation
@@ -608,7 +611,7 @@ chapters:
       - id: tri.similarity_definition
         name: Similar triangles
         description: Corresponding angles equal and corresponding sides proportional; correct vertex correspondence.
-        prerequisites: [tri.similar_figures, c9.geo.congruence]
+        prerequisites: [tri.similar_figures, c9.tri.congruence_criteria]
         misconceptions:
           - id: tri.def.order
             description: "Matches vertices in the wrong order (ΔABC ~ ΔPQR read as A↔Q)"
@@ -633,7 +636,7 @@ chapters:
       - id: tri.bpt_proof
         name: Proof of BPT
         description: Steps of the area-based proof of the Basic Proportionality Theorem.
-        prerequisites: [tri.bpt, c9.mens.areas]
+        prerequisites: [tri.bpt, c9.area.basic_areas]
         question_types_allowed: [mcq, case_based]
         misconceptions:
           - id: tri.proof.equal_area_reason
@@ -642,7 +645,7 @@ chapters:
       - id: tri.aaa
         name: AA / AAA similarity
         description: Two pairs of equal corresponding angles are enough for similarity.
-        prerequisites: [tri.similarity_definition, c9.geo.angles_lines]
+        prerequisites: [tri.similarity_definition, c9.lines.parallel_transversal]
         misconceptions:
           - id: tri.aaa.needs_side
             description: "Thinks a side ratio is also required"
@@ -691,7 +694,7 @@ chapters:
       - id: coord.distance_formula
         name: Distance formula
         description: Distance between (x₁, y₁) and (x₂, y₂) is √((x₂ − x₁)² + (y₂ − y₁)²).
-        prerequisites: [c9.coord.plotting, c9.geo.pythagoras]
+        prerequisites: [c9.coord.cartesian_plane, c8.pythagoras]
         misconceptions:
           - id: coord.dist.no_sqrt
             description: "Forgets the square root"
@@ -730,7 +733,7 @@ chapters:
       - id: coord.section_formula
         name: Section formula (internal division)
         description: Point dividing the join of A and B in ratio m:n is ((mx₂ + nx₁)/(m+n), (my₂ + ny₁)/(m+n)).
-        prerequisites: [c9.coord.plotting]
+        prerequisites: [c9.coord.cartesian_plane]
         misconceptions:
           - id: coord.sec.swapped_weights
             description: "Pairs m with x₁ instead of x₂"
@@ -775,7 +778,7 @@ chapters:
       - id: trig.ratios_definition
         name: Trigonometric ratios
         description: sin, cos, tan, cosec, sec, cot of an acute angle in a right triangle.
-        prerequisites: [c9.geo.pythagoras]
+        prerequisites: [c8.pythagoras]
         misconceptions:
           - id: trig.def.opp_adj_swap
             description: "Swaps opposite and adjacent sides for the angle"
@@ -841,7 +844,7 @@ chapters:
       - id: trig.identity_basic
         name: sin²θ + cos²θ = 1 and its forms
         description: Know and derive 1 + tan²θ = sec²θ and 1 + cot²θ = cosec²θ.
-        prerequisites: [trig.reciprocal_relations, c9.geo.pythagoras]
+        prerequisites: [trig.reciprocal_relations, c8.pythagoras]
         misconceptions:
           - id: trig.id.tan_sec_sign
             description: "Writes tan²θ − sec²θ = 1"
@@ -964,7 +967,7 @@ chapters:
       - id: circ.tangent_secant
         name: Tangents and secants
         description: A tangent meets the circle at exactly one point; number of tangents from inside/on/outside a point.
-        prerequisites: [c9.geo.circles]
+        prerequisites: [c9.circ.terms]
         question_types_allowed: [mcq, assertion_reason]
         misconceptions:
           - id: circ.ts.tangents_from_inside
@@ -993,7 +996,7 @@ chapters:
       - id: circ.tangent_length
         name: Length of a tangent
         description: Use Pythagoras with the radius and the distance to the centre.
-        prerequisites: [circ.tangent_perpendicular, c9.geo.pythagoras]
+        prerequisites: [circ.tangent_perpendicular, c8.pythagoras]
         misconceptions:
           - id: circ.len.adds_squares
             description: "Adds the squares where subtraction is needed"
@@ -1001,7 +1004,7 @@ chapters:
       - id: circ.equal_tangents
         name: Tangents from an external point are equal
         description: Two tangents from an external point have equal lengths.
-        prerequisites: [circ.tangent_perpendicular, c9.geo.congruence]
+        prerequisites: [circ.tangent_perpendicular, c9.tri.congruence_criteria]
         misconceptions:
           - id: circ.eq.to_centre
             description: "Thinks the tangent equals the distance to the centre"
@@ -1043,7 +1046,7 @@ chapters:
       - id: area.circle_basics
         name: Circumference and area of a circle
         description: C = 2πr, A = πr²; switching between radius and diameter.
-        prerequisites: [c9.mens.areas]
+        prerequisites: [c9.area.basic_areas]
         misconceptions:
           - id: area.basic.diameter_as_radius
             description: "Uses the diameter as the radius"
@@ -1129,7 +1132,7 @@ chapters:
       - id: sav.basic_solids_review
         name: Formulas for basic solids
         description: Surface area and volume of cube, cuboid, cylinder, cone, sphere and hemisphere.
-        prerequisites: [c9.mens.surface_volume]
+        prerequisites: [c9.sav.cylinder, c9.sav.cone, c9.sav.sphere_hemisphere]
         misconceptions:
           - id: sav.basic.cone_third
             description: "Forgets the ⅓ in the cone volume"
@@ -1140,7 +1143,7 @@ chapters:
       - id: sav.slant_height
         name: Slant height of a cone
         description: l = √(r² + h²).
-        prerequisites: [sav.basic_solids_review, c9.geo.pythagoras]
+        prerequisites: [sav.basic_solids_review, c8.pythagoras]
         misconceptions:
           - id: sav.slant.uses_height
             description: "Uses the vertical height where the slant height is needed"
@@ -1219,7 +1222,7 @@ chapters:
       - id: stat.class_marks
         name: Class marks and class intervals
         description: Class mark = (lower + upper)/2; class size; converting inclusive to exclusive intervals.
-        prerequisites: [c9.stat.ungrouped]
+        prerequisites: [c9.stat.central_tendency]
         misconceptions:
           - id: stat.cm.difference
             description: "Takes the class mark as upper − lower"

@@ -27,18 +27,21 @@ from pathlib import Path
 
 import yaml
 
+from . import subjects
 from .issues import Issues
 from .questions import validate_bank
-from .syllabus import CONTENT_ROOT, load, syllabus_path
+from .subjects import SubjectProfile
+from .syllabus import load, syllabus_path
 from .types import GENERIC_MISCONCEPTIONS, REGISTRY
 
 MODEL = "claude-sonnet-5"
 OUT_ROOT = Path(__file__).resolve().parent / "out"
-GOLDEN = CONTENT_ROOT / "questions" / "cbse" / "10" / "maths_standard" / "quadratic_equations.yaml"
+DEFAULT_SUBJECT = "cbse/9/maths"
 
-# Types the generator can produce. case_based is assembled by hand for now.
+# Types the generator can produce at all (per-subject lists live in subjects.py).
+# case_based is assembled by hand for now.
 GENERATABLE = ("mcq", "numeric", "expression", "assertion_reason")
-DIFFICULTY_LABEL = {1: "easy (direct recall or one step)", 2: "board-standard", 3: "challenge (multi-step)"}
+DIFFICULTY_LABEL = {1: "easy (direct recall or one step)", 2: "exam-standard", 3: "challenge (multi-step)"}
 
 # ---------------------------------------------------------------------------
 # Output schemas (structured outputs). Map-shaped fields are arrays here and
@@ -73,7 +76,7 @@ _TYPE_PROPS = {
         },
         "option_values": _STRS,
     },
-    "numeric": {"answers": _STRS, "tolerance": {"type": "number"}, "wrong_answers": _MAPPED_WRONG},
+    "numeric": {"answers": _STRS, "tolerance": {"type": "number"}, "unit": _STR, "wrong_answers": _MAPPED_WRONG},
     "expression": {
         "answer": _STR,
         "variables": _STRS,
@@ -99,20 +102,22 @@ def output_schema(qtype: str) -> dict:
 # Prompts. The system prompt is identical across a run so it caches.
 # ---------------------------------------------------------------------------
 
-SYSTEM_PROMPT = """You write practice questions for Indian CBSE Class 10 Mathematics (Standard), 2026-27 syllabus.
+SYSTEM_PROMPT = """You write practice questions for {title}.
 Students use them in a daily practice app. A single wrong answer key destroys their trust, so correctness beats variety.
 
 Rules:
-- Original questions only, in the style of CBSE board papers. Never copy NCERT or past-paper questions.
-- Stay strictly inside the concept you are given and the rationalised CBSE syllabus. Do not use topics CBSE removed (Euclid's division lemma, polynomial division algorithm, cross-multiplication, completing the square, frustums, ogives, area of a triangle by coordinates, complementary-angle identities).
+- Original questions only, in the style of CBSE exam papers. Never copy NCERT or past-paper questions.
+- Stay strictly inside the concept you are given.
 - Indian context where a situation is used (rupees, metres, school, cricket, festivals). Simple English; short sentences.
 - Maths in LaTeX between single $ signs, e.g. "$x^2 - 5x + 6 = 0$". Escape nothing extra; the JSON encoder handles backslashes.
 - Use "hints" for at most 2 progressive hints that don't give the answer away. "solution_steps" is a short worked solution, one step per item.
 - Every wrong MCQ option must come from a specific misconception in the list you are given (use its id). Use "generic.arithmetic_slip" or "generic.misread_question" only when no listed misconception fits.
 
+Subject rules:
+{rules}
+
 Machine verification (a checker recomputes your answer with SymPy and rejects mismatches):
 - "verification_sympy" is ONE SymPy expression that computes the answer from the question's numbers. Use plain SymPy: solve, sqrt, Rational, pi, sin, cos, tan, factor, expand, simplify, gcd, lcm, factorint, positive_roots(expr, var) (real positive roots, for lengths/ages/counts). Use ** for powers and * for multiplication. No imports, no attribute access, no lambdas.
-- Work in degrees via pi: sin(pi/6), not sin(30).
 - mcq: "option_values" gives each option as a SymPy value in the same order (a list like "[-6, 6]" for ±6). Exactly one option must equal the verification result. If the question is conceptual and can't be computed, set verification_sympy and every option_value to "".
 - numeric: "answers" lists every value the student must enter (usually one). "wrong_answers" maps predictable wrong values to misconception ids. tolerance is 0 unless the answer is a rounded decimal.
 - expression: "answer" is SymPy syntax, e.g. "(2*x - 1)*(x + 3)"; "variables" lists its symbols.
@@ -124,8 +129,10 @@ Reference examples in our format (YAML shown for readability; you answer in the 
 {examples}"""
 
 
-def system_prompt() -> str:
-    return SYSTEM_PROMPT.format(examples=GOLDEN.read_text(encoding="utf-8"))
+def system_prompt(profile: SubjectProfile) -> str:
+    return SYSTEM_PROMPT.format(
+        title=profile.title, rules=profile.rules, examples=profile.golden.read_text(encoding="utf-8")
+    )
 
 
 def user_prompt(concept: dict, chapter_name: str, qtype: str, difficulty: int, count: int) -> str:
@@ -165,7 +172,20 @@ def iter_cells(raw: dict, chapter_ids: list[str], types: list[str], difficulties
                         yield ch, c, t, d
 
 
+def custom_id_for(concept_id: str, qtype: str, difficulty: int) -> str:
+    """Batch custom_ids must match ^[a-zA-Z0-9_-]{1,64}$."""
+    cid = f"{concept_id}--{qtype}--{difficulty}".replace(".", "-")
+    if len(cid) > 64:
+        cid = cid[:55] + "-" + hashlib.sha1(cid.encode()).hexdigest()[:8]
+    return cid
+
+
 def cmd_plan(args) -> int:
+    try:
+        profile = subjects.get(args.subject)
+    except KeyError as exc:
+        print(exc, file=sys.stderr)
+        return 2
     board, grade, subject = args.subject.split("/")
     raw = load_raw_syllabus(board, int(grade), subject)
     known = {ch["id"] for ch in raw["chapters"]}
@@ -177,11 +197,12 @@ def cmd_plan(args) -> int:
     run = args.run or datetime.now().strftime("%Y%m%d-%H%M%S")
     run_dir = OUT_ROOT / run
     run_dir.mkdir(parents=True, exist_ok=True)
-    system = system_prompt()
+    system = system_prompt(profile)
+    types = [t for t in (args.types or profile.generatable) if t in profile.generatable]
     n = 0
     with (run_dir / "requests.jsonl").open("w", encoding="utf-8") as f:
-        for ch, c, t, d in iter_cells(raw, args.chapter, args.types, args.difficulty):
-            custom_id = f"{c['id']}|{t}|{d}".replace(".", "-").replace("|", "--")
+        for ch, c, t, d in iter_cells(raw, args.chapter, types, args.difficulty):
+            custom_id = custom_id_for(c["id"], t, d)
             params = {
                 "model": MODEL,
                 "max_tokens": 16000,
@@ -296,6 +317,8 @@ def to_question(item: dict, *, concept: str, type: str, difficulty: int) -> dict
         q["answers"] = item["answers"]
         if item.get("tolerance"):
             q["tolerance"] = item["tolerance"]
+        if item.get("unit"):
+            q["unit"] = item["unit"]
         if item.get("wrong_answers"):
             q["wrong_answers"] = {w["value"]: w["misconception_id"] for w in item["wrong_answers"]}
     elif type == "expression":
@@ -347,9 +370,9 @@ def main(argv: list[str] | None = None) -> int:
     sub = parser.add_subparsers(dest="cmd", required=True)
 
     p = sub.add_parser("plan", help="build batch requests")
-    p.add_argument("--subject", default="cbse/10/maths_standard")
+    p.add_argument("--subject", default=DEFAULT_SUBJECT, choices=sorted(subjects.PROFILES))
     p.add_argument("--chapter", action="append", default=[], help="chapter id (repeatable; default all)")
-    p.add_argument("--types", nargs="+", default=list(GENERATABLE), choices=GENERATABLE)
+    p.add_argument("--types", nargs="+", choices=GENERATABLE, help="default: every type the subject supports")
     p.add_argument("--difficulty", nargs="+", type=int, default=[1, 2, 3], choices=[1, 2, 3])
     p.add_argument("--count", type=int, default=5, help="questions per request")
     p.add_argument("--effort", default="high", choices=["low", "medium", "high", "xhigh", "max"])
