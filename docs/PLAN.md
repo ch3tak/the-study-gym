@@ -457,6 +457,8 @@ quality: {reports: 0, p_correct_observed: null, discrimination: null}
 - Per-user daily cap on AI calls, and a cache keyed by content hash.
 - Target average under ₹5 per Pro user per month. Free users get effectively zero AI cost.
 
+**AI usage policy (decided 26 Sep 2026).** Keep AI usage to where it's genuinely needed, not as a default answer to every feature: content generation (question authoring, §4.3), mock-exam assembly, and building a curated study plan are the cases that justify it. Day-to-day interactions — grading MCQ/numeric/assertion-reason answers, mastery updates, the workout selector, the coach's template messages — stay deterministic and rule-based, both because it's cheaper and because it's easier for students to trust a rule than an opaque model call. Free-tier AI usage is heavily restricted (the rule-engine coach message, no "AI polish", no "explain differently"); those stay Pro-only per the table above. No UI change needed for this in the current mockup — it's a backend/cost-control policy that shapes which future screens (mock-exam generation, a study-plan builder) get an AI call behind them versus which don't.
+
 ---
 
 ## 6. Technical architecture
