@@ -27,3 +27,13 @@ pip install -r content/pipeline/requirements.txt
 python -m content.pipeline.validate          # validate all syllabi and questions
 python -m pytest content/pipeline/tests
 ```
+
+Generating questions (Batch API, needs `ANTHROPIC_API_KEY`):
+
+```sh
+python -m content.pipeline.generate plan --chapter quadratic_equations --count 3 --run pilot
+python -m content.pipeline.generate submit pilot
+python -m content.pipeline.generate collect pilot   # re-run until the batch has ended
+```
+
+Output lands in `content/pipeline/out/<run>/` (git-ignored): `passed.yaml`, `failed.yaml`, `report.txt`. Questions reach `content/questions/` only after human review.
