@@ -1,0 +1,22 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  content:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install -r content/pipeline/requirements.txt
+      - name: Pipeline tests
+        run: python -m pytest content/pipeline/tests -q
+      - name: Validate syllabi and question bank
+        run: python -m content.pipeline.validate
+
+  # app: flutter analyze + flutter test get added once app/ is scaffolded.
