@@ -1,0 +1,1426 @@
+# CBSE Class 10 Mathematics (Standard): the curriculum spine.
+#
+# Every question, mastery score and Board Readiness number hangs off the ids in
+# this file. Ids are permanent: rename the `name`, never the `id`. To retire a
+# concept, set `retired: true` instead of deleting it.
+#
+# Scope follows the rationalised NCERT textbook and CBSE curriculum. Topics
+# CBSE removed (Euclid's division lemma, polynomial division algorithm,
+# cross-multiplication, equations reducible to linear, completing the square,
+# areas of similar triangles, Pythagoras proofs, area of a triangle by
+# coordinates, complementary-angle ratios, frustums, ogives, constructions) are
+# deliberately absent. Anything marked `verify:` must be checked against the
+# official 2026-27 curriculum PDF before launch.
+
+schema_version: 1
+board: cbse
+class: 10
+subject: maths_standard
+name: Mathematics (Standard)
+academic_year: "2026-27"
+status: live
+total_marks: 80          # theory paper; internal assessment (20) is out of scope
+default_half_life_days: 2
+
+sources:
+  - CBSE Secondary Curriculum 2026-27, Mathematics (Code 041)
+  - NCERT Mathematics Class 10, rationalised edition
+
+# Official unit weightage (theory, 80 marks). Chapter weights below split these
+# and are our estimate, since CBSE publishes weights per unit only.
+units:
+  - {id: number_systems,        name: Number Systems,               marks: 6}
+  - {id: algebra,               name: Algebra,                      marks: 20}
+  - {id: coordinate_geometry,   name: Coordinate Geometry,          marks: 6}
+  - {id: geometry,              name: Geometry,                     marks: 15}
+  - {id: trigonometry,          name: Trigonometry,                 marks: 12}
+  - {id: mensuration,           name: Mensuration,                  marks: 10}
+  - {id: statistics_probability, name: Statistics & Probability,    marks: 11}
+
+# Prerequisites from earlier classes. Referenced by id; authored with the Class 9 syllabus.
+external_concepts:
+  - {id: c9.num.irrationals,        name: Irrational numbers}
+  - {id: c9.num.exponents,          name: Laws of exponents for real numbers}
+  - {id: c9.poly.zeroes,            name: Zeroes of a polynomial}
+  - {id: c9.poly.factorisation,     name: Factorisation of polynomials}
+  - {id: c9.poly.identities,        name: Algebraic identities}
+  - {id: c9.lin.one_equation,       name: Linear equations in two variables}
+  - {id: c9.coord.plotting,         name: Plotting points on the Cartesian plane}
+  - {id: c9.geo.congruence,         name: Congruence of triangles}
+  - {id: c9.geo.angles_lines,       name: Lines and angles}
+  - {id: c9.geo.circles,            name: Circles (chords, angles)}
+  - {id: c9.geo.pythagoras,         name: Pythagoras theorem}
+  - {id: c9.mens.areas,             name: Areas of plane figures}
+  - {id: c9.mens.surface_volume,    name: Surface areas and volumes of basic solids}
+  - {id: c9.stat.ungrouped,         name: Mean, median, mode of ungrouped data}
+
+chapters:
+
+  # ---------------------------------------------------------------------------
+  - id: real_numbers
+    name: Real Numbers
+    unit: number_systems
+    board_weight_marks: 6
+    default_question_types: [mcq, numeric, assertion_reason]
+    concepts:
+      - id: real.prime_factorisation
+        name: Prime factorisation
+        description: Express a composite number as a product of primes.
+        prerequisites: []
+        misconceptions:
+          - id: real.pf.non_prime_factor
+            description: "Leaves a composite factor (e.g. 4) in the \"prime\" factorisation"
+            detect: "factor list contains a composite"
+          - id: real.pf.missing_power
+            description: "Lists each prime once and drops repeated factors"
+            detect: "product of listed factors < number"
+      - id: real.fta
+        name: Fundamental Theorem of Arithmetic
+        description: Every composite number has a unique prime factorisation (ignoring order); apply it to decide statements like "can 6^n end in 0?".
+        prerequisites: [real.prime_factorisation]
+        misconceptions:
+          - id: real.fta.ends_in_zero
+            description: "Thinks a power like 4^n or 6^n can end in 0 without the prime 5 in its factorisation"
+            detect: "chooses \"yes, for some n\""
+          - id: real.fta.uniqueness
+            description: "Believes a number can have two different prime factorisations"
+            detect: "distractor"
+      - id: real.hcf_lcm_pf
+        name: HCF and LCM by prime factorisation
+        description: HCF = product of smallest powers of common primes; LCM = product of greatest powers of all primes.
+        prerequisites: [real.prime_factorisation]
+        misconceptions:
+          - id: real.hcf.swap
+            description: "Swaps the rules (greatest powers for HCF, smallest for LCM)"
+            detect: "answer equals the other quantity"
+          - id: real.hcf.common_only_lcm
+            description: "Uses only common primes for LCM"
+            detect: "LCM answer missing a non-common prime"
+      - id: real.hcf_lcm_product
+        name: HCF × LCM = product of two numbers
+        description: Use HCF(a,b) × LCM(a,b) = a × b for two positive integers, and know it fails for three numbers.
+        prerequisites: [real.hcf_lcm_pf]
+        misconceptions:
+          - id: real.hcflcm.three_numbers
+            description: "Applies the product rule to three numbers"
+            detect: "answer uses a*b*c/HCF"
+          - id: real.hcflcm.divides_wrong
+            description: "Divides HCF by the product instead of the product by HCF"
+            detect: "answer < 1 or reciprocal"
+      - id: real.hcf_lcm_word
+        name: HCF/LCM word problems
+        description: Recognise whether a situation needs HCF (largest equal groups) or LCM (next time events coincide).
+        prerequisites: [real.hcf_lcm_pf]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: real.hcfword.wrong_tool
+            description: "Uses LCM where HCF is needed or vice versa"
+            detect: "answer equals the other quantity"
+      - id: real.irrational_proof
+        name: Proving irrationality of √2, √3, √5
+        description: Proof by contradiction using "if p divides a², then p divides a".
+        prerequisites: [c9.num.irrationals, real.fta]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: real.irr.assumes_conclusion
+            description: "Starts the proof by assuming the number is irrational"
+            detect: "distractor"
+          - id: real.irr.coprime_skipped
+            description: "Forgets to assume p/q is in lowest terms, so no contradiction arises"
+            detect: "distractor"
+      - id: real.irrational_combinations
+        name: Sums and products involving irrationals
+        description: Show numbers like 5 − √3 or 3√2 are irrational; know rational × irrational (non-zero) is irrational.
+        prerequisites: [real.irrational_proof]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: real.irrcomb.sum_always_irrational
+            description: "Thinks the sum of two irrationals is always irrational (e.g. √2 + (−√2))"
+            detect: "distractor"
+          - id: real.irrcomb.product_always_irrational
+            description: "Thinks the product of two irrationals is always irrational (e.g. √2 × √2)"
+            detect: "distractor"
+      - id: real.classify_numbers
+        name: Classifying rational and irrational numbers
+        description: Decide whether a given expression is rational or irrational after simplifying.
+        prerequisites: [c9.num.irrationals]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: real.classify.root_always_irrational
+            description: "Marks every square root as irrational (e.g. √16)"
+            detect: "distractor"
+          - id: real.classify.pi_rational
+            description: "Treats π as the rational 22/7"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: polynomials
+    name: Polynomials
+    unit: algebra
+    board_weight_marks: 4
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, expression, assertion_reason]
+    concepts:
+      - id: poly.degree_types
+        name: Degree and types of polynomials
+        description: Identify linear, quadratic and cubic polynomials and their degree.
+        prerequisites: [c9.poly.zeroes]
+        question_types_allowed: [mcq]
+        misconceptions:
+          - id: poly.deg.counts_terms
+            description: "Gives the number of terms instead of the highest power"
+            detect: "answer equals term count"
+      - id: poly.zeroes_graph
+        name: Geometric meaning of zeroes
+        description: The zeroes of p(x) are the x-coordinates where y = p(x) meets the x-axis; count zeroes from a graph.
+        prerequisites: [c9.poly.zeroes, c9.coord.plotting]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: poly.graph.y_intercept
+            description: "Counts y-axis crossings instead of x-axis crossings"
+            detect: "distractor"
+          - id: poly.graph.touch_not_counted
+            description: "Doesn't count a point where the graph touches the x-axis"
+            detect: "answer one less than correct"
+      - id: poly.max_zeroes
+        name: Maximum number of zeroes
+        description: A polynomial of degree n has at most n zeroes.
+        prerequisites: [poly.degree_types, poly.zeroes_graph]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: poly.maxz.exactly_n
+            description: "Believes a degree-n polynomial must have exactly n real zeroes"
+            detect: "distractor"
+      - id: poly.find_zeroes_quadratic
+        name: Finding zeroes of a quadratic polynomial
+        description: Find zeroes by splitting the middle term or factorising.
+        prerequisites: [c9.poly.factorisation]
+        misconceptions:
+          - id: poly.fz.sign_flip
+            description: "Gives roots with the wrong sign (reads (x−2) as zero −2)"
+            detect: "answer = −correct"
+          - id: poly.fz.split_wrong
+            description: "Picks a split of the middle term whose product isn't a×c"
+            detect: "distractor"
+      - id: poly.sum_product_zeroes
+        name: Sum and product of zeroes
+        description: For ax² + bx + c, α + β = −b/a and αβ = c/a.
+        prerequisites: [poly.find_zeroes_quadratic]
+        misconceptions:
+          - id: poly.sp.sum_sign
+            description: "Writes α + β = b/a (drops the minus)"
+            detect: "answer = −correct"
+          - id: poly.sp.divides_by_c
+            description: "Divides by c instead of a"
+            detect: "answer uses c in denominator"
+          - id: poly.sp.swap
+            description: "Swaps the sum and product formulas"
+            detect: "sum answer equals c/a"
+      - id: poly.verify_relationship
+        name: Verifying the zero–coefficient relationship
+        description: Find the zeroes, then check they satisfy the sum and product relations.
+        prerequisites: [poly.sum_product_zeroes]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: poly.verify.skips_a
+            description: "Forgets to divide by a when a ≠ 1"
+            detect: "answer off by factor a"
+      - id: poly.form_quadratic
+        name: Forming a quadratic from sum and product
+        description: Build k[x² − (α+β)x + αβ] from given sum and product of zeroes.
+        prerequisites: [poly.sum_product_zeroes]
+        misconceptions:
+          - id: poly.form.plus_sum
+            description: "Writes x² + (sum)x + product"
+            detect: "middle coefficient sign flipped"
+          - id: poly.form.fraction_left
+            description: "Leaves fractional coefficients when an integer form was asked"
+            detect: "coefficients not integers"
+      - id: poly.symmetric_expressions
+        name: Expressions in α and β
+        description: Evaluate α² + β², 1/α + 1/β, etc. using sum and product without finding the zeroes.
+        prerequisites: [poly.sum_product_zeroes, c9.poly.identities]
+        misconceptions:
+          - id: poly.sym.square_sum
+            description: "Takes α² + β² = (α + β)²"
+            detect: "answer = (sum)^2"
+          - id: poly.sym.reciprocal
+            description: "Takes 1/α + 1/β = 1/(α + β)"
+            detect: "answer = 1/sum"
+      - id: poly.unknown_coefficient
+        name: Finding an unknown coefficient
+        description: Find k when a zero or a relation between zeroes is given.
+        prerequisites: [poly.sum_product_zeroes]
+        misconceptions:
+          - id: poly.unk.substitute_sign
+            description: "Substitutes the zero with the wrong sign"
+            detect: "answer matches p(−α) = 0"
+
+  # ---------------------------------------------------------------------------
+  - id: linear_equations
+    name: Pair of Linear Equations in Two Variables
+    unit: algebra
+    board_weight_marks: 6
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: lin.form_equations
+        name: Forming equations from situations
+        description: Translate a word problem into a pair of linear equations.
+        prerequisites: [c9.lin.one_equation]
+        misconceptions:
+          - id: lin.form.reversed_relation
+            description: "Reverses \"a is 3 more than b\" into b = a + 3"
+            detect: "distractor"
+          - id: lin.form.age_timeline
+            description: "Adds years to only one person in age problems"
+            detect: "distractor"
+      - id: lin.graphical_solution
+        name: Graphical method
+        description: Solve by plotting both lines and reading their intersection.
+        prerequisites: [c9.lin.one_equation, c9.coord.plotting]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: lin.graph.axis_swap
+            description: "Reads the intersection as (y, x)"
+            detect: "answer coordinates swapped"
+      - id: lin.consistency_ratios
+        name: Consistency by ratio of coefficients
+        description: Compare a1/a2, b1/b2, c1/c2 to decide unique / no / infinitely many solutions.
+        prerequisites: [lin.graphical_solution]
+        misconceptions:
+          - id: lin.cons.swap_cases
+            description: "Mixes up the parallel (no solution) and coincident (infinite) conditions"
+            detect: "distractor"
+          - id: lin.cons.c_sign
+            description: "Uses c with the wrong sign after moving terms"
+            detect: "distractor"
+      - id: lin.geometric_interpretation
+        name: Intersecting, parallel and coincident lines
+        description: Link the number of solutions to the geometry of the two lines.
+        prerequisites: [lin.consistency_ratios]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: lin.geo.coincident_none
+            description: "Thinks coincident lines have no solution"
+            detect: "distractor"
+      - id: lin.find_k_condition
+        name: Finding k for a given number of solutions
+        description: Find the parameter value for which the pair has a unique, no, or infinitely many solutions.
+        prerequisites: [lin.consistency_ratios]
+        misconceptions:
+          - id: lin.findk.forgets_c_ratio
+            description: "Forgets to check the c-ratio inequality for \"no solution\""
+            detect: "includes an excluded value"
+      - id: lin.substitution
+        name: Substitution method
+        description: Express one variable from one equation and substitute into the other.
+        prerequisites: [c9.lin.one_equation]
+        misconceptions:
+          - id: lin.sub.same_equation
+            description: "Substitutes back into the same equation, getting 0 = 0"
+            detect: "claims infinite solutions"
+          - id: lin.sub.distribute
+            description: "Forgets to distribute a coefficient over the substituted expression"
+            detect: "distractor"
+      - id: lin.elimination
+        name: Elimination method
+        description: Multiply to equalise a coefficient, then add or subtract to eliminate a variable.
+        prerequisites: [c9.lin.one_equation]
+        misconceptions:
+          - id: lin.elim.partial_multiply
+            description: "Multiplies only one side or one term of an equation"
+            detect: "distractor"
+          - id: lin.elim.add_vs_subtract
+            description: "Adds when signs are equal (or subtracts when opposite), so nothing cancels"
+            detect: "distractor"
+      - id: lin.word_numbers_ages
+        name: Word problems — numbers, ages, fractions
+        description: Solve situational problems on digits, ages and fractions.
+        prerequisites: [lin.form_equations, lin.elimination]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: lin.wna.digit_value
+            description: "Treats a two-digit number as x + y instead of 10x + y"
+            detect: "distractor"
+      - id: lin.word_money_geometry
+        name: Word problems — costs, speed, geometry
+        description: Solve situational problems on prices, speed/distance and angles of figures.
+        prerequisites: [lin.form_equations, lin.elimination]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: lin.wmg.speed_stream
+            description: "Adds stream speed when going upstream"
+            detect: "distractor"
+      - id: lin.check_solution
+        name: Checking a solution
+        description: Verify whether an ordered pair satisfies both equations.
+        prerequisites: [c9.lin.one_equation]
+        question_types_allowed: [mcq]
+        misconceptions:
+          - id: lin.check.one_equation
+            description: "Checks only one of the two equations"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: quadratic_equations
+    name: Quadratic Equations
+    unit: algebra
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, expression, assertion_reason, case_based]
+    concepts:
+      - id: quad.identify
+        name: Identifying a quadratic equation
+        description: Decide whether an equation reduces to the form ax² + bx + c = 0 with a ≠ 0.
+        prerequisites: [poly.degree_types]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: quad.id.no_expand
+            description: "Judges by appearance without expanding (x² terms may cancel)"
+            detect: "distractor"
+          - id: quad.id.a_zero
+            description: "Accepts a = 0 as quadratic"
+            detect: "distractor"
+      - id: quad.standard_form
+        name: Writing in standard form
+        description: Rearrange and read off a, b, c correctly, including signs.
+        prerequisites: [quad.identify]
+        misconceptions:
+          - id: quad.sf.sign_on_move
+            description: "Keeps a term's sign when moving it across the equals sign"
+            detect: "coefficient sign flipped"
+      - id: quad.form_from_situation
+        name: Forming a quadratic from a situation
+        description: Represent a word problem (area, consecutive numbers, speed) as a quadratic equation.
+        prerequisites: [quad.standard_form, lin.form_equations]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: quad.form.consecutive
+            description: "Writes consecutive even/odd integers as x and x + 1"
+            detect: "distractor"
+      - id: quad.factorisation
+        name: Solving by factorisation
+        description: Split the middle term and use the zero-product rule.
+        prerequisites: [poly.find_zeroes_quadratic, quad.standard_form]
+        misconceptions:
+          - id: quad.fact.sign_flip
+            description: "Reads the roots of (x − 3)(x + 2) = 0 as −3 and 2"
+            detect: "answer = −correct"
+          - id: quad.fact.divide_by_x
+            description: "Divides both sides by x and loses the root x = 0"
+            detect: "missing root 0"
+          - id: quad.fact.nonzero_rhs
+            description: "Sets each factor equal to a non-zero RHS (e.g. (x−1)(x−2) = 6 ⇒ x−1 = 6)"
+            detect: "distractor"
+      - id: quad.formula
+        name: Quadratic formula
+        description: Solve using x = (−b ± √(b² − 4ac)) / 2a.
+        prerequisites: [quad.standard_form]
+        misconceptions:
+          - id: quad.formula.minus_b
+            description: "Uses +b instead of −b in the numerator"
+            detect: "answer = −correct"
+          - id: quad.formula.denominator
+            description: "Divides only the square-root term by 2a"
+            detect: "distractor"
+          - id: quad.formula.negative_b_squared
+            description: "Computes (−b)² as −b²"
+            detect: "wrong discriminant sign"
+      - id: quad.discriminant
+        name: Discriminant
+        description: Compute D = b² − 4ac.
+        prerequisites: [quad.standard_form]
+        misconceptions:
+          - id: quad.disc.forgot_4ac_factor
+            description: "Computes b² − ac (drops the 4)"
+            detect: "answer = b^2 - ac"
+          - id: quad.disc.sign_c
+            description: "Uses +4ac or the wrong sign of c"
+            detect: "answer = b^2 + 4ac"
+          - id: quad.disc.confused_c_with_k
+            description: "Substitutes the unknown coefficient in the wrong slot"
+            detect: "distractor"
+      - id: quad.nature_of_roots
+        name: Nature of roots
+        description: D > 0 two distinct real roots, D = 0 two equal real roots, D < 0 no real roots.
+        prerequisites: [quad.discriminant]
+        misconceptions:
+          - id: quad.nature.zero_no_roots
+            description: "Thinks D = 0 means no real roots"
+            detect: "distractor"
+          - id: quad.nature.negative_one_root
+            description: "Thinks D < 0 means one real root"
+            detect: "distractor"
+      - id: quad.find_k_equal_roots
+        name: Finding k for equal or real roots
+        description: Set D = 0 (equal roots) or D ≥ 0 (real roots) and solve for the parameter.
+        prerequisites: [quad.nature_of_roots]
+        misconceptions:
+          - id: quad.disc.missed_negative_root
+            description: "Solving k² = c gives only the positive root"
+            detect: "answer is +√c only"
+          - id: quad.findk.strict_inequality
+            description: "Uses D > 0 when the question says real roots"
+            detect: "boundary value excluded"
+      - id: quad.word_numbers
+        name: Word problems — numbers and ages
+        description: Situational problems on numbers, ages and products.
+        prerequisites: [quad.form_from_situation, quad.factorisation]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: quad.wn.keep_invalid_root
+            description: "Keeps a negative or non-integer root that the situation rules out"
+            detect: "answer uses the rejected root"
+      - id: quad.word_geometry
+        name: Word problems — area and geometry
+        description: Situational problems on dimensions of rectangles, right triangles, etc.
+        prerequisites: [quad.form_from_situation, quad.factorisation]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: quad.wg.negative_length
+            description: "Accepts a negative length"
+            detect: "answer negative"
+      - id: quad.word_speed_work
+        name: Word problems — speed, time, work
+        description: Situational problems on speed/distance/time and work done.
+        prerequisites: [quad.form_from_situation, quad.formula]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: quad.wsw.time_equation
+            description: "Sets up the equation with speeds where times are compared (or vice versa)"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: arithmetic_progressions
+    name: Arithmetic Progressions
+    unit: algebra
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: ap.identify
+        name: Identifying an AP
+        description: Check whether consecutive differences are constant.
+        prerequisites: []
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: ap.id.first_two_only
+            description: "Checks only the first difference"
+            detect: "distractor"
+      - id: ap.common_difference
+        name: First term and common difference
+        description: Find a and d, including negative and fractional d.
+        prerequisites: [ap.identify]
+        misconceptions:
+          - id: ap.cd.reversed
+            description: "Computes d as a1 − a2"
+            detect: "answer = −d"
+      - id: ap.nth_term
+        name: nth term
+        description: Use aₙ = a + (n − 1)d.
+        prerequisites: [ap.common_difference]
+        misconceptions:
+          - id: ap.nth.n_not_n_minus_1
+            description: "Uses a + nd"
+            detect: "answer = correct + d"
+      - id: ap.find_term_position
+        name: Which term is a given number
+        description: Solve a + (n − 1)d = x for n; decide whether x is a term at all.
+        prerequisites: [ap.nth_term]
+        misconceptions:
+          - id: ap.pos.non_integer_n
+            description: "Accepts a non-integer n as a valid position"
+            detect: "answer not an integer"
+      - id: ap.nth_from_end
+        name: nth term from the end
+        description: Use l − (n − 1)d, or reverse the AP.
+        prerequisites: [ap.nth_term]
+        misconceptions:
+          - id: ap.end.plus_d
+            description: "Uses l + (n − 1)d"
+            detect: "distractor"
+      - id: ap.three_terms
+        name: Terms in AP (a−d, a, a+d)
+        description: Choose symmetric terms to solve for three or four numbers in AP; condition 2b = a + c.
+        prerequisites: [ap.nth_term]
+        misconceptions:
+          - id: ap.three.middle_condition
+            description: "Uses b = a + c instead of 2b = a + c"
+            detect: "distractor"
+      - id: ap.sum_n_terms
+        name: Sum of first n terms
+        description: Use Sₙ = n/2 [2a + (n − 1)d] or n/2 (a + l).
+        prerequisites: [ap.nth_term]
+        misconceptions:
+          - id: ap.sum.forgets_half
+            description: "Forgets the n/2 factor (uses n)"
+            detect: "answer = 2*correct"
+          - id: ap.sum.l_formula_d
+            description: "Mixes the two forms (n/2 [a + (n−1)d])"
+            detect: "distractor"
+      - id: ap.sum_find_n
+        name: Finding n from a given sum
+        description: Solve the quadratic in n that comes from Sₙ, rejecting invalid roots.
+        prerequisites: [ap.sum_n_terms, quad.factorisation]
+        misconceptions:
+          - id: ap.sumn.both_roots
+            description: "Accepts both roots, including a negative n"
+            detect: "answer includes negative n"
+      - id: ap.nth_from_sum
+        name: nth term from Sₙ
+        description: Use aₙ = Sₙ − Sₙ₋₁.
+        prerequisites: [ap.sum_n_terms]
+        misconceptions:
+          - id: ap.fromsum.sn_is_an
+            description: "Treats Sₙ as the nth term"
+            detect: "answer = Sn"
+      - id: ap.word_problems
+        name: AP in daily life
+        description: Savings, seats in rows, logs in a pile, and similar situations.
+        prerequisites: [ap.nth_term, ap.sum_n_terms]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: ap.word.term_vs_sum
+            description: "Finds the nth term when the total (sum) is asked, or vice versa"
+            detect: "answer = other quantity"
+
+  # ---------------------------------------------------------------------------
+  - id: triangles
+    name: Triangles
+    unit: geometry
+    board_weight_marks: 8
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: tri.similar_figures
+        name: Similar figures
+        description: Similar figures have the same shape; all squares/circles are similar, not all rectangles/triangles.
+        prerequisites: []
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: tri.sim.congruent_same
+            description: "Thinks similar means congruent"
+            detect: "distractor"
+          - id: tri.sim.all_rectangles
+            description: "Thinks all rectangles (or all isosceles triangles) are similar"
+            detect: "distractor"
+      - id: tri.similarity_definition
+        name: Similar triangles
+        description: Corresponding angles equal and corresponding sides proportional; correct vertex correspondence.
+        prerequisites: [tri.similar_figures, c9.geo.congruence]
+        misconceptions:
+          - id: tri.def.order
+            description: "Matches vertices in the wrong order (ΔABC ~ ΔPQR read as A↔Q)"
+            detect: "distractor"
+      - id: tri.bpt
+        name: Basic Proportionality Theorem
+        description: A line parallel to one side divides the other two sides in the same ratio.
+        prerequisites: [tri.similarity_definition]
+        misconceptions:
+          - id: tri.bpt.wrong_segments
+            description: "Compares a part with the whole on one side and part with part on the other"
+            detect: "distractor"
+      - id: tri.bpt_converse
+        name: Converse of BPT
+        description: If a line divides two sides in the same ratio, it is parallel to the third side.
+        prerequisites: [tri.bpt]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        misconceptions:
+          - id: tri.conv.equal_segments
+            description: "Checks equal segment lengths instead of equal ratios"
+            detect: "distractor"
+      - id: tri.bpt_proof
+        name: Proof of BPT
+        description: Steps of the area-based proof of the Basic Proportionality Theorem.
+        prerequisites: [tri.bpt, c9.mens.areas]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: tri.proof.equal_area_reason
+            description: "Can't justify why the two triangles on the same base between parallels have equal area"
+            detect: "distractor"
+      - id: tri.aaa
+        name: AA / AAA similarity
+        description: Two pairs of equal corresponding angles are enough for similarity.
+        prerequisites: [tri.similarity_definition, c9.geo.angles_lines]
+        misconceptions:
+          - id: tri.aaa.needs_side
+            description: "Thinks a side ratio is also required"
+            detect: "distractor"
+      - id: tri.sss
+        name: SSS similarity
+        description: All three pairs of corresponding sides in the same ratio.
+        prerequisites: [tri.similarity_definition]
+        misconceptions:
+          - id: tri.sss.unordered
+            description: "Compares sides without sorting them into corresponding order"
+            detect: "distractor"
+      - id: tri.sas
+        name: SAS similarity
+        description: One equal angle included between two proportional pairs of sides.
+        prerequisites: [tri.similarity_definition]
+        misconceptions:
+          - id: tri.sas.non_included
+            description: "Uses an angle that is not included between the proportional sides"
+            detect: "distractor"
+      - id: tri.similar_side_lengths
+        name: Finding lengths in similar triangles
+        description: Set up the proportion from the correspondence and solve for an unknown side.
+        prerequisites: [tri.aaa, tri.sss, tri.sas]
+        misconceptions:
+          - id: tri.len.inverted_ratio
+            description: "Inverts one of the ratios in the proportion"
+            detect: "distractor"
+      - id: tri.similarity_applications
+        name: Similarity in real situations
+        description: Shadows, heights, and scale problems solved with similar triangles.
+        prerequisites: [tri.similar_side_lengths]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: tri.app.shadow_pairing
+            description: "Pairs an object's height with the other object's shadow"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: coordinate_geometry
+    name: Coordinate Geometry
+    unit: coordinate_geometry
+    board_weight_marks: 6
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: coord.distance_formula
+        name: Distance formula
+        description: Distance between (x₁, y₁) and (x₂, y₂) is √((x₂ − x₁)² + (y₂ − y₁)²).
+        prerequisites: [c9.coord.plotting, c9.geo.pythagoras]
+        misconceptions:
+          - id: coord.dist.no_sqrt
+            description: "Forgets the square root"
+            detect: "answer = correct^2"
+          - id: coord.dist.sum_not_diff
+            description: "Adds coordinates instead of subtracting"
+            detect: "distractor"
+          - id: coord.dist.negative_square
+            description: "Squares a negative difference as negative"
+            detect: "distractor"
+      - id: coord.distance_origin
+        name: Distance from the origin
+        description: Distance of (x, y) from (0, 0) is √(x² + y²).
+        prerequisites: [coord.distance_formula]
+        misconceptions:
+          - id: coord.origin.sum
+            description: "Gives x + y"
+            detect: "answer = x + y"
+      - id: coord.distance_applications
+        name: Classifying figures with distances
+        description: Decide collinearity or whether points form an isosceles/right triangle, square, rectangle, etc.
+        prerequisites: [coord.distance_formula]
+        question_types_allowed: [mcq, case_based, assertion_reason]
+        misconceptions:
+          - id: coord.app.sides_only_square
+            description: "Concludes \"square\" from equal sides without checking diagonals"
+            detect: "distractor"
+      - id: coord.equidistant_point
+        name: Equidistant points
+        description: Find a point equidistant from two or three given points, or an unknown coordinate from a distance condition.
+        prerequisites: [coord.distance_formula]
+        misconceptions:
+          - id: coord.equi.both_roots
+            description: "Misses one of the two solutions when a squared equation gives two values"
+            detect: "only one root"
+      - id: coord.section_formula
+        name: Section formula (internal division)
+        description: Point dividing the join of A and B in ratio m:n is ((mx₂ + nx₁)/(m+n), (my₂ + ny₁)/(m+n)).
+        prerequisites: [c9.coord.plotting]
+        misconceptions:
+          - id: coord.sec.swapped_weights
+            description: "Pairs m with x₁ instead of x₂"
+            detect: "answer = division in n:m"
+      - id: coord.midpoint
+        name: Midpoint formula
+        description: Midpoint is the average of the coordinates.
+        prerequisites: [coord.section_formula]
+        misconceptions:
+          - id: coord.mid.difference
+            description: "Halves the difference instead of the sum"
+            detect: "distractor"
+      - id: coord.find_ratio
+        name: Finding the ratio of division
+        description: Find the ratio in which a point (or an axis) divides a segment, using k:1.
+        prerequisites: [coord.section_formula]
+        misconceptions:
+          - id: coord.ratio.axis_coordinate
+            description: "Sets x = 0 when the point is on the x-axis (should be y = 0)"
+            detect: "distractor"
+      - id: coord.trisection_applications
+        name: Trisection points and parallelogram vertices
+        description: Points of trisection, and the fourth vertex of a parallelogram via bisecting diagonals.
+        prerequisites: [coord.section_formula, coord.midpoint]
+        question_types_allowed: [numeric, mcq, case_based]
+        misconceptions:
+          - id: coord.tri.one_point
+            description: "Gives only one of the two trisection points"
+            detect: "only one point"
+          - id: coord.para.adjacent_diagonal
+            description: "Uses adjacent vertices as a diagonal"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: intro_trigonometry
+    name: Introduction to Trigonometry
+    unit: trigonometry
+    board_weight_marks: 8
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, expression, assertion_reason]
+    concepts:
+      - id: trig.ratios_definition
+        name: Trigonometric ratios
+        description: sin, cos, tan, cosec, sec, cot of an acute angle in a right triangle.
+        prerequisites: [c9.geo.pythagoras]
+        misconceptions:
+          - id: trig.def.opp_adj_swap
+            description: "Swaps opposite and adjacent sides for the angle"
+            detect: "answer = co-ratio"
+          - id: trig.def.hypotenuse_numerator
+            description: "Puts the hypotenuse in the numerator of sin/cos"
+            detect: "answer = reciprocal"
+      - id: trig.reciprocal_relations
+        name: Reciprocal and quotient relations
+        description: cosec = 1/sin, sec = 1/cos, cot = 1/tan, tan = sin/cos.
+        prerequisites: [trig.ratios_definition]
+        misconceptions:
+          - id: trig.recip.sec_sin
+            description: "Pairs sec with sin and cosec with cos"
+            detect: "distractor"
+      - id: trig.ratios_from_one
+        name: Finding all ratios from one
+        description: Given one ratio, find the others by building the triangle.
+        prerequisites: [trig.ratios_definition]
+        misconceptions:
+          - id: trig.one.missing_pythagoras
+            description: "Uses the given numbers as two sides without finding the third correctly"
+            detect: "distractor"
+      - id: trig.ratio_bounds
+        name: Range of trigonometric ratios
+        description: sin and cos of an acute angle lie between 0 and 1; sec, cosec ≥ 1; tan can be any positive number.
+        prerequisites: [trig.ratios_definition]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: trig.bounds.sin_gt_1
+            description: "Accepts sin θ = 4/3 as possible"
+            detect: "distractor"
+      - id: trig.standard_values
+        name: Standard values (0°, 30°, 45°, 60°, 90°)
+        description: Recall the table of values.
+        prerequisites: [trig.ratios_definition]
+        misconceptions:
+          - id: trig.std.sin_cos_30_60
+            description: "Swaps sin 30° and sin 60° (or cos)"
+            detect: "answer = co-value"
+          - id: trig.std.tan_90
+            description: "Gives a number for tan 90° (it is not defined)"
+            detect: "distractor"
+      - id: trig.evaluate_expressions
+        name: Evaluating expressions with standard values
+        description: Substitute and simplify expressions like 2tan²45° + cos²30° − sin²60°.
+        prerequisites: [trig.standard_values]
+        misconceptions:
+          - id: trig.eval.square_angle
+            description: "Reads sin²30° as sin(30²)"
+            detect: "distractor"
+          - id: trig.eval.distribute_sin
+            description: "Treats sin(A + B) as sin A + sin B"
+            detect: "distractor"
+      - id: trig.find_angle
+        name: Finding angles from values
+        description: Find acute angles from equations like sin(A − B) = 1/2, cos(A + B) = 1/2.
+        prerequisites: [trig.standard_values]
+        misconceptions:
+          - id: trig.angle.value_as_angle
+            description: "Writes the angle as the ratio value (e.g. A = 1/2)"
+            detect: "distractor"
+      - id: trig.identity_basic
+        name: sin²θ + cos²θ = 1 and its forms
+        description: Know and derive 1 + tan²θ = sec²θ and 1 + cot²θ = cosec²θ.
+        prerequisites: [trig.reciprocal_relations, c9.geo.pythagoras]
+        misconceptions:
+          - id: trig.id.tan_sec_sign
+            description: "Writes tan²θ − sec²θ = 1"
+            detect: "distractor"
+          - id: trig.id.no_square
+            description: "Writes sin θ + cos θ = 1"
+            detect: "distractor"
+      - id: trig.express_in_terms
+        name: Expressing ratios in terms of one ratio
+        description: Write all ratios in terms of, say, sin θ or tan θ.
+        prerequisites: [trig.identity_basic]
+        question_types_allowed: [mcq, expression]
+        misconceptions:
+          - id: trig.express.sqrt_sum
+            description: "Takes √(1 − sin²θ) as 1 − sin θ"
+            detect: "distractor"
+      - id: trig.simplify_expressions
+        name: Simplifying using identities
+        description: Simplify expressions like (1 + tan²A)/(1 + cot²A) or (sec A + tan A)(1 − sin A).
+        prerequisites: [trig.identity_basic]
+        misconceptions:
+          - id: trig.simp.cancel_terms
+            description: "Cancels terms across addition (e.g. (1 + tan²A)/(1 + cot²A) = tan²A/cot²A)"
+            detect: "distractor"
+      - id: trig.prove_identities
+        name: Proving identities
+        description: Prove identities by converting to sin/cos, rationalising, or using the three Pythagorean forms.
+        prerequisites: [trig.simplify_expressions]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: trig.prove.works_both_sides
+            description: "Treats the identity as an equation and cross-multiplies both sides as given"
+            detect: "distractor"
+      - id: trig.identity_values
+        name: Values from identities
+        description: Given sec θ + tan θ = p, find sec θ − tan θ, etc.
+        prerequisites: [trig.identity_basic]
+        misconceptions:
+          - id: trig.idval.difference_of_squares
+            description: "Doesn't use (sec θ + tan θ)(sec θ − tan θ) = 1"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: applications_trigonometry
+    name: Some Applications of Trigonometry
+    unit: trigonometry
+    board_weight_marks: 4
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, case_based]
+    concepts:
+      - id: htd.elevation_depression
+        name: Angles of elevation and depression
+        description: Identify the angle measured from the horizontal at the observer's eye.
+        prerequisites: [trig.ratios_definition]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: htd.angle.from_vertical
+            description: "Measures the angle from the vertical"
+            detect: "answer uses complementary angle"
+          - id: htd.angle.depression_placement
+            description: "Places the angle of depression inside the triangle at the wrong vertex"
+            detect: "distractor"
+      - id: htd.choose_ratio
+        name: Choosing the right ratio
+        description: Pick tan, sin or cos from the known and unknown sides.
+        prerequisites: [htd.elevation_depression, trig.standard_values]
+        misconceptions:
+          - id: htd.ratio.always_tan
+            description: "Uses tan when the hypotenuse (e.g. a ladder or string) is involved"
+            detect: "distractor"
+      - id: htd.single_triangle
+        name: Height or distance with one triangle
+        description: Find a height, distance or length using one right triangle at 30°, 45° or 60°.
+        prerequisites: [htd.choose_ratio]
+        misconceptions:
+          - id: htd.single.inverted
+            description: "Inverts the ratio (distance/height instead of height/distance)"
+            detect: "answer = x*3 or x/3 variant"
+      - id: htd.two_triangles_same_side
+        name: Two angles from the same side
+        description: Observer moves towards an object; angles change (e.g. 30° to 60°).
+        prerequisites: [htd.single_triangle]
+        misconceptions:
+          - id: htd.two.total_distance
+            description: "Uses the distance moved as the full base of one triangle"
+            detect: "distractor"
+      - id: htd.two_triangles_opposite
+        name: Objects on opposite sides
+        description: Two objects on either side of an observer, or an observer between two towers.
+        prerequisites: [htd.single_triangle]
+        misconceptions:
+          - id: htd.opp.same_base
+            description: "Uses the same base for both triangles"
+            detect: "distractor"
+      - id: htd.elevation_and_depression
+        name: Elevation and depression together
+        description: Observer on a building sees the top (elevation) and foot (depression) of another building.
+        prerequisites: [htd.two_triangles_same_side]
+        misconceptions:
+          - id: htd.both.observer_height
+            description: "Forgets to add the observer's height to the computed part"
+            detect: "answer = part only"
+      - id: htd.observer_height
+        name: Including the observer's height
+        description: Add the height of the observer's eye when measuring from a person standing on the ground.
+        prerequisites: [htd.single_triangle]
+        misconceptions:
+          - id: htd.oh.ignored
+            description: "Ignores the observer's eye height"
+            detect: "answer smaller by observer height"
+
+  # ---------------------------------------------------------------------------
+  - id: circles
+    name: Circles
+    unit: geometry
+    board_weight_marks: 7
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: circ.tangent_secant
+        name: Tangents and secants
+        description: A tangent meets the circle at exactly one point; number of tangents from inside/on/outside a point.
+        prerequisites: [c9.geo.circles]
+        question_types_allowed: [mcq, assertion_reason]
+        misconceptions:
+          - id: circ.ts.tangents_from_inside
+            description: "Thinks a tangent can be drawn from a point inside the circle"
+            detect: "distractor"
+          - id: circ.ts.one_from_outside
+            description: "Thinks only one tangent can be drawn from an outside point"
+            detect: "distractor"
+      - id: circ.tangent_perpendicular
+        name: Tangent ⟂ radius
+        description: The tangent at any point is perpendicular to the radius through the point of contact.
+        prerequisites: [circ.tangent_secant]
+        misconceptions:
+          - id: circ.perp.any_chord
+            description: "Applies perpendicularity to a chord instead of the radius"
+            detect: "distractor"
+      - id: circ.tangent_perpendicular_proof
+        name: Proof — tangent ⟂ radius
+        description: Steps of the proof that the radius to the point of contact is the shortest distance to the tangent.
+        prerequisites: [circ.tangent_perpendicular]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: circ.perpproof.circular
+            description: "Uses the result being proved as a step"
+            detect: "distractor"
+      - id: circ.tangent_length
+        name: Length of a tangent
+        description: Use Pythagoras with the radius and the distance to the centre.
+        prerequisites: [circ.tangent_perpendicular, c9.geo.pythagoras]
+        misconceptions:
+          - id: circ.len.adds_squares
+            description: "Adds the squares where subtraction is needed"
+            detect: "answer = sqrt(d^2 + r^2)"
+      - id: circ.equal_tangents
+        name: Tangents from an external point are equal
+        description: Two tangents from an external point have equal lengths.
+        prerequisites: [circ.tangent_perpendicular, c9.geo.congruence]
+        misconceptions:
+          - id: circ.eq.to_centre
+            description: "Thinks the tangent equals the distance to the centre"
+            detect: "distractor"
+      - id: circ.equal_tangents_proof
+        name: Proof — equal tangents
+        description: Congruence (RHS) proof that tangents from an external point are equal.
+        prerequisites: [circ.equal_tangents]
+        question_types_allowed: [mcq, case_based]
+        misconceptions:
+          - id: circ.eqproof.wrong_criterion
+            description: "Cites SAS or SSS instead of RHS"
+            detect: "distractor"
+      - id: circ.tangent_angles
+        name: Angles with tangents
+        description: Angle between two tangents and the angle at the centre are supplementary; related angle problems.
+        prerequisites: [circ.tangent_perpendicular, circ.equal_tangents]
+        misconceptions:
+          - id: circ.ang.equal_not_supplementary
+            description: "Takes the angle between tangents as equal to the central angle"
+            detect: "distractor"
+      - id: circ.incircle_polygons
+        name: Circles inscribed in polygons
+        description: Use equal tangents in triangles and quadrilaterals (e.g. AB + CD = AD + BC).
+        prerequisites: [circ.equal_tangents]
+        misconceptions:
+          - id: circ.inc.opposite_pairing
+            description: "Pairs adjacent sides instead of opposite sides"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: areas_related_to_circles
+    name: Areas Related to Circles
+    unit: mensuration
+    board_weight_marks: 4
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, case_based]
+    concepts:
+      - id: area.circle_basics
+        name: Circumference and area of a circle
+        description: C = 2πr, A = πr²; switching between radius and diameter.
+        prerequisites: [c9.mens.areas]
+        misconceptions:
+          - id: area.basic.diameter_as_radius
+            description: "Uses the diameter as the radius"
+            detect: "answer = 4x or 2x correct"
+          - id: area.basic.formula_swap
+            description: "Uses 2πr for area or πr² for circumference"
+            detect: "distractor"
+      - id: area.sector_area
+        name: Area of a sector
+        description: Area = (θ/360) × πr².
+        prerequisites: [area.circle_basics]
+        misconceptions:
+          - id: area.sector.over_180
+            description: "Divides by 180 instead of 360"
+            detect: "answer = 2*correct"
+          - id: area.sector.circumference
+            description: "Uses 2πr instead of πr²"
+            detect: "distractor"
+      - id: area.arc_length
+        name: Length of an arc
+        description: Length = (θ/360) × 2πr.
+        prerequisites: [area.circle_basics]
+        misconceptions:
+          - id: area.arc.uses_area
+            description: "Uses πr² in place of 2πr"
+            detect: "distractor"
+      - id: area.sector_perimeter
+        name: Perimeter of a sector
+        description: Arc length + 2r.
+        prerequisites: [area.arc_length]
+        misconceptions:
+          - id: area.perim.arc_only
+            description: "Gives only the arc length"
+            detect: "answer = arc"
+      - id: area.major_minor
+        name: Major and minor sectors/segments
+        description: Major = whole circle − minor.
+        prerequisites: [area.sector_area]
+        misconceptions:
+          - id: area.major.uses_minor_angle
+            description: "Uses θ instead of 360° − θ for the major sector"
+            detect: "answer = minor"
+      - id: area.segment_area
+        name: Area of a segment (60°, 90°, 120°)
+        description: Segment = sector − triangle; triangle area for 60° (equilateral), 90° (right), 120°.
+        prerequisites: [area.sector_area]
+        verify: CBSE restricts central angles to 60°, 90° and 120° — confirm the note is unchanged for 2026-27.
+        misconceptions:
+          - id: area.seg.adds_triangle
+            description: "Adds the triangle area instead of subtracting"
+            detect: "answer = sector + triangle"
+          - id: area.seg.triangle_formula
+            description: "Uses ½r² for the 60° triangle (not (√3/4)r²)"
+            detect: "distractor"
+      - id: area.clock_wiper_applications
+        name: Sectors in real situations
+        description: Minute hand sweep, wiper area, lighthouse beam, brooch wires.
+        prerequisites: [area.sector_area, area.arc_length]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: area.clock.angle_per_minute
+            description: "Uses 1° per minute for the minute hand (it is 6°)"
+            detect: "answer = correct/6"
+      - id: area.combination_figures
+        name: Shaded areas with sectors
+        description: Shaded regions made of sectors, segments, squares and triangles.
+        prerequisites: [area.sector_area, area.segment_area]
+        question_types_allowed: [numeric, mcq, case_based]
+        verify: Combinations of plane figures were trimmed in the rationalised syllabus; keep only sector/segment-based shaded regions unless the 2026-27 document says otherwise.
+        misconceptions:
+          - id: area.combo.double_count
+            description: "Counts an overlapping region twice"
+            detect: "answer too large"
+
+  # ---------------------------------------------------------------------------
+  - id: surface_areas_volumes
+    name: Surface Areas and Volumes
+    unit: mensuration
+    board_weight_marks: 6
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, case_based]
+    concepts:
+      - id: sav.basic_solids_review
+        name: Formulas for basic solids
+        description: Surface area and volume of cube, cuboid, cylinder, cone, sphere and hemisphere.
+        prerequisites: [c9.mens.surface_volume]
+        misconceptions:
+          - id: sav.basic.cone_third
+            description: "Forgets the ⅓ in the cone volume"
+            detect: "answer = 3*correct"
+          - id: sav.basic.hemisphere_tsa
+            description: "Uses 2πr² for the hemisphere's total surface area (it is 3πr²)"
+            detect: "distractor"
+      - id: sav.slant_height
+        name: Slant height of a cone
+        description: l = √(r² + h²).
+        prerequisites: [sav.basic_solids_review, c9.geo.pythagoras]
+        misconceptions:
+          - id: sav.slant.uses_height
+            description: "Uses the vertical height where the slant height is needed"
+            detect: "distractor"
+      - id: sav.combined_surface_area
+        name: Surface area of combined solids
+        description: Add only the exposed curved/flat surfaces; hidden joined faces are excluded.
+        prerequisites: [sav.basic_solids_review, sav.slant_height]
+        misconceptions:
+          - id: sav.csa.adds_tsa
+            description: "Adds the total surface areas of both solids, counting hidden faces"
+            detect: "answer too large by joined faces"
+      - id: sav.combined_volume
+        name: Volume of combined solids
+        description: Volume of a combination is the sum of the volumes of its parts.
+        prerequisites: [sav.basic_solids_review]
+        misconceptions:
+          - id: sav.cv.subtracts
+            description: "Subtracts one part's volume instead of adding"
+            detect: "distractor"
+      - id: sav.hollowed_solids
+        name: Solids with a part removed
+        description: A cone or hemisphere scooped out of a cylinder or cube (volume removed, surface added).
+        prerequisites: [sav.combined_surface_area, sav.combined_volume]
+        misconceptions:
+          - id: sav.hollow.surface_subtract
+            description: "Subtracts the scooped surface area instead of adding the new inner surface"
+            detect: "distractor"
+      - id: sav.units
+        name: Units and conversions
+        description: cm² vs cm³, litres ↔ cm³ (1 L = 1000 cm³), m³ ↔ cm³.
+        prerequisites: [sav.basic_solids_review]
+        misconceptions:
+          - id: sav.units.m3_cm3
+            description: "Converts m³ to cm³ by multiplying by 100"
+            detect: "answer off by 10^4"
+          - id: sav.units.litre
+            description: "Uses 1 L = 100 cm³"
+            detect: "answer off by 10"
+      - id: sav.pi_choice
+        name: Using π = 22/7 or 3.14
+        description: Use the value of π asked for; recognise when 22/7 simplifies nicely.
+        prerequisites: [sav.basic_solids_review]
+        question_types_allowed: [mcq, numeric]
+        misconceptions:
+          - id: sav.pi.wrong_value
+            description: "Uses a different π value than specified, so the answer misses the tolerance"
+            detect: "answer within 0.1% of correct with other π"
+      - id: sav.cost_problems
+        name: Cost of painting, polishing, filling
+        description: Multiply the right area or volume by the rate.
+        prerequisites: [sav.combined_surface_area, sav.combined_volume]
+        question_types_allowed: [numeric, case_based, mcq]
+        misconceptions:
+          - id: sav.cost.volume_for_area
+            description: "Uses volume for a painting cost (or area for filling)"
+            detect: "distractor"
+      - id: sav.real_objects
+        name: Modelling real objects
+        description: Identify the solids in a real object (tent, capsule, toy, pen stand) and choose the right formulas.
+        prerequisites: [sav.combined_surface_area, sav.combined_volume]
+        question_types_allowed: [case_based, mcq, numeric]
+        misconceptions:
+          - id: sav.model.wrong_parts
+            description: "Models a capsule as a cylinder plus one hemisphere"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: statistics
+    name: Statistics
+    unit: statistics_probability
+    board_weight_marks: 6
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, case_based]
+    concepts:
+      - id: stat.class_marks
+        name: Class marks and class intervals
+        description: Class mark = (lower + upper)/2; class size; converting inclusive to exclusive intervals.
+        prerequisites: [c9.stat.ungrouped]
+        misconceptions:
+          - id: stat.cm.difference
+            description: "Takes the class mark as upper − lower"
+            detect: "answer = class size"
+      - id: stat.mean_direct
+        name: Mean — direct method
+        description: x̄ = Σfᵢxᵢ / Σfᵢ with class marks.
+        prerequisites: [stat.class_marks]
+        misconceptions:
+          - id: stat.mean.divide_by_classes
+            description: "Divides by the number of classes instead of Σf"
+            detect: "distractor"
+          - id: stat.mean.uses_limits
+            description: "Uses a class limit instead of the class mark"
+            detect: "distractor"
+      - id: stat.mean_assumed
+        name: Mean — assumed mean method
+        description: x̄ = a + Σfᵢdᵢ / Σfᵢ with dᵢ = xᵢ − a.
+        prerequisites: [stat.mean_direct]
+        verify: Confirm the assumed-mean and step-deviation methods remain in the rationalised textbook.
+        misconceptions:
+          - id: stat.assumed.forgets_a
+            description: "Forgets to add back the assumed mean a"
+            detect: "answer = correct - a"
+      - id: stat.mean_step_deviation
+        name: Mean — step-deviation method
+        description: x̄ = a + h·(Σfᵢuᵢ / Σfᵢ) with uᵢ = (xᵢ − a)/h.
+        prerequisites: [stat.mean_assumed]
+        verify: See stat.mean_assumed.
+        misconceptions:
+          - id: stat.step.forgets_h
+            description: "Forgets to multiply by h"
+            detect: "distractor"
+      - id: stat.missing_frequency_mean
+        name: Missing frequency from the mean
+        description: Find an unknown frequency when the mean is given.
+        prerequisites: [stat.mean_direct]
+        misconceptions:
+          - id: stat.missf.sigma_f
+            description: "Forgets that Σf also contains the unknown"
+            detect: "distractor"
+      - id: stat.modal_class
+        name: Modal class
+        description: The class with the highest frequency.
+        prerequisites: [stat.class_marks]
+        question_types_allowed: [mcq]
+        misconceptions:
+          - id: stat.modal.highest_value
+            description: "Picks the class with the highest values rather than the highest frequency"
+            detect: "distractor"
+      - id: stat.mode_grouped
+        name: Mode of grouped data
+        description: Mode = l + [(f₁ − f₀)/(2f₁ − f₀ − f₂)] × h.
+        prerequisites: [stat.modal_class]
+        misconceptions:
+          - id: stat.mode.denominator
+            description: "Uses f₁ − f₀ − f₂ (drops the 2)"
+            detect: "distractor"
+          - id: stat.mode.neighbours
+            description: "Takes f₀ and f₂ from the wrong classes"
+            detect: "distractor"
+      - id: stat.cumulative_frequency
+        name: Cumulative frequency
+        description: Build a less-than cumulative frequency table.
+        prerequisites: [stat.class_marks]
+        misconceptions:
+          - id: stat.cf.not_cumulative
+            description: "Copies frequencies without accumulating"
+            detect: "distractor"
+      - id: stat.median_class
+        name: Median class
+        description: The class whose cumulative frequency first reaches or exceeds n/2.
+        prerequisites: [stat.cumulative_frequency]
+        question_types_allowed: [mcq]
+        misconceptions:
+          - id: stat.medclass.n_plus_1
+            description: "Uses (n + 1)/2 as for ungrouped data"
+            detect: "distractor"
+          - id: stat.medclass.middle_row
+            description: "Picks the middle row of the table"
+            detect: "distractor"
+      - id: stat.median_grouped
+        name: Median of grouped data
+        description: Median = l + [(n/2 − cf)/f] × h.
+        prerequisites: [stat.median_class]
+        misconceptions:
+          - id: stat.median.cf_of_class
+            description: "Uses the median class's own cumulative frequency as cf"
+            detect: "distractor"
+      - id: stat.missing_frequency_median
+        name: Missing frequencies from the median
+        description: Find unknown frequencies when the median and total are given.
+        prerequisites: [stat.median_grouped]
+        question_types_allowed: [numeric, case_based]
+        misconceptions:
+          - id: stat.missmed.total_ignored
+            description: "Doesn't use the given total to form the second equation"
+            detect: "distractor"
+      - id: stat.choose_measure
+        name: Choosing a measure of central tendency
+        description: Which measure suits a situation (e.g. median with extreme values, mode for most popular).
+        prerequisites: [stat.mean_direct, stat.mode_grouped, stat.median_grouped]
+        question_types_allowed: [mcq, assertion_reason, case_based]
+        verify: The empirical relation 3 Median = Mode + 2 Mean may be out of the rationalised syllabus; don't generate questions on it until confirmed.
+        misconceptions:
+          - id: stat.choose.mean_always
+            description: "Always prefers the mean, even with extreme values"
+            detect: "distractor"
+
+  # ---------------------------------------------------------------------------
+  - id: probability
+    name: Probability
+    unit: statistics_probability
+    board_weight_marks: 5
+    board_weight_is_estimate: true
+    default_question_types: [mcq, numeric, assertion_reason, case_based]
+    concepts:
+      - id: prob.classical_definition
+        name: Theoretical probability
+        description: P(E) = favourable outcomes / total equally likely outcomes.
+        prerequisites: []
+        misconceptions:
+          - id: prob.def.unfavourable_ratio
+            description: "Uses favourable/unfavourable (odds)"
+            detect: "answer = f/(n-f)"
+          - id: prob.def.not_equally_likely
+            description: "Treats outcomes that aren't equally likely as equally likely"
+            detect: "distractor"
+      - id: prob.bounds_complement
+        name: Range and complement
+        description: 0 ≤ P(E) ≤ 1; P(not E) = 1 − P(E); sure and impossible events.
+        prerequisites: [prob.classical_definition]
+        misconceptions:
+          - id: prob.bounds.gt_1
+            description: "Accepts a probability greater than 1 or negative"
+            detect: "distractor"
+          - id: prob.comp.adds
+            description: "Computes P(not E) as 1 + P(E)"
+            detect: "distractor"
+      - id: prob.coins
+        name: Coins
+        description: Sample spaces for tossing one, two or three coins.
+        prerequisites: [prob.classical_definition]
+        misconceptions:
+          - id: prob.coins.hh_ht_tt
+            description: "Lists {HH, HT, TT} as three equally likely outcomes"
+            detect: "denominator 3"
+      - id: prob.dice
+        name: Dice
+        description: "One die (6 outcomes) and two dice (36 ordered outcomes): sums, doubles, products."
+        prerequisites: [prob.classical_definition]
+        misconceptions:
+          - id: prob.dice.eleven_sums
+            description: "Treats the 11 possible sums as equally likely"
+            detect: "denominator 11"
+          - id: prob.dice.unordered
+            description: "Counts (1,2) and (2,1) once"
+            detect: "favourable count halved"
+      - id: prob.cards
+        name: Playing cards
+        description: "A 52-card deck: suits, colours, face cards, aces; cards removed from the deck."
+        prerequisites: [prob.classical_definition]
+        misconceptions:
+          - id: prob.cards.face_count
+            description: "Counts aces as face cards (face cards are J, Q, K → 12)"
+            detect: "favourable 16"
+          - id: prob.cards.removed_total
+            description: "Keeps 52 as the total after cards are removed"
+            detect: "denominator 52"
+      - id: prob.balls_bags
+        name: Balls, bags and numbered discs
+        description: Drawing from bags of coloured balls or numbered tickets; primes, multiples, perfect squares.
+        prerequisites: [prob.classical_definition]
+        misconceptions:
+          - id: prob.bag.one_as_prime
+            description: "Counts 1 as a prime number"
+            detect: "favourable +1"
+      - id: prob.find_unknown_count
+        name: Finding an unknown count
+        description: Find the number of items of a kind given a probability relation (e.g. P(blue) = 2 × P(red)).
+        prerequisites: [prob.classical_definition]
+        misconceptions:
+          - id: prob.unknown.total_fixed
+            description: "Keeps the total fixed while the unknown changes it"
+            detect: "distractor"
+      - id: prob.events_everyday
+        name: Everyday events and games
+        description: Leap years, birthdays, spinners, games of chance.
+        prerequisites: [prob.classical_definition]
+        question_types_allowed: [mcq, numeric, case_based]
+        misconceptions:
+          - id: prob.leap.53_days
+            description: "Forgets that a leap year has 2 extra days (366 = 52 weeks + 2)"
+            detect: "denominator 7 with 1 favourable"
+      - id: prob.geometric_simple
+        name: Probability with regions
+        description: Simple area-based probability (e.g. a point chosen in a square landing in a circle).
+        prerequisites: [prob.classical_definition, area.circle_basics]
+        question_types_allowed: [mcq, numeric]
+        verify: Area-based probability appears in NCERT examples; confirm it remains in scope.
+        misconceptions:
+          - id: prob.geo.inverted
+            description: "Divides the whole area by the target area"
+            detect: "answer > 1"

@@ -1,0 +1,10 @@
+schema_version: 1
+board: cbse
+class: 10
+subject: maths_basic
+name: Mathematics (Basic)
+status: coming_soon
+total_marks: 80
+# Same chapter list as Standard with an easier question mix. Planned to reuse
+# maths_standard concepts and filter questions by difficulty/type.
+chapters: []
