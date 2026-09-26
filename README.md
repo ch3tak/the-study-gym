@@ -1,10 +1,10 @@
-# Study Gym
+# the-study-gym
 
-A mastery system for every core subject in a student's board and class, shaped like a gym app:
+App that focuses on learning and understanding: a mastery system for every core subject in a student's board and class, shaped like a gym app.
 
 > Diagnose → find weak concepts → daily workout → evaluate → adapt → track progress → repeat
 
-The alpha covers **CBSE Class 10 Mathematics (Standard)**. The architecture is subject-agnostic from day one: board, class, subject, chapter and concept are data, and question types are pluggable. The full plan lives in [docs/PLAN.md](docs/PLAN.md).
+The alpha covers **CBSE Class 9 Mathematics and Science** (2026-27 syllabus). A Class 10 Maths sample syllabus is kept alongside. The architecture is subject-agnostic from day one: board, class, subject, chapter and concept are data, and question types are pluggable. The full plan lives in [docs/PLAN.md](docs/PLAN.md).
 
 ## Repo layout
 
@@ -31,7 +31,7 @@ python -m pytest content/pipeline/tests
 Generating questions (Batch API, needs `ANTHROPIC_API_KEY`):
 
 ```sh
-python -m content.pipeline.generate plan --chapter quadratic_equations --count 3 --run pilot
+python -m content.pipeline.generate plan --subject cbse/9/maths --chapter sequences_progressions --count 3 --run pilot
 python -m content.pipeline.generate submit pilot
 python -m content.pipeline.generate collect pilot   # re-run until the batch has ended
 ```
