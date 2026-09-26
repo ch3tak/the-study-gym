@@ -1,0 +1,211 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme.dart';
+import '../../data/app_state.dart';
+import 'custom_test_builder_screen.dart';
+
+/// S9. Tests tab — docs/PLAN.md §3: mock papers, chapter tests, and (new)
+/// a custom test builder where the student picks their own chapters. Custom
+/// tests are Pro-only — free users see the feature with a lock, not a
+/// paywall wall; tapping it explains what unlocks rather than hiding it.
+class TestsScreen extends ConsumerWidget {
+  const TestsScreen({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isPro = ref.watch(studentProvider).isPro;
+
+    return Scaffold(
+      body: SafeArea(
+        child: ListView(
+          padding: const EdgeInsets.fromLTRB(
+            AppTheme.space20,
+            AppTheme.space16,
+            AppTheme.space20,
+            AppTheme.space24,
+          ),
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text('Tests', style: Theme.of(context).textTheme.headlineLarge),
+                // Demo-only Pro toggle so both states are easy to show.
+                TextButton(
+                  onPressed: () => ref.read(studentProvider.notifier).togglePro(),
+                  child: Text(
+                    isPro ? 'Pro (demo)' : 'Free (demo)',
+                    style: TextStyle(
+                      color: isPro ? AppColors.mastered : AppColors.inkFaint,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 12,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.space20),
+            _CustomTestCard(isPro: isPro),
+            const SizedBox(height: AppTheme.space24),
+            Text('Mock papers', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(height: AppTheme.space12),
+            _MockPaperTile(name: 'Mock Paper 1', locked: false, marks: 80, duration: '3 hrs'),
+            const SizedBox(height: 10),
+            _MockPaperTile(name: 'Mock Paper 2', locked: !isPro, marks: 80, duration: '3 hrs'),
+            const SizedBox(height: 10),
+            _MockPaperTile(name: 'Mock Paper 3', locked: !isPro, marks: 80, duration: '3 hrs'),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _CustomTestCard extends StatelessWidget {
+  const _CustomTestCard({required this.isPro});
+  final bool isPro;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: () {
+        Navigator.of(context).push(
+          MaterialPageRoute(builder: (_) => const CustomTestBuilderScreen()),
+        );
+      },
+      child: Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(AppTheme.space20),
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(
+            colors: [AppColors.brand, AppColors.brandDark],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+          borderRadius: BorderRadius.circular(AppTheme.radiusXl),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 52,
+              height: 52,
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.15),
+                borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              ),
+              child: const Icon(Icons.tune_rounded, color: Colors.white, size: 28),
+            ),
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Create a custom test',
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+                      ),
+                      if (!isPro) ...[
+                        const SizedBox(width: 8),
+                        const _ProBadge(),
+                      ],
+                    ],
+                  ),
+                  const SizedBox(height: 4),
+                  Text(
+                    'Pick any chapters and build your own quiz',
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                  ),
+                ],
+              ),
+            ),
+            const Icon(Icons.chevron_right_rounded, color: Colors.white),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _ProBadge extends StatelessWidget {
+  const _ProBadge();
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        color: AppColors.xp,
+        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
+      ),
+      child: const Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.workspace_premium_rounded, size: 12, color: AppColors.ink),
+          SizedBox(width: 3),
+          Text('PRO', style: TextStyle(color: AppColors.ink, fontWeight: FontWeight.w900, fontSize: 10)),
+        ],
+      ),
+    );
+  }
+}
+
+class _MockPaperTile extends StatelessWidget {
+  const _MockPaperTile({
+    required this.name,
+    required this.locked,
+    required this.marks,
+    required this.duration,
+  });
+
+  final String name;
+  final bool locked;
+  final int marks;
+  final String duration;
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(AppTheme.space16),
+      decoration: BoxDecoration(
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+        border: Border.all(color: AppColors.border),
+      ),
+      child: Row(
+        children: [
+          Container(
+            width: 44,
+            height: 44,
+            decoration: BoxDecoration(
+              color: AppColors.brandLight,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+            ),
+            child: Icon(
+              locked ? Icons.lock_rounded : Icons.description_rounded,
+              color: AppColors.brand,
+              size: 22,
+            ),
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(name, style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 2),
+                Text(
+                  '$marks marks · $duration',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkFaint, fontSize: 12),
+                ),
+              ],
+            ),
+          ),
+          if (locked) const _ProBadge(),
+        ],
+      ),
+    );
+  }
+}
