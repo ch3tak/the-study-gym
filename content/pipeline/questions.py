@@ -38,6 +38,8 @@ def validate_question(q: dict, syl: Syllabus, issues: Issues, *, where: str,
 
     required = (_PART_REQUIRED if is_part else _COMMON_REQUIRED) | qtype.required
     optional = (_PART_OPTIONAL if is_part else _COMMON_OPTIONAL) | qtype.optional
+    if qtype.id == "case_based":
+        required = required - {"solution_steps"}  # each part carries its own solution
     for key in sorted(required - q.keys()):
         issues.error(where, f"missing field '{key}'")
     for key in sorted(q.keys() - required - optional):

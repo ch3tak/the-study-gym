@@ -29,6 +29,14 @@ _ALLOWED = {
 }
 _ALLOWED["E"] = sp.E
 
+
+def positive_roots(expr, var):
+    """Real positive roots, ascending. For word problems where lengths, ages or counts can't be negative."""
+    return sorted(r for r in sp.solve(expr, var) if r.is_real and r > 0)
+
+
+_ALLOWED["positive_roots"] = positive_roots
+
 _FORBIDDEN = re.compile(r"__|\bimport\b|\blambda\b|\bexec\b|\beval\b|\bopen\b|\.\s*[A-Za-z_]")
 _TRANSFORMS = standard_transformations + (convert_xor,)
 _TRANSFORMS_IMPLICIT = _TRANSFORMS + (implicit_multiplication_application,)

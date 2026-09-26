@@ -1,3 +1,4 @@
+
 # "Study Gym": detailed build and business plan
 *Working name. Options to test: StudyGym, Rep, Topper Gym, Padhai Gym. It must be subject-neutral, so no "Maths" in the brand. Last updated 26 Sep 2026.*
 

@@ -30,7 +30,8 @@ class CaseBased(QuestionType):
             if part.get("type") not in REGISTRY:
                 ctx.error(f"parts[{i}]: unknown type '{part.get('type')}'")
                 continue
-            validate_question(part, ctx.syllabus, ctx.issues, where=f"{ctx.where}/parts[{i}]", is_part=True)
+            validate_question(part, ctx.syllabus, ctx.issues, where=f"{ctx.where}/parts[{i}]",
+                              is_part=True, parent_concepts=ctx.concepts)
             total += float(part.get("marks", 0))
         if abs(total - float(q.get("marks", 0))) > 1e-9:
             ctx.error(f"marks: parts sum to {total}, question says {q.get('marks')}")
