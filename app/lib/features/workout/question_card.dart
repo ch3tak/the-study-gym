@@ -16,6 +16,9 @@ class QuestionCard extends StatelessWidget {
     this.revealAnswer = false,
     this.numericController,
     this.numericSubmitted,
+    this.partSelections = const {},
+    this.onSelectPart,
+    this.partNumericControllers = const {},
   });
 
   final Question question;
@@ -24,6 +27,12 @@ class QuestionCard extends StatelessWidget {
   final bool revealAnswer;
   final TextEditingController? numericController;
   final bool? numericSubmitted;
+
+  /// case_based only: part index -> selected option index (mcq part) or
+  /// unused (numeric part, which reads its own controller instead).
+  final Map<int, int?> partSelections;
+  final void Function(int partIndex, int optionIndex)? onSelectPart;
+  final Map<int, TextEditingController> partNumericControllers;
 
   @override
   Widget build(BuildContext context) {
@@ -48,6 +57,13 @@ class QuestionCard extends StatelessWidget {
           question: question,
           controller: numericController,
           submitted: numericSubmitted ?? false,
+        ),
+        if (question.type == QuestionType.caseBased) _CaseBasedParts(
+          question: question,
+          partSelections: partSelections,
+          onSelectPart: onSelectPart,
+          partNumericControllers: partNumericControllers,
+          revealAnswer: revealAnswer,
         ),
       ],
     );
@@ -305,6 +321,73 @@ class _NumericInput extends StatelessWidget {
             ),
         ],
       ),
+    );
+  }
+}
+
+class _CaseBasedParts extends StatelessWidget {
+  const _CaseBasedParts({
+    required this.question,
+    required this.partSelections,
+    required this.onSelectPart,
+    required this.partNumericControllers,
+    required this.revealAnswer,
+  });
+
+  final Question question;
+  final Map<int, int?> partSelections;
+  final void Function(int partIndex, int optionIndex)? onSelectPart;
+  final Map<int, TextEditingController> partNumericControllers;
+  final bool revealAnswer;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: question.parts.asMap().entries.map((entry) {
+        final i = entry.key;
+        final part = entry.value;
+        return Padding(
+          padding: const EdgeInsets.only(bottom: AppTheme.space16),
+          child: Container(
+            padding: const EdgeInsets.all(AppTheme.space16),
+            decoration: BoxDecoration(
+              color: AppColors.surface,
+              borderRadius: BorderRadius.circular(AppTheme.radiusMd),
+              border: Border.all(color: AppColors.border),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Part ${i + 1}',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                        color: AppColors.brand,
+                        fontWeight: FontWeight.w800,
+                        fontSize: 12,
+                      ),
+                ),
+                const SizedBox(height: 6),
+                Text(part.stem, style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 12),
+                if (part.type == QuestionType.mcq)
+                  _McqOptions(
+                    question: part,
+                    selectedIndex: partSelections[i],
+                    onSelect: (opt) => onSelectPart?.call(i, opt),
+                    revealAnswer: revealAnswer,
+                  ),
+                if (part.type == QuestionType.numeric)
+                  _NumericInput(
+                    question: part,
+                    controller: partNumericControllers[i],
+                    submitted: revealAnswer,
+                  ),
+              ],
+            ),
+          ),
+        );
+      }).toList(),
     );
   }
 }
