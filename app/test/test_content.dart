@@ -28,7 +28,7 @@ Future<ContentSnapshot> fakeContentLoader() async {
     ),
   ];
 
-  const questions = <Question>[
+  final questions = <Question>[
     Question(
       id: 'q_ap_nth_1',
       conceptId: 'c9.seq.ap_nth_term',
@@ -36,9 +36,9 @@ Future<ContentSnapshot> fakeContentLoader() async {
       difficulty: 2,
       marks: 1,
       stem: 'The first term of an AP is 5 and the common difference is 3. What is its 12th term?',
-      options: ['38', '41', '33', '36'],
+      options: const ['38', '41', '33', '36'],
       correctIndex: 0,
-      solutionSteps: ['aₙ = a + (n − 1)d', 'aₙ = 5 + (11)(3) = 38'],
+      solutionSteps: const ['aₙ = a + (n − 1)d', 'aₙ = 5 + (11)(3) = 38'],
     ),
     Question(
       id: 'q_speed_1',
@@ -49,9 +49,9 @@ Future<ContentSnapshot> fakeContentLoader() async {
       stem: 'A car covers 150 km in 3 hours. Find its average speed.',
       numericAnswer: '50',
       unit: 'km/h',
-      solutionSteps: ['Speed = 150 / 3 = 50 km/h'],
+      solutionSteps: const ['Speed = 150 / 3 = 50 km/h'],
     ),
   ];
 
-  return const ContentSnapshot(chapters: chapters, questions: questions);
+  return ContentSnapshot(chapters: chapters, questions: questions);
 }
