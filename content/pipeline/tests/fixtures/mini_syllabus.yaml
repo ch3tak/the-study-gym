@@ -1,0 +1,7 @@
+chapters:
+  - id: surface_area_volume
+    name: "Mensuration: Surface Area and Volume"
+    board_weight_marks: 6
+    concepts:
+      - id: c9.sav.cuboid_cube
+        name: Cuboids and cubes
