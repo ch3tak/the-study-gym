@@ -3,7 +3,7 @@ plus the cbse/9/maths syllabus, and writes a SQL seed file that inserts the
 chapter/concepts (not yet present in any seed file) and the 62 questions
 (with level/stage/parts) into Supabase.
 
-Run: python content/pipeline/seed_mission.py
+Run (from repo root): python -m content.pipeline.seed_mission
 Writes: backend/supabase/seed/004_surface_area_volume_mission.sql
 """
 from __future__ import annotations

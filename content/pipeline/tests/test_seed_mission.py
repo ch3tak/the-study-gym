@@ -1,7 +1,7 @@
 import re
 from pathlib import Path
 
-from pipeline.seed_mission import FRACTION_TOLERANCE, _numeric_fields, generate_sql
+from content.pipeline.seed_mission import FRACTION_TOLERANCE, _numeric_fields, generate_sql
 
 FIXTURE_YAML = Path(__file__).parent / "fixtures" / "mini_mission.yaml"
 FIXTURE_SYLLABUS = Path(__file__).parent / "fixtures" / "mini_syllabus.yaml"
