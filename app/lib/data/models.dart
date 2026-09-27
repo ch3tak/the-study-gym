@@ -13,7 +13,7 @@ extension SubjectX on Subject {
 
 enum MasteryState { notStarted, learning, practising, mastered, fading }
 
-enum QuestionType { mcq, numeric, assertionReason }
+enum QuestionType { mcq, numeric, assertionReason, caseBased, expression }
 
 class Concept {
   const Concept({
@@ -53,7 +53,7 @@ class Distractor {
 }
 
 class Question {
-  const Question({
+  Question({
     required this.id,
     required this.conceptId,
     required this.type,
@@ -69,7 +69,11 @@ class Question {
     this.hints = const [],
     required this.solutionSteps,
     this.distractors = const [],
-  });
+    this.level,
+    this.stage,
+    this.parts = const [],
+    List<String>? conceptIds,
+  }) : conceptIds = conceptIds ?? [conceptId];
 
   final String id;
   final String conceptId;
@@ -93,6 +97,18 @@ class Question {
 
   final List<String> hints;
   final List<String> solutionSteps;
+
+  // Mission-level metadata — null/empty for every non-mission question.
+  final int? level;
+  final String? stage;
+
+  // case_based
+  final List<Question> parts;
+
+  /// All concepts this question touches — plural counterpart to [conceptId].
+  /// Defaults to `[conceptId]` when not supplied, so every existing
+  /// single-concept call site keeps working unchanged.
+  final List<String> conceptIds;
 }
 
 /// Per-student, per-concept mastery — mirrors the `concept_mastery` table.
@@ -110,4 +126,19 @@ class ConceptMastery {
   int attempts;
   int correct;
   MasteryState state;
+}
+
+/// Per-student, per-level completion — mirrors the `level_progress` table.
+class LevelProgress {
+  const LevelProgress({
+    required this.level,
+    required this.chapterId,
+    required this.completedAt,
+    required this.score,
+  });
+
+  final int level;
+  final String chapterId;
+  final DateTime completedAt;
+  final double score;
 }
