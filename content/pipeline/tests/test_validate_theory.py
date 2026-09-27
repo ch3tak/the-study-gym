@@ -52,3 +52,16 @@ def test_theory_file_is_not_validated_as_a_question_bank(tmp_path, monkeypatch, 
     assert "'questions' list" not in out
     assert "0 questions, 1 lessons: 0 errors" in out
     assert exit_code == 0
+
+
+def test_theory_file_passed_explicitly_is_validated_as_lessons(tmp_path, monkeypatch, capsys):
+    point_at(monkeypatch, tmp_path)
+    write_theory(tmp_path, "surface_area_volume_theory.yaml", [LESSON])
+    theory_file = tmp_path / "cbse" / "9" / "maths" / "surface_area_volume_theory.yaml"
+
+    exit_code = validate.main(["-q", str(theory_file)])
+
+    out = capsys.readouterr().out
+    assert "'questions' list" not in out
+    assert "0 questions, 1 lessons: 0 errors" in out
+    assert exit_code == 0

@@ -92,6 +92,20 @@ def test_unbalanced_dollar_in_try_it_is_caught():
     assert "math delimiters" in messages(issues)
 
 
+def test_unbalanced_brace_in_math_is_caught():
+    lesson = dict(VALID_LESSON, body="The volume is $\\frac{1}{3 \\pi r^2 h$.")
+    issues = Issues()
+    validate_lesson(lesson, syllabus(), issues, "test")
+    assert "body: unbalanced braces" in messages(issues)
+
+
+def test_frac_without_two_brace_groups_is_caught():
+    lesson = dict(VALID_LESSON, try_it="Is the volume $\\frac13 \\pi r^2 h$?")
+    issues = Issues()
+    validate_lesson(lesson, syllabus(), issues, "test")
+    assert "try_it: \\frac needs two brace groups" in messages(issues)
+
+
 def test_try_it_is_optional():
     lesson = dict(VALID_LESSON)
     del lesson["try_it"]

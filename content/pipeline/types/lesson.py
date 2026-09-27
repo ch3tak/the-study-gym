@@ -6,7 +6,7 @@ validate.py's theory-file pass and by seed_theory.py before writing SQL.
 
 from __future__ import annotations
 
-from .base import _DOLLAR
+from .base import Context, check_latex
 from ..issues import Issues
 from ..syllabus import Syllabus
 
@@ -16,13 +16,6 @@ ID_PREFIX = "t_"
 _REQUIRED_FIELDS = {"id", "concept_id", "title", "body", "hook_kind", "hook", "sort_order"}
 _OPTIONAL_FIELDS = {"try_it"}
 _VALID_HOOK_KINDS = {"historical", "real_world"}
-
-
-def _check_latex_field(text: str, label: str, where: str, issues: Issues) -> None:
-    """Balanced-$ check only (lesson prose doesn't use \\frac or braces the
-    way question stems do, so this is narrower than base.check_latex)."""
-    if len(_DOLLAR.findall(text)) % 2:
-        issues.error(where, f"{label}: unbalanced $ math delimiters")
 
 
 def _check_text(value: object, label: str, where: str, issues: Issues) -> bool:
@@ -62,6 +55,8 @@ def validate_lesson(lesson: dict, syllabus: Syllabus, issues: Issues, where: str
     if hook_kind not in _VALID_HOOK_KINDS:
         issues.error(where, f"hook_kind: must be one of {sorted(_VALID_HOOK_KINDS)}, got '{hook_kind}'")
 
+    # Same structural math checks as question text ($ pairs, braces, \frac).
+    ctx = Context(where, issues, syllabus, [concept_id])
     for field_name in ("body", "hook", "try_it"):
         value = lesson.get(field_name)
         if value is None and field_name in _OPTIONAL_FIELDS:
@@ -70,6 +65,6 @@ def validate_lesson(lesson: dict, syllabus: Syllabus, issues: Issues, where: str
             continue
         if len(value) > MAX_FIELD_CHARS:
             issues.error(where, f"{field_name}: longer than {MAX_FIELD_CHARS} characters")
-        _check_latex_field(value, field_name, where, issues)
+        check_latex(value, field_name, ctx)
 
     _check_text(lesson["title"], "title", where, issues)

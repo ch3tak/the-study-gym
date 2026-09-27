@@ -62,11 +62,19 @@ def load_all_syllabi(issues: Issues) -> dict[tuple[str, int, str], Syllabus]:
 THEORY_ROOT = QUESTIONS_ROOT  # theory files live alongside question files, named *_theory.yaml
 
 
-def validate_theory_files(syllabi: dict[tuple[str, int, str], Syllabus], issues: Issues) -> int:
+def is_theory_file(path: Path) -> bool:
+    return path.name.endswith("_theory.yaml")
+
+
+def validate_theory_files(
+    syllabi: dict[tuple[str, int, str], Syllabus], issues: Issues, extra: list[Path] | None = None
+) -> int:
+    """Validate every theory file under THEORY_ROOT, plus any named in `extra`."""
     total = 0
     # One set across every file: lessons.id is a table-wide primary key.
     seen_ids: dict[str, str] = {}
-    for path in sorted(THEORY_ROOT.glob("*/*/*/**/*_theory.yaml")):
+    paths = {p.resolve() for p in THEORY_ROOT.glob("*/*/*/**/*_theory.yaml")} | {p.resolve() for p in extra or []}
+    for path in sorted(paths):
         key = subject_of(path)
         if key is None or key not in syllabi:
             issues.error(rel(path), "can't resolve subject for theory file (expected board/class/subject layout)")
@@ -111,9 +119,13 @@ def main(argv: list[str] | None = None) -> int:
     syllabi = load_all_syllabi(issues)
     validate_class_files(issues)
 
-    files = args.files or sorted(
-        p for p in QUESTIONS_ROOT.glob("*/*/*/**/*.yaml") if not p.name.endswith("_theory.yaml")
-    )
+    # Theory files share directories with question banks but go to the theory pass.
+    if args.files:
+        files = [f for f in args.files if not is_theory_file(f)]
+        theory_files = [f for f in args.files if is_theory_file(f)]
+    else:
+        files = sorted(p for p in QUESTIONS_ROOT.glob("*/*/*/**/*.yaml") if not is_theory_file(p))
+        theory_files = []
     groups: dict[tuple[str, int, str], list[tuple[str, dict]]] = {}
     for f in files:
         if args.subject:
@@ -133,7 +145,7 @@ def main(argv: list[str] | None = None) -> int:
     for key, questions in groups.items():
         total += len(questions)
         validate_bank(questions, syllabi[key], issues)
-    lessons = validate_theory_files(syllabi, issues)
+    lessons = validate_theory_files(syllabi, issues, theory_files)
 
     shown = issues.errors if args.quiet else issues.items
     for issue in shown:
