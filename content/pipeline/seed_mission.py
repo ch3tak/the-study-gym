@@ -9,6 +9,7 @@ Writes: backend/supabase/seed/004_surface_area_volume_mission.sql
 from __future__ import annotations
 
 import io
+import re
 import sys
 from pathlib import Path
 
@@ -63,6 +64,38 @@ def _is_machine_verified(question: dict) -> bool:
     return "verification" in question
 
 
+_FRACTION_RE = re.compile(r"^\s*(-?\d+)\s*/\s*(\d+)\s*$")
+
+# Tolerance applied to an answer converted from fraction form when the YAML
+# gives none: the answer is stored to 2 dp (e.g. 256/3 -> "85.33"), and 0.05
+# accepts both the 2-dp form and a 1-dp rounding (85.3) of the true value.
+FRACTION_TOLERANCE = 0.05
+
+
+def _numeric_fields(src: dict) -> dict:
+    """numericAnswer (+ tolerance) for a numeric question or part.
+
+    The YAML's own `tolerance` (a sibling of `answers`) is carried through
+    as a number. A fraction-form answer like "256/3" is converted to a
+    2-dp decimal string, since the app's numeric keyboard
+    (TextInputType.numberWithOptions(decimal: true)) has no "/" key on iOS
+    and none guaranteed on Android — the YAML itself is left unchanged.
+    """
+    answer = str(src["answers"][0])
+    fields: dict = {}
+    tolerance = src.get("tolerance")
+    match = _FRACTION_RE.match(answer)
+    if match:
+        value = int(match.group(1)) / int(match.group(2))
+        answer = f"{value:.2f}".rstrip("0").rstrip(".")
+        if tolerance is None:
+            tolerance = FRACTION_TOLERANCE
+    fields["numericAnswer"] = answer
+    if tolerance is not None:
+        fields["tolerance"] = float(tolerance)
+    return fields
+
+
 def _body_for_part(part: dict, question: dict) -> dict:
     body: dict = {"stem": part["stem"]}
     if part["type"] == "mcq":
@@ -74,7 +107,7 @@ def _body_for_part(part: dict, question: dict) -> dict:
                 for idx, misconception in part["distractors"].items()
             ]
     elif part["type"] == "numeric":
-        body["numericAnswer"] = part["answers"][0]
+        body.update(_numeric_fields(part))
         body["unit"] = part.get("unit", "none")
     body["hints"] = part.get("hints", [])
     body["solutionSteps"] = part.get("solution_steps", [])
@@ -96,7 +129,7 @@ def _body_for_question(question: dict) -> dict:
                 for idx, misconception in question["distractors"].items()
             ]
     elif qtype == "numeric":
-        body["numericAnswer"] = question["answers"][0]
+        body.update(_numeric_fields(question))
         body["unit"] = question.get("unit", "none")
     elif qtype == "case_based":
         body["parts"] = [_body_for_part(p, question) for p in question["parts"]]
