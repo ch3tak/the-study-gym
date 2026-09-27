@@ -1,4 +1,4 @@
-# Subjects offered for CBSE Class 10. Drives the subject switcher and "Notify me".
+# Subjects offered for CBSE Class 10. Maths only (docs/PLAN.md: "Math only. Permanently.").
 schema_version: 1
 board: {id: cbse, name: CBSE}
 class: {grade: 10, academic_year: "2026-27"}
@@ -19,48 +19,7 @@ subjects:
     accent_color: "#5B5BD6"
     icon: calculate
     syllabus: maths_basic.yaml
-  - code: science
-    name: Science
-    short_name: Science
-    status: coming_soon
-    eta: Jan 2027
-    accent_color: "#12A594"
-    icon: science
-    syllabus: science.yaml
-  - code: sst
-    name: Social Science
-    short_name: SST
-    status: coming_soon
-    eta: Feb 2027
-    accent_color: "#E5484D"
-    icon: public
-    syllabus: sst.yaml
-  - code: english
-    name: English (Language & Literature)
-    short_name: English
-    status: coming_soon
-    eta: May 2027
-    accent_color: "#0090FF"
-    icon: menu_book
-    syllabus: english.yaml
-  - code: hindi_a
-    name: Hindi Course A
-    short_name: Hindi
-    status: coming_soon
-    eta: Aug 2027
-    accent_color: "#F76B15"
-    icon: translate
-    syllabus: hindi_a.yaml
-  - code: hindi_b
-    name: Hindi Course B
-    short_name: Hindi
-    status: coming_soon
-    eta: Aug 2027
-    accent_color: "#F76B15"
-    icon: translate
-    syllabus: hindi_b.yaml
 
 # Mutually exclusive choices asked in onboarding (S2).
 choice_groups:
   - {label: "Maths level", options: [maths_standard, maths_basic]}
-  - {label: "Hindi course", options: [hindi_a, hindi_b]}

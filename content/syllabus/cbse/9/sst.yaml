@@ -1,9 +1,0 @@
-schema_version: 1
-board: cbse
-class: 9
-subject: sst
-name: Social Science
-status: coming_soon
-total_marks: 80
-# Not yet authored; only Maths and Science are in scope for Class 9 alpha.
-chapters: []

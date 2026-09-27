@@ -88,15 +88,17 @@ def test_flow_mapping_comma_split_is_caught(tmp_path):
     assert any("unknown field" in i.message for i in issues.errors)
 
 
-def test_real_class9_syllabi_are_clean():
-    for subject in ("maths", "science"):
-        issues = Issues()
-        syl = load(syllabus_path("cbse", 9, subject), issues, KNOWN)
-        assert issues.errors == [], subject
-        assert all(cid.startswith("c9.") for cid in syl.concepts), subject
+def test_real_class9_syllabus_is_clean():
     issues = Issues()
-    science = load(syllabus_path("cbse", 9, "science"), issues, KNOWN)
-    assert science.numeric_requires_unit
+    syl = load(syllabus_path("cbse", 9, "maths"), issues, KNOWN)
+    assert issues.errors == []
+    assert all(cid.startswith("c9.") for cid in syl.concepts)
+
+
+def test_numeric_requires_unit_rule_loads(tmp_path):
+    syl, issues = load_text(tmp_path, BASE + "\nquestion_rules:\n  numeric_requires_unit: true\n")
+    assert issues.errors == []
+    assert syl.numeric_requires_unit
 
 
 def test_cross_references_across_all_syllabi():

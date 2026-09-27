@@ -45,25 +45,6 @@ PROFILES = {
             generatable=("mcq", "numeric", "expression", "assertion_reason"),
         ),
         SubjectProfile(
-            key="cbse/9/science",
-            title="Indian CBSE Class 9 Science, 2026-27 syllabus (new NCF-SE 2023 curriculum and NCERT textbook)",
-            golden=QUESTIONS / "cbse/9/science/golden.yaml",
-            rules=(
-                "- Stay inside the 2026-27 Class 9 chapter list: Cell, Tissues, Reproduction, Diversity, Mixtures and "
-                "their separation, Structure of an Atom, Atoms and Molecules, Motion, Force and Laws of Motion, Work, "
-                "Energy and Simple Machines, Sound, and Earth as a System. Gravitation, momentum and conservation of "
-                "momentum are NOT in this syllabus.\n"
-                "- Every fact must match the NCERT Class 9 textbook. If you are not certain a fact is correct and in "
-                "the syllabus, don't use it.\n"
-                "- Use SI units. Take g = 10 m/s^2 and state it in the question when needed. Use atomic masses "
-                "rounded to whole numbers (H 1, C 12, N 14, O 16, Na 23, Cl 35.5, Ca 40).\n"
-                "- numeric: \"unit\" is always set, e.g. \"m/s^2\", \"J\", \"%\", or \"none\" for a pure number.\n"
-                "- Numerical questions: verification_sympy computes the answer from the given values with the formula. "
-                "Factual or conceptual questions: set verification_sympy (and option_values) to \"\"; a teacher checks them."
-            ),
-            generatable=("mcq", "numeric", "assertion_reason"),
-        ),
-        SubjectProfile(
             key="cbse/10/maths_standard",
             title="Indian CBSE Class 10 Mathematics (Standard), 2026-27 syllabus",
             golden=QUESTIONS / "cbse/10/maths_standard/quadratic_equations.yaml",

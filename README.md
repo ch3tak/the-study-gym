@@ -4,7 +4,7 @@ App that focuses on learning and understanding: a mastery system for every core 
 
 > Diagnose → find weak concepts → daily workout → evaluate → adapt → track progress → repeat
 
-The alpha covers **CBSE Class 9 Mathematics and Science** (2026-27 syllabus). A Class 10 Maths sample syllabus is kept alongside. The architecture is subject-agnostic from day one: board, class, subject, chapter and concept are data, and question types are pluggable. The full plan lives in [docs/PLAN.md](docs/PLAN.md).
+The alpha covers **CBSE Class 9 Mathematics** (2026-27 syllabus). A Class 10 Maths sample syllabus is kept alongside. The architecture is subject-agnostic from day one: board, class, subject, chapter and concept are data, and question types are pluggable. The full plan lives in [docs/PLAN.md](docs/PLAN.md).
 
 ## Repo layout
 

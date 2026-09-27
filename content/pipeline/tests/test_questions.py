@@ -2,6 +2,7 @@
 golden questions in specific ways and check each break is caught."""
 
 import copy
+import dataclasses
 
 import pytest
 
@@ -138,21 +139,18 @@ def test_unbalanced_latex_is_caught(syllabus, golden):
 
 
 def test_class9_golden_files_are_clean():
-    for subject in ("maths", "science"):
-        issues = Issues()
-        syl = load(syllabus_path("cbse", 9, subject), issues, set(REGISTRY))
-        qs = load_file(QUESTIONS_ROOT / "cbse" / "9" / subject / "golden.yaml", issues)
-        validate_bank([("golden", q) for q in qs], syl, issues)
-        assert issues.errors == [], subject
-
-
-def test_science_numeric_without_unit_is_caught():
     issues = Issues()
-    syl = load(syllabus_path("cbse", 9, "science"), issues, set(REGISTRY))
-    qs = {q["id"]: q for q in load_file(QUESTIONS_ROOT / "cbse" / "9" / "science" / "golden.yaml", issues)}
-    q = copy.deepcopy(qs["q_c9_acceleration_0001"])
-    del q["unit"]
-    assert "unit: required" in messages(run(syl, q))
+    syl = load(syllabus_path("cbse", 9, "maths"), issues, set(REGISTRY))
+    qs = load_file(QUESTIONS_ROOT / "cbse" / "9" / "maths" / "golden.yaml", issues)
+    validate_bank([("golden", q) for q in qs], syl, issues)
+    assert issues.errors == []
+
+
+def test_numeric_without_unit_is_caught_when_the_syllabus_requires_one(syllabus, golden):
+    strict = dataclasses.replace(syllabus, numeric_requires_unit=True)
+    q = golden["q_quad_factorise_solve_0001"]
+    assert "unit" not in q
+    assert "unit: required" in messages(run(strict, q))
 
 
 def test_unknown_field_is_caught(syllabus, golden):

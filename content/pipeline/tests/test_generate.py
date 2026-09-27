@@ -43,17 +43,6 @@ def test_every_profile_has_syllabus_and_golden_examples():
         assert set(profile.generatable) <= set(generate.GENERATABLE), key
 
 
-def test_science_plan_uses_science_profile(tmp_path, monkeypatch):
-    monkeypatch.setattr(generate, "OUT_ROOT", tmp_path)
-    rc = generate.main(["plan", "--subject", "cbse/9/science", "--chapter", "motion", "--run", "s"])
-    assert rc == 0
-    reqs = [json.loads(l) for l in (tmp_path / "s" / "requests.jsonl").read_text(encoding="utf-8").splitlines()]
-    assert {r["meta"]["type"] for r in reqs} <= {"mcq", "numeric", "assertion_reason"}
-    system = reqs[0]["params"]["system"][0]["text"]
-    assert "Class 9 Science" in system and "Gravitation" in system
-    assert all(len(r["custom_id"]) <= 64 for r in reqs)
-
-
 def test_custom_id_is_capped():
     cid = generate.custom_id_for("c9." + "x" * 80, "assertion_reason", 3)
     assert len(cid) <= 64
