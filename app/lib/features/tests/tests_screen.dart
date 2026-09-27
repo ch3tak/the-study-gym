@@ -15,6 +15,7 @@ class TestsScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
     final isPro = ref.watch(studentProvider).isPro;
 
     return Scaffold(
@@ -37,7 +38,7 @@ class TestsScreen extends ConsumerWidget {
                   child: Text(
                     isPro ? 'Pro (demo)' : 'Free (demo)',
                     style: TextStyle(
-                      color: isPro ? AppColors.mastered : AppColors.inkFaint,
+                      color: isPro ? colors.mastered : colors.inkFaint,
                       fontWeight: FontWeight.w800,
                       fontSize: 12,
                     ),
@@ -68,6 +69,7 @@ class _CustomTestCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return GestureDetector(
       onTap: () {
         Navigator.of(context).push(
@@ -78,8 +80,8 @@ class _CustomTestCard extends StatelessWidget {
         width: double.infinity,
         padding: const EdgeInsets.all(AppTheme.space20),
         decoration: BoxDecoration(
-          gradient: const LinearGradient(
-            colors: [AppColors.brand, AppColors.brandDark],
+          gradient: LinearGradient(
+            colors: [colors.brand, colors.brandDark],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
@@ -91,10 +93,10 @@ class _CustomTestCard extends StatelessWidget {
               width: 52,
               height: 52,
               decoration: BoxDecoration(
-                color: Colors.white.withValues(alpha: 0.15),
+                color: colors.accentInk.withValues(alpha: 0.15),
                 borderRadius: BorderRadius.circular(AppTheme.radiusMd),
               ),
-              child: const Icon(Icons.tune_rounded, color: Colors.white, size: 28),
+              child: Icon(Icons.tune_rounded, color: colors.accentInk, size: 28),
             ),
             const SizedBox(width: 16),
             Expanded(
@@ -105,7 +107,7 @@ class _CustomTestCard extends StatelessWidget {
                     children: [
                       Text(
                         'Create a custom test',
-                        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: Colors.white),
+                        style: Theme.of(context).textTheme.titleLarge?.copyWith(color: colors.accentInk),
                       ),
                       if (!isPro) ...[
                         const SizedBox(width: 8),
@@ -116,12 +118,12 @@ class _CustomTestCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   Text(
                     'Pick any chapters and build your own quiz',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: Colors.white70),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.accentInk.withValues(alpha: 0.7)),
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, color: Colors.white),
+            Icon(Icons.chevron_right_rounded, color: colors.accentInk),
           ],
         ),
       ),
@@ -134,18 +136,19 @@ class _ProBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
       decoration: BoxDecoration(
-        color: AppColors.xp,
+        color: colors.xp,
         borderRadius: BorderRadius.circular(AppTheme.radiusPill),
       ),
-      child: const Row(
+      child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(Icons.workspace_premium_rounded, size: 12, color: AppColors.ink),
-          SizedBox(width: 3),
-          Text('PRO', style: TextStyle(color: AppColors.ink, fontWeight: FontWeight.w900, fontSize: 10)),
+          Icon(Icons.workspace_premium_rounded, size: 12, color: colors.ink),
+          const SizedBox(width: 3),
+          Text('PRO', style: TextStyle(color: colors.ink, fontWeight: FontWeight.w900, fontSize: 10)),
         ],
       ),
     );
@@ -167,12 +170,13 @@ class _MockPaperTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(AppTheme.space16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
@@ -180,12 +184,12 @@ class _MockPaperTile extends StatelessWidget {
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: AppColors.brandLight,
+              color: colors.brandLight,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
             ),
             child: Icon(
               locked ? Icons.lock_rounded : Icons.description_rounded,
-              color: AppColors.brand,
+              color: colors.brand,
               size: 22,
             ),
           ),
@@ -198,7 +202,7 @@ class _MockPaperTile extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   '$marks marks · $duration',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkFaint, fontSize: 12),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint, fontSize: 12),
                 ),
               ],
             ),

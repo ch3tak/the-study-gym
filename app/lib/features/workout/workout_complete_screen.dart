@@ -60,6 +60,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final student = ref.watch(studentProvider);
     final correctCount = widget.items.where((i) => i.correct).length;
     final total = widget.items.length;
@@ -88,11 +89,11 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      _StatPill(icon: Icons.star_rounded, color: AppColors.xp, label: '+$xpEarned XP'),
+                      _StatPill(icon: Icons.star_rounded, color: colors.xp, label: '+$xpEarned XP'),
                       const SizedBox(width: 12),
                       _StatPill(
                         icon: Icons.local_fire_department_rounded,
-                        color: AppColors.streak,
+                        color: colors.streak,
                         label: '${student.streak} day streak',
                       ),
                     ],
@@ -109,7 +110,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                     width: double.infinity,
                     padding: const EdgeInsets.all(AppTheme.space16),
                     decoration: BoxDecoration(
-                      color: AppColors.brandLight,
+                      color: colors.brandLight,
                       borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                     ),
                     child: Row(
@@ -120,7 +121,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                         Expanded(
                           child: Text(
                             _coachMessage(correctCount, total),
-                            style: const TextStyle(color: AppColors.brandDark, fontWeight: FontWeight.w700),
+                            style: TextStyle(color: colors.brandDark, fontWeight: FontWeight.w700),
                           ),
                         ),
                       ],
@@ -138,14 +139,14 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                     style: OutlinedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 20),
                       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
-                      side: const BorderSide(color: AppColors.border),
-                      foregroundColor: AppColors.inkSoft,
+                      side: BorderSide(color: colors.border),
+                      foregroundColor: colors.inkSoft,
                     ),
                   ),
                   const SizedBox(height: AppTheme.space20),
                   ChunkyButton(
                     label: 'Done',
-                    color: AppColors.mastered,
+                    color: colors.mastered,
                     onPressed: () {
                       Navigator.of(context).pushAndRemoveUntil(
                         MaterialPageRoute(builder: (_) => const AppShell()),
@@ -167,11 +168,11 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
               emissionFrequency: 0.06,
               numberOfParticles: 16,
               gravity: 0.25,
-              colors: const [
-                AppColors.brand,
-                AppColors.mastered,
-                AppColors.xp,
-                AppColors.streak,
+              colors: [
+                colors.brand,
+                colors.mastered,
+                colors.xp,
+                colors.streak,
               ],
             ),
           ),
@@ -213,6 +214,7 @@ class _MasteryBarRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
     final mastery = ref.watch(studentProvider).mastery[concept.id];
     final percent = (mastery?.masteryPercent ?? 0) / 100;
 
@@ -237,9 +239,9 @@ class _MasteryBarRow extends ConsumerWidget {
                     builder: (context, value, _) => LinearProgressIndicator(
                       value: value,
                       minHeight: 8,
-                      backgroundColor: AppColors.border,
+                      backgroundColor: colors.border,
                       valueColor: AlwaysStoppedAnimation(
-                        value >= 0.8 ? AppColors.mastered : (value >= 0.5 ? AppColors.learning : AppColors.weak),
+                        value >= 0.8 ? colors.mastered : (value >= 0.5 ? colors.learning : colors.weak),
                       ),
                     ),
                   ),

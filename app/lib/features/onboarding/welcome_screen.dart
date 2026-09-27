@@ -18,6 +18,7 @@ class WelcomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -36,7 +37,7 @@ class WelcomeScreen extends StatelessWidget {
               Text(
                 "We find exactly what you're weak at in Maths and\nScience, train it, and show your real progress.",
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: AppColors.inkSoft),
+                style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: colors.inkSoft),
               ),
               const Spacer(flex: 3),
               ChunkyButton(
@@ -47,9 +48,9 @@ class WelcomeScreen extends StatelessWidget {
               const SizedBox(height: AppTheme.space16),
               TextButton(
                 onPressed: () => _enterApp(context),
-                child: const Text(
+                child: Text(
                   'I already have an account',
-                  style: TextStyle(color: AppColors.inkFaint, fontWeight: FontWeight.w700),
+                  style: TextStyle(color: colors.inkFaint, fontWeight: FontWeight.w700),
                 ),
               ),
               const SizedBox(height: AppTheme.space24),
@@ -71,14 +72,15 @@ void _enterApp(BuildContext context) {
 class _HeroMark extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: 120,
       height: 120,
       decoration: BoxDecoration(
-        color: AppColors.brandLight,
+        color: colors.brandLight,
         borderRadius: BorderRadius.circular(AppTheme.radiusXl),
       ),
-      child: const Icon(Icons.fitness_center_rounded, size: 64, color: AppColors.brand),
+      child: Icon(Icons.fitness_center_rounded, size: 64, color: colors.brand),
     );
   }
 }

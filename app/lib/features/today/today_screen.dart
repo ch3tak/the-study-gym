@@ -92,15 +92,16 @@ class _DailyGoalRing extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return MasteryRing(
       progress: progress,
       size: 28,
       strokeWidth: 3.5,
-      trackColor: AppColors.border,
+      trackColor: colors.border,
       child: Icon(
         met ? Icons.check_rounded : Icons.flag_rounded,
         size: 14,
-        color: met ? AppColors.mastered : AppColors.inkFaint,
+        color: met ? colors.mastered : colors.inkFaint,
       ),
     );
   }
@@ -113,6 +114,7 @@ class _DailyGoalCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final progress = goal == 0 ? 0.0 : (xpToday / goal).clamp(0.0, 1.0);
     final met = xpToday >= goal;
 
@@ -120,15 +122,15 @@ class _DailyGoalCard extends StatelessWidget {
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.space16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
           Icon(
             met ? Icons.emoji_events_rounded : Icons.flag_rounded,
-            color: met ? AppColors.xp : AppColors.brand,
+            color: met ? colors.xp : colors.brand,
             size: 28,
           ),
           const SizedBox(width: 14),
@@ -143,7 +145,7 @@ class _DailyGoalCard extends StatelessWidget {
                     Text(
                       met ? 'Goal reached! 🎉' : '$xpToday / $goal XP',
                       style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: met ? AppColors.mastered : AppColors.inkFaint,
+                            color: met ? colors.mastered : colors.inkFaint,
                             fontWeight: FontWeight.w800,
                           ),
                     ),
@@ -159,8 +161,8 @@ class _DailyGoalCard extends StatelessWidget {
                     builder: (context, value, _) => LinearProgressIndicator(
                       value: value,
                       minHeight: 10,
-                      backgroundColor: AppColors.border,
-                      valueColor: AlwaysStoppedAnimation(met ? AppColors.mastered : AppColors.brand),
+                      backgroundColor: colors.border,
+                      valueColor: AlwaysStoppedAnimation(met ? colors.mastered : colors.brand),
                     ),
                   ),
                 ),
@@ -179,11 +181,12 @@ class _WorkoutHeroCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.space24),
       decoration: BoxDecoration(
-        color: AppColors.brand,
+        color: colors.brand,
         borderRadius: BorderRadius.circular(AppTheme.radiusXl),
       ),
       child: Column(
@@ -191,18 +194,18 @@ class _WorkoutHeroCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              const Icon(Icons.bolt_rounded, color: Colors.white, size: 22),
+              Icon(Icons.bolt_rounded, color: colors.accentInk, size: 22),
               const SizedBox(width: 6),
               Text(
                 "Today's workout",
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.white70),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: colors.accentInk.withValues(alpha: 0.7)),
               ),
             ],
           ),
           const SizedBox(height: 8),
           Text(
             '15 min · 10 reps',
-            style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: Colors.white),
+            style: Theme.of(context).textTheme.headlineLarge?.copyWith(color: colors.accentInk),
           ),
           const SizedBox(height: 16),
           Wrap(
@@ -212,12 +215,12 @@ class _WorkoutHeroCard extends StatelessWidget {
                 .map((c) => Container(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                       decoration: BoxDecoration(
-                        color: Colors.white.withValues(alpha: 0.15),
+                        color: colors.accentInk.withValues(alpha: 0.15),
                         borderRadius: BorderRadius.circular(AppTheme.radiusPill),
                       ),
                       child: Text(
                         c.name,
-                        style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w700, fontSize: 12),
+                        style: TextStyle(color: colors.accentInk, fontWeight: FontWeight.w700, fontSize: 12),
                       ),
                     ))
                 .toList(),
@@ -252,6 +255,7 @@ class _WhiteButtonState extends State<_WhiteButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return GestureDetector(
       onTapDown: (_) => setState(() => _pressed = true),
       onTapUp: (_) {
@@ -268,7 +272,7 @@ class _WhiteButtonState extends State<_WhiteButton> {
               top: 5,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: const Color(0xFFD9D9F5),
+                  color: colors.accentInk.withValues(alpha: 0.65),
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 ),
               ),
@@ -281,13 +285,13 @@ class _WhiteButtonState extends State<_WhiteButton> {
               height: 56,
               child: DecoratedBox(
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: colors.surface,
                   borderRadius: BorderRadius.circular(AppTheme.radiusMd),
                 ),
                 child: Center(
                   child: Text(
                     widget.label,
-                    style: const TextStyle(color: AppColors.brand, fontWeight: FontWeight.w800, fontSize: 16),
+                    style: TextStyle(color: colors.brand, fontWeight: FontWeight.w800, fontSize: 16),
                   ),
                 ),
               ),
@@ -316,13 +320,14 @@ class _StreakCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.space20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -348,24 +353,25 @@ class _ReviewDueCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.space16),
       decoration: BoxDecoration(
-        color: AppColors.learningLight,
+        color: colors.learningLight,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
       ),
       child: Row(
         children: [
-          const Icon(Icons.refresh_rounded, color: AppColors.learningDark),
+          Icon(Icons.refresh_rounded, color: colors.learningDark),
           const SizedBox(width: 12),
           Expanded(
             child: Text(
               '${concepts.length} concepts are fading. Quick refresh?',
-              style: const TextStyle(color: AppColors.learningDark, fontWeight: FontWeight.w700),
+              style: TextStyle(color: colors.learningDark, fontWeight: FontWeight.w700),
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: AppColors.learningDark),
+          Icon(Icons.chevron_right_rounded, color: colors.learningDark),
         ],
       ),
     );
@@ -378,14 +384,15 @@ class _ReadinessCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final marks = (percent * 80).round();
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.space20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Row(
         children: [
@@ -404,7 +411,7 @@ class _ReadinessCard extends StatelessWidget {
                 const SizedBox(height: 4),
                 Text(
                   '~$marks / 80 marks based on what you\'ve practised so far',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkFaint),
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint),
                 ),
               ],
             ),

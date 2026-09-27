@@ -12,20 +12,21 @@ class StreakFlame extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final lit = count > 0;
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
           Icons.local_fire_department_rounded,
-          color: lit ? AppColors.streak : AppColors.notStarted,
+          color: lit ? colors.streak : colors.notStarted,
           size: size,
         ),
         const SizedBox(width: 4),
         Text(
           '$count',
           style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                color: lit ? AppColors.streak : AppColors.inkFaint,
+                color: lit ? colors.streak : colors.inkFaint,
                 fontSize: size * 0.7,
               ),
         ),
@@ -56,7 +57,7 @@ class WeekDotsRow extends StatelessWidget {
             Text(
               lbls[i],
               style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: AppColors.inkFaint,
+                    color: context.colors.inkFaint,
                     fontSize: 11,
                   ),
             ),
@@ -74,14 +75,15 @@ class _Dot extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     const dim = 32.0;
     switch (state) {
       case DayState.done:
         return Container(
           width: dim,
           height: dim,
-          decoration: const BoxDecoration(
-            color: AppColors.streak,
+          decoration: BoxDecoration(
+            color: colors.streak,
             shape: BoxShape.circle,
           ),
           child: const Icon(Icons.local_fire_department_rounded, color: Colors.white, size: 18),
@@ -91,31 +93,31 @@ class _Dot extends StatelessWidget {
           width: dim,
           height: dim,
           decoration: BoxDecoration(
-            color: AppColors.brandLight,
+            color: colors.brandLight,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.brand.withValues(alpha: 0.3)),
+            border: Border.all(color: colors.brand.withValues(alpha: 0.3)),
           ),
-          child: const Icon(Icons.nightlight_round, color: AppColors.brand, size: 16),
+          child: Icon(Icons.nightlight_round, color: colors.brand, size: 16),
         );
       case DayState.missed:
         return Container(
           width: dim,
           height: dim,
           decoration: BoxDecoration(
-            color: AppColors.notStartedLight,
+            color: colors.notStartedLight,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: colors.border),
           ),
-          child: const Icon(Icons.close_rounded, color: AppColors.inkFaint, size: 16),
+          child: Icon(Icons.close_rounded, color: colors.inkFaint, size: 16),
         );
       case DayState.today:
         return Container(
           width: dim,
           height: dim,
           decoration: BoxDecoration(
-            color: AppColors.surface,
+            color: colors.surface,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.brand, width: 2.5),
+            border: Border.all(color: colors.brand, width: 2.5),
           ),
         );
       case DayState.future:
@@ -123,9 +125,9 @@ class _Dot extends StatelessWidget {
           width: dim,
           height: dim,
           decoration: BoxDecoration(
-            color: AppColors.notStartedLight,
+            color: colors.notStartedLight,
             shape: BoxShape.circle,
-            border: Border.all(color: AppColors.border),
+            border: Border.all(color: colors.border),
           ),
         );
     }

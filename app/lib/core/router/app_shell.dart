@@ -27,6 +27,7 @@ class _AppShellState extends State<AppShell> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Scaffold(
       body: IndexedStack(
         index: _index,
@@ -40,7 +41,7 @@ class _AppShellState extends State<AppShell> {
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(
           color: Theme.of(context).scaffoldBackgroundColor,
-          border: const Border(top: BorderSide(color: AppColors.border)),
+          border: Border(top: BorderSide(color: colors.border)),
         ),
         child: SafeArea(
           child: SizedBox(
@@ -57,14 +58,14 @@ class _AppShellState extends State<AppShell> {
                       children: [
                         Icon(
                           selected ? tab.activeIcon : tab.icon,
-                          color: selected ? AppColors.brand : AppColors.inkFaint,
+                          color: selected ? colors.brand : colors.inkFaint,
                           size: 26,
                         ),
                         const SizedBox(height: 4),
                         Text(
                           tab.label,
                           style: TextStyle(
-                            color: selected ? AppColors.brand : AppColors.inkFaint,
+                            color: selected ? colors.brand : colors.inkFaint,
                             fontWeight: selected ? FontWeight.w800 : FontWeight.w600,
                             fontSize: 11,
                           ),
@@ -96,6 +97,7 @@ class _ComingSoonTab extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return SafeArea(
       child: Center(
         child: Padding(
@@ -103,14 +105,14 @@ class _ComingSoonTab extends StatelessWidget {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.construction_rounded, size: 48, color: AppColors.inkFaint),
+              Icon(Icons.construction_rounded, size: 48, color: colors.inkFaint),
               const SizedBox(height: 16),
               Text(title, style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 8),
               Text(
                 subtitle,
                 textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkFaint),
+                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint),
               ),
             ],
           ),

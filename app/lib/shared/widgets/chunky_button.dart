@@ -11,8 +11,8 @@ class ChunkyButton extends StatefulWidget {
     super.key,
     required this.label,
     required this.onPressed,
-    this.color = AppColors.brand,
-    this.textColor = Colors.white,
+    this.color,
+    this.textColor,
     this.icon,
     this.trailing,
     this.height = 56,
@@ -22,8 +22,8 @@ class ChunkyButton extends StatefulWidget {
 
   final String label;
   final VoidCallback? onPressed;
-  final Color color;
-  final Color textColor;
+  final Color? color;
+  final Color? textColor;
   final IconData? icon;
   final Widget? trailing;
   final double height;
@@ -39,16 +39,18 @@ class _ChunkyButtonState extends State<ChunkyButton> {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final active = widget.enabled && widget.onPressed != null;
-    final baseColor = active ? widget.color : AppColors.notStartedLight;
+    final buttonColor = widget.color ?? colors.accent;
+    final baseColor = active ? buttonColor : colors.notStartedLight;
     final slabColor = active
-        ? HSLColor.fromColor(widget.color)
+        ? HSLColor.fromColor(buttonColor)
             .withLightness(
-              (HSLColor.fromColor(widget.color).lightness - 0.13).clamp(0.0, 1.0),
+              (HSLColor.fromColor(buttonColor).lightness - 0.13).clamp(0.0, 1.0),
             )
             .toColor()
-        : AppColors.border;
-    final textColor = active ? widget.textColor : AppColors.inkFaint;
+        : colors.border;
+    final textColor = active ? (widget.textColor ?? colors.accentInk) : colors.inkFaint;
 
     const slabHeight = 5.0;
 

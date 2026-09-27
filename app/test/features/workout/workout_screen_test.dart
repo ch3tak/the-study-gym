@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:study_gym/core/theme/app_theme.dart';
 import 'package:study_gym/data/app_state.dart';
 import 'package:study_gym/data/content.dart';
 import 'package:study_gym/data/content_repository.dart';
@@ -100,7 +101,7 @@ void main() {
   Future<void> pumpLevel(WidgetTester tester, Question level) async {
     await tester.pumpWidget(
       ProviderScope(
-        child: MaterialApp(home: WorkoutScreen.singleLevel(level)),
+        child: MaterialApp(theme: AppTheme.light, home: WorkoutScreen.singleLevel(level)),
       ),
     );
   }
@@ -114,6 +115,7 @@ void main() {
       UncontrolledProviderScope(
         container: container,
         child: MaterialApp(
+          theme: AppTheme.light,
           home: Builder(
             builder: (context) => Scaffold(
               body: TextButton(

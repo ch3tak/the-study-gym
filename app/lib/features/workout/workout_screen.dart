@@ -8,6 +8,7 @@ import '../../data/content.dart';
 import '../../data/mission_state.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/chunky_button.dart';
+import '../../shared/widgets/math_text.dart';
 import 'numeric_grading.dart';
 import 'question_card.dart';
 import 'workout_complete_screen.dart';
@@ -281,8 +282,8 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
               child: LinearProgressIndicator(
                 value: (_index + 1) / _items.length,
                 minHeight: 8,
-                backgroundColor: AppColors.border,
-                valueColor: const AlwaysStoppedAnimation(AppColors.brand),
+                backgroundColor: context.colors.border,
+                valueColor: AlwaysStoppedAnimation(context.colors.brand),
               ),
             ),
           ],
@@ -381,11 +382,12 @@ class _HintsPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.space16),
       decoration: BoxDecoration(
-        color: AppColors.brandLight,
+        color: colors.brandLight,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       ),
       child: Column(
@@ -400,9 +402,9 @@ class _HintsPanel extends StatelessWidget {
                     children: [
                       Text('💡 ', style: Theme.of(context).textTheme.bodyLarge),
                       Expanded(
-                        child: Text(
+                        child: MathText(
                           e.value,
-                          style: const TextStyle(color: AppColors.brandDark, fontWeight: FontWeight.w700),
+                          style: TextStyle(color: colors.brandDark, fontWeight: FontWeight.w700),
                         ),
                       ),
                     ],
@@ -435,7 +437,7 @@ class _FeedbackPanel extends StatelessWidget {
   List<Widget> _steps(List<String> steps, Color color) => steps
       .map((s) => Padding(
             padding: const EdgeInsets.only(bottom: 6),
-            child: Text('• $s', style: TextStyle(color: color)),
+            child: MathText('• $s', style: TextStyle(color: color)),
           ))
       .toList();
 
@@ -462,9 +464,10 @@ class _FeedbackPanel extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = correct ? AppColors.mastered : AppColors.weak;
-    final lightColor = correct ? AppColors.masteredLight : AppColors.weakLight;
-    final darkColor = correct ? AppColors.masteredDark : AppColors.weakDark;
+    final colors = context.colors;
+    final color = correct ? colors.mastered : colors.weak;
+    final lightColor = correct ? colors.masteredLight : colors.weakLight;
+    final darkColor = correct ? colors.masteredDark : colors.weakDark;
 
     return Container(
       width: double.infinity,
@@ -489,7 +492,7 @@ class _FeedbackPanel extends StatelessWidget {
           ),
           if (_misconceptionNote != null) ...[
             const SizedBox(height: 8),
-            Text(_misconceptionNote!, style: TextStyle(color: darkColor, fontWeight: FontWeight.w600)),
+            MathText(_misconceptionNote!, style: TextStyle(color: darkColor, fontWeight: FontWeight.w600)),
           ],
           if (isRetryAttempt) ...[
             const SizedBox(height: 8),
@@ -559,6 +562,7 @@ class _BottomBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     if (item.submitted) {
       if (!(item.wasCorrect ?? false) && !usedRetry) {
         return Row(
@@ -568,23 +572,23 @@ class _BottomBar extends StatelessWidget {
                 onPressed: onRetry,
                 style: OutlinedButton.styleFrom(
                   padding: const EdgeInsets.symmetric(vertical: 16),
-                  side: const BorderSide(color: AppColors.weak),
+                  side: BorderSide(color: colors.weak),
                   shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(AppTheme.radiusMd)),
                 ),
-                child: const Text('Try again', style: TextStyle(color: AppColors.weak, fontWeight: FontWeight.w800)),
+                child: Text('Try again', style: TextStyle(color: colors.weak, fontWeight: FontWeight.w800)),
               ),
             ),
             const SizedBox(width: 12),
             Expanded(
               flex: 2,
-              child: ChunkyButton(label: 'Continue', color: AppColors.weak, onPressed: onNext),
+              child: ChunkyButton(label: 'Continue', color: colors.weak, onPressed: onNext),
             ),
           ],
         );
       }
       return ChunkyButton(
         label: 'Continue',
-        color: item.wasCorrect ?? false ? AppColors.mastered : AppColors.weak,
+        color: item.wasCorrect ?? false ? colors.mastered : colors.weak,
         onPressed: onNext,
       );
     }
@@ -596,10 +600,10 @@ class _BottomBar extends StatelessWidget {
             padding: const EdgeInsets.only(bottom: 10),
             child: TextButton.icon(
               onPressed: onHint,
-              icon: const Icon(Icons.lightbulb_outline_rounded, size: 18, color: AppColors.brand),
+              icon: Icon(Icons.lightbulb_outline_rounded, size: 18, color: colors.brand),
               label: Text(
                 item.hintsRevealed == 0 ? 'Get a hint' : 'Get another hint',
-                style: const TextStyle(color: AppColors.brand, fontWeight: FontWeight.w700),
+                style: TextStyle(color: colors.brand, fontWeight: FontWeight.w700),
               ),
             ),
           ),

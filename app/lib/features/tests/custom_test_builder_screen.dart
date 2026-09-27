@@ -58,6 +58,7 @@ class _CustomTestBuilderScreenState extends ConsumerState<CustomTestBuilderScree
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final isPro = ref.watch(studentProvider).isPro;
 
     return Scaffold(
@@ -71,7 +72,7 @@ class _CustomTestBuilderScreenState extends ConsumerState<CustomTestBuilderScree
                 children: [
                   Text(
                     'Pick the chapters you want to be tested on — from Maths, Science, or both.',
-                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkSoft),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkSoft),
                   ),
                   const SizedBox(height: AppTheme.space20),
                   for (final subject in Subject.values) ...[
@@ -106,7 +107,7 @@ class _CustomTestBuilderScreenState extends ConsumerState<CustomTestBuilderScree
                       padding: const EdgeInsets.only(bottom: 10),
                       child: Text(
                         '${_selectedChapterIds.length} chapters selected · ~$_questionCount questions available',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkFaint),
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint),
                       ),
                     ),
                   ChunkyButton(
@@ -131,6 +132,7 @@ class _ChapterCheckTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Padding(
       padding: const EdgeInsets.only(bottom: 8),
       child: GestureDetector(
@@ -139,15 +141,15 @@ class _ChapterCheckTile extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: BoxDecoration(
-            color: selected ? AppColors.brandLight : AppColors.surface,
+            color: selected ? colors.brandLight : colors.surface,
             borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-            border: Border.all(color: selected ? AppColors.brand : AppColors.border, width: selected ? 2 : 1),
+            border: Border.all(color: selected ? colors.brand : colors.border, width: selected ? 2 : 1),
           ),
           child: Row(
             children: [
               Icon(
                 selected ? Icons.check_circle_rounded : Icons.circle_outlined,
-                color: selected ? AppColors.brand : AppColors.inkFaint,
+                color: selected ? colors.brand : colors.inkFaint,
               ),
               const SizedBox(width: 12),
               Expanded(
@@ -157,7 +159,7 @@ class _ChapterCheckTile extends StatelessWidget {
                     Text(chapter.name, style: Theme.of(context).textTheme.titleMedium),
                     Text(
                       '${chapter.concepts.length} concepts',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkFaint, fontSize: 12),
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint, fontSize: 12),
                     ),
                   ],
                 ),
@@ -176,11 +178,12 @@ class _UpgradeSheet extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
-      decoration: const BoxDecoration(
-        color: AppColors.surface,
-        borderRadius: BorderRadius.vertical(top: Radius.circular(AppTheme.radiusXl)),
+      decoration: BoxDecoration(
+        color: colors.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(AppTheme.radiusXl)),
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -188,14 +191,14 @@ class _UpgradeSheet extends StatelessWidget {
           Container(
             width: 40,
             height: 4,
-            decoration: BoxDecoration(color: AppColors.border, borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
+            decoration: BoxDecoration(color: colors.border, borderRadius: BorderRadius.circular(AppTheme.radiusPill)),
           ),
           const SizedBox(height: AppTheme.space20),
           Container(
             width: 64,
             height: 64,
-            decoration: const BoxDecoration(color: AppColors.brandLight, shape: BoxShape.circle),
-            child: const Icon(Icons.workspace_premium_rounded, color: AppColors.brand, size: 32),
+            decoration: BoxDecoration(color: colors.brandLight, shape: BoxShape.circle),
+            child: Icon(Icons.workspace_premium_rounded, color: colors.brand, size: 32),
           ),
           const SizedBox(height: AppTheme.space16),
           Text('Custom tests are a Pro feature', style: Theme.of(context).textTheme.headlineMedium, textAlign: TextAlign.center),
@@ -203,14 +206,14 @@ class _UpgradeSheet extends StatelessWidget {
           Text(
             'Build unlimited tests from any chapter, across Maths and Science, whenever you want to check yourself.',
             textAlign: TextAlign.center,
-            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: AppColors.inkFaint),
+            style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint),
           ),
           const SizedBox(height: AppTheme.space24),
           ChunkyButton(label: 'Upgrade to Pro (demo)', onPressed: onUpgrade),
           const SizedBox(height: AppTheme.space12),
           TextButton(
             onPressed: () => Navigator.of(context).pop(),
-            child: const Text('Not now', style: TextStyle(color: AppColors.inkFaint, fontWeight: FontWeight.w700)),
+            child: Text('Not now', style: TextStyle(color: colors.inkFaint, fontWeight: FontWeight.w700)),
           ),
         ],
       ),

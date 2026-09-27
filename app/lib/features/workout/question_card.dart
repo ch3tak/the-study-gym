@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/models.dart';
+import '../../shared/widgets/math_text.dart';
 
 /// Renders one question by type (mcq / numeric / assertion_reason) with a
 /// shared card layout — docs/PLAN.md §3: "all subject-specific input widgets
@@ -76,13 +77,14 @@ class _StemCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       width: double.infinity,
       padding: const EdgeInsets.all(AppTheme.space20),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -100,7 +102,7 @@ class _StemCard extends StatelessWidget {
             const SizedBox(height: 12),
             _LabeledText(label: 'Reason (R)', text: question.reason ?? ''),
           ] else
-            Text(
+            MathText(
               question.stem,
               style: Theme.of(context).textTheme.headlineMedium?.copyWith(fontSize: 20),
             ),
@@ -123,14 +125,14 @@ class _LabeledText extends StatelessWidget {
         Text(
           label,
           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                color: AppColors.brand,
+                color: context.colors.brand,
                 fontWeight: FontWeight.w800,
                 fontSize: 12,
                 letterSpacing: 0.5,
               ),
         ),
         const SizedBox(height: 4),
-        Text(text, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18)),
+        MathText(text, style: Theme.of(context).textTheme.titleLarge?.copyWith(fontSize: 18)),
       ],
     );
   }
@@ -142,6 +144,7 @@ class _DifficultyPips extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Row(
       children: List.generate(3, (i) {
         final filled = i < difficulty;
@@ -151,7 +154,7 @@ class _DifficultyPips extends StatelessWidget {
             width: 8,
             height: 8,
             decoration: BoxDecoration(
-              color: filled ? AppColors.brand : AppColors.border,
+              color: filled ? colors.brand : colors.border,
               shape: BoxShape.circle,
             ),
           ),
@@ -167,15 +170,16 @@ class _MarksBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: AppColors.brandLight,
+        color: colors.brandLight,
         borderRadius: BorderRadius.circular(AppTheme.radiusPill),
       ),
       child: Text(
         '$marks ${marks == 1 ? 'mark' : 'marks'}',
-        style: const TextStyle(color: AppColors.brand, fontWeight: FontWeight.w800, fontSize: 12),
+        style: TextStyle(color: colors.brand, fontWeight: FontWeight.w800, fontSize: 12),
       ),
     );
   }
@@ -196,32 +200,33 @@ class _McqOptions extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       children: List.generate(question.options.length, (i) {
         final isSelected = selectedIndex == i;
         final isCorrect = i == question.correctIndex;
 
-        Color bg = AppColors.surface;
-        Color border = AppColors.border;
-        Color text = AppColors.ink;
+        Color bg = colors.surface;
+        Color border = colors.border;
+        Color text = colors.ink;
         Widget? trailing;
 
         if (revealAnswer) {
           if (isCorrect) {
-            bg = AppColors.masteredLight;
-            border = AppColors.mastered;
-            text = AppColors.masteredDark;
-            trailing = const Icon(Icons.check_circle_rounded, color: AppColors.mastered);
+            bg = colors.masteredLight;
+            border = colors.mastered;
+            text = colors.masteredDark;
+            trailing = Icon(Icons.check_circle_rounded, color: colors.mastered);
           } else if (isSelected) {
-            bg = AppColors.weakLight;
-            border = AppColors.weak;
-            text = AppColors.weakDark;
-            trailing = const Icon(Icons.cancel_rounded, color: AppColors.weak);
+            bg = colors.weakLight;
+            border = colors.weak;
+            text = colors.weakDark;
+            trailing = Icon(Icons.cancel_rounded, color: colors.weak);
           }
         } else if (isSelected) {
-          bg = AppColors.brandLight;
-          border = AppColors.brand;
-          text = AppColors.brandDark;
+          bg = colors.brandLight;
+          border = colors.brand;
+          text = colors.brandDark;
         }
 
         return Padding(
@@ -240,7 +245,7 @@ class _McqOptions extends StatelessWidget {
               child: Row(
                 children: [
                   Expanded(
-                    child: Text(
+                    child: MathText(
                       question.options[i],
                       style: TextStyle(color: text, fontWeight: FontWeight.w700, fontSize: 16),
                     ),
@@ -290,12 +295,13 @@ class _NumericInput extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(AppTheme.space16),
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: submitted ? AppColors.brand : AppColors.border, width: submitted ? 2 : 1),
+        border: Border.all(color: submitted ? colors.brand : colors.border, width: submitted ? 2 : 1),
       ),
       child: Row(
         children: [
@@ -316,7 +322,7 @@ class _NumericInput extends StatelessWidget {
               padding: const EdgeInsets.only(left: 8),
               child: Text(
                 question.unit!,
-                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.inkFaint),
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: colors.inkFaint),
               ),
             ),
         ],
@@ -342,6 +348,7 @@ class _CaseBasedParts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: question.parts.asMap().entries.map((entry) {
@@ -352,9 +359,9 @@ class _CaseBasedParts extends StatelessWidget {
           child: Container(
             padding: const EdgeInsets.all(AppTheme.space16),
             decoration: BoxDecoration(
-              color: AppColors.surface,
+              color: colors.surface,
               borderRadius: BorderRadius.circular(AppTheme.radiusMd),
-              border: Border.all(color: AppColors.border),
+              border: Border.all(color: colors.border),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -362,13 +369,13 @@ class _CaseBasedParts extends StatelessWidget {
                 Text(
                   'Part ${i + 1}',
                   style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                        color: AppColors.brand,
+                        color: colors.brand,
                         fontWeight: FontWeight.w800,
                         fontSize: 12,
                       ),
                 ),
                 const SizedBox(height: 6),
-                Text(part.stem, style: Theme.of(context).textTheme.titleMedium),
+                MathText(part.stem, style: Theme.of(context).textTheme.titleMedium),
                 const SizedBox(height: 12),
                 if (part.type == QuestionType.mcq)
                   _McqOptions(

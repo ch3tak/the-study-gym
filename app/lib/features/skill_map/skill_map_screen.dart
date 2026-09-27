@@ -89,16 +89,17 @@ class _SubjectSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     return Container(
       padding: const EdgeInsets.all(4),
       decoration: BoxDecoration(
-        color: AppColors.notStartedLight,
+        color: colors.notStartedLight,
         borderRadius: BorderRadius.circular(AppTheme.radiusPill),
       ),
       child: Row(
         children: Subject.values.map((s) {
           final isSelected = s == selected;
-          final accent = s == Subject.maths ? AppColors.mathsAccent : AppColors.scienceAccent;
+          final accent = s == Subject.maths ? colors.mathsAccent : colors.scienceAccent;
           return Expanded(
             child: GestureDetector(
               onTap: () => onChanged(s),
@@ -115,13 +116,13 @@ class _SubjectSwitcher extends StatelessWidget {
                     Icon(
                       s == Subject.maths ? Icons.calculate_rounded : Icons.science_rounded,
                       size: 18,
-                      color: isSelected ? Colors.white : AppColors.inkFaint,
+                      color: isSelected ? colors.accentInk : colors.inkFaint,
                     ),
                     const SizedBox(width: 6),
                     Text(
                       s.label,
                       style: TextStyle(
-                        color: isSelected ? Colors.white : AppColors.inkFaint,
+                        color: isSelected ? colors.accentInk : colors.inkFaint,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
@@ -144,14 +145,15 @@ class _ChapterCard extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
     final student = ref.watch(studentProvider);
     final progress = student.chapterMastery(chapter.id);
 
     return Container(
       decoration: BoxDecoration(
-        color: AppColors.surface,
+        color: colors.surface,
         borderRadius: BorderRadius.circular(AppTheme.radiusLg),
-        border: Border.all(color: AppColors.border),
+        border: Border.all(color: colors.border),
       ),
       child: Column(
         children: [
@@ -181,7 +183,7 @@ class _ChapterCard extends ConsumerWidget {
                         Text(
                           '${chapter.concepts.length} concepts · ${chapter.boardWeightMarks} marks',
                           style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: AppColors.inkFaint,
+                                color: colors.inkFaint,
                                 fontSize: 12,
                               ),
                         ),
@@ -191,7 +193,7 @@ class _ChapterCard extends ConsumerWidget {
                   AnimatedRotation(
                     turns: expanded ? 0.5 : 0,
                     duration: const Duration(milliseconds: 200),
-                    child: const Icon(Icons.keyboard_arrow_down_rounded, color: AppColors.inkFaint),
+                    child: Icon(Icons.keyboard_arrow_down_rounded, color: colors.inkFaint),
                   ),
                 ],
               ),
@@ -232,16 +234,17 @@ class _ConceptRow extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final colors = context.colors;
     final mastery = ref.watch(studentProvider).mastery[concept.id];
     final state = mastery?.state ?? MasteryState.notStarted;
     final percent = mastery?.masteryPercent ?? 0;
 
     final (color, lightColor, label) = switch (state) {
-      MasteryState.mastered => (AppColors.mastered, AppColors.masteredLight, 'Mastered'),
-      MasteryState.practising => (AppColors.learning, AppColors.learningLight, 'Practising'),
-      MasteryState.learning => (AppColors.weak, AppColors.weakLight, 'Learning'),
-      MasteryState.fading => (AppColors.learning, AppColors.learningLight, 'Fading'),
-      MasteryState.notStarted => (AppColors.notStarted, AppColors.notStartedLight, 'Not started'),
+      MasteryState.mastered => (colors.mastered, colors.masteredLight, 'Mastered'),
+      MasteryState.practising => (colors.learning, colors.learningLight, 'Practising'),
+      MasteryState.learning => (colors.weak, colors.weakLight, 'Learning'),
+      MasteryState.fading => (colors.learning, colors.learningLight, 'Fading'),
+      MasteryState.notStarted => (colors.notStarted, colors.notStartedLight, 'Not started'),
     };
 
     final hasQuestions = Content.forConcept(concept.id).isNotEmpty;
@@ -250,7 +253,7 @@ class _ConceptRow extends ConsumerWidget {
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
       decoration: BoxDecoration(
-        color: AppColors.background,
+        color: colors.background,
         borderRadius: BorderRadius.circular(AppTheme.radiusMd),
       ),
       child: Row(
@@ -272,7 +275,7 @@ class _ConceptRow extends ConsumerWidget {
                     ),
                     if (percent > 0) ...[
                       const SizedBox(width: 6),
-                      Text('${percent.round()}%', style: const TextStyle(color: AppColors.inkFaint, fontSize: 11, fontWeight: FontWeight.w700)),
+                      Text('${percent.round()}%', style: TextStyle(color: colors.inkFaint, fontSize: 11, fontWeight: FontWeight.w700)),
                     ],
                   ],
                 ),

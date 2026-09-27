@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:study_gym/core/theme/app_theme.dart';
 import 'package:study_gym/data/content.dart';
 import 'package:study_gym/data/content_repository.dart';
 import 'package:study_gym/data/mission_state.dart';
@@ -57,7 +58,7 @@ void main() {
         overrides: [
           levelProgressProvider.overrideWith(LevelProgressNotifier.new),
         ],
-        child: const MaterialApp(home: MissionScreen(chapterId: _chapterId)),
+        child: MaterialApp(theme: AppTheme.light, home: const MissionScreen(chapterId: _chapterId)),
       ),
     );
     await tester.pumpAndSettle();
@@ -90,7 +91,7 @@ void main() {
     await tester.pumpWidget(
       UncontrolledProviderScope(
         container: container,
-        child: const MaterialApp(home: MissionScreen(chapterId: _chapterId)),
+        child: MaterialApp(theme: AppTheme.light, home: const MissionScreen(chapterId: _chapterId)),
       ),
     );
     await tester.pumpAndSettle();

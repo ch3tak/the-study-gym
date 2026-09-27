@@ -110,17 +110,18 @@ class _MissionNode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final Color fill;
     final Widget icon;
     if (completed) {
-      fill = AppColors.mastered;
-      icon = const Icon(Icons.check_rounded, color: Colors.white);
+      fill = colors.mastered;
+      icon = Icon(Icons.check_rounded, color: colors.background);
     } else if (unlocked) {
-      fill = AppColors.brand;
-      icon = Text('${level.level}', style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w800));
+      fill = colors.brand;
+      icon = Text('${level.level}', style: TextStyle(color: colors.accentInk, fontWeight: FontWeight.w800));
     } else {
-      fill = AppColors.notStarted;
-      icon = const Icon(Icons.lock_rounded, color: Colors.white, size: 18);
+      fill = colors.notStarted;
+      icon = Icon(Icons.lock_rounded, color: colors.background, size: 18);
     }
 
     return Padding(

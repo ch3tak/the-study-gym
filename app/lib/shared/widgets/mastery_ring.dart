@@ -24,17 +24,18 @@ class MasteryRing extends StatelessWidget {
   final Color? trackColor;
   final bool animate;
 
-  Color _colorFor(double p) {
-    if (p >= 0.8) return AppColors.mastered;
-    if (p >= 0.5) return AppColors.learning;
-    if (p > 0) return AppColors.weak;
-    return AppColors.notStarted;
+  Color _colorFor(AppColors colors, double p) {
+    if (p >= 0.8) return colors.mastered;
+    if (p >= 0.5) return colors.learning;
+    if (p > 0) return colors.weak;
+    return colors.notStarted;
   }
 
   @override
   Widget build(BuildContext context) {
+    final colors = context.colors;
     final target = progress.clamp(0.0, 1.0);
-    final color = _colorFor(target);
+    final color = _colorFor(colors, target);
 
     final ring = TweenAnimationBuilder<double>(
       tween: Tween(begin: 0, end: target),
@@ -46,7 +47,7 @@ class MasteryRing extends StatelessWidget {
           painter: _RingPainter(
             progress: value,
             color: color,
-            trackColor: trackColor ?? AppColors.border,
+            trackColor: trackColor ?? colors.border,
             strokeWidth: strokeWidth,
           ),
         );

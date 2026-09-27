@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:study_gym/core/theme/app_theme.dart';
 import 'package:study_gym/data/models.dart';
 import 'package:study_gym/features/workout/question_card.dart';
 
@@ -39,6 +40,7 @@ void main() {
     );
 
     await tester.pumpWidget(MaterialApp(
+      theme: AppTheme.light,
       home: Scaffold(
         body: QuestionCard(
           question: question,
