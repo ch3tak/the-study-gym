@@ -38,7 +38,13 @@ def _sql_array(values: list[str]) -> str:
 
 
 def _jsonb(value) -> str:
-    return f"'{json.dumps(value)}'::jsonb"
+    # Dollar-quoted, not single-quoted: the JSON body can contain LaTeX
+    # backslash sequences (e.g. \text{cm}^2), and a plain '...' literal
+    # requires those backslashes to be escaped for the SQL layer on top of
+    # JSON's own escaping — dollar-quoting sidesteps that entirely, since
+    # Postgres treats everything between $$ as fully literal.
+    encoded = json.dumps(value)
+    return f"$${encoded}$$::jsonb"
 
 
 def _load_yaml(path: Path) -> dict:
