@@ -7,7 +7,9 @@ import '../../data/app_state.dart';
 import '../../data/content.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/mastery_ring.dart';
+import '../../shared/widgets/chunky_button.dart';
 import '../workout/workout_screen.dart';
+import '../mission/mission_screen.dart';
 
 /// S8. Skill Map tab — docs/PLAN.md §3: chapters with a mastery ring,
 /// expandable concept list with status chips, "Practice" CTA. Subject
@@ -195,6 +197,16 @@ class _ChapterCard extends ConsumerWidget {
               ),
             ),
           ),
+          if (Content.forChapter(chapter.id).any((q) => q.level != null))
+            Padding(
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              child: ChunkyButton(
+                label: 'Start Mission',
+                onPressed: () => Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => MissionScreen(chapterId: chapter.id)),
+                ),
+              ),
+            ),
           AnimatedCrossFade(
             firstChild: const SizedBox(width: double.infinity),
             secondChild: Padding(
