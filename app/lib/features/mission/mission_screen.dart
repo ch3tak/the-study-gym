@@ -60,7 +60,12 @@ class MissionScreen extends ConsumerWidget {
     final level = levels[i];
     final showStageHeader = i == 0 || levels[i - 1].stage != level.stage;
     final completed = progress.isCompleted(chapterId, level.level!);
-    final unlocked = progress.isUnlocked(chapterId, level.level!);
+    // Positional unlock: the predecessor is whichever level precedes this
+    // one in the loaded (live-only, possibly gapped) list, not `level - 1`.
+    final unlocked = progress.isUnlocked(
+      chapterId,
+      previousLevelInList: i == 0 ? null : levels[i - 1].level,
+    );
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

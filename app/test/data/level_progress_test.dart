@@ -2,47 +2,62 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:study_gym/data/mission_state.dart';
 
 void main() {
-  test('level 1 is always unlocked, even with no progress at all', () {
+  const ch = 'surface_area_volume';
+
+  test('the first loaded level (no predecessor) is always unlocked, even with no progress', () {
     const state = LevelProgressState(completedLevels: {});
-    expect(state.isUnlocked('surface_area_volume', 1), isTrue);
-    expect(state.isUnlocked('surface_area_volume', 2), isFalse);
+    expect(state.isUnlocked(ch, previousLevelInList: null), isTrue);
+    expect(state.isUnlocked(ch, previousLevelInList: 1), isFalse);
   });
 
-  test('level N+1 is unlocked iff level N is complete', () {
+  test('a level is unlocked iff its predecessor in the list is complete', () {
     const state = LevelProgressState(
       completedLevels: {
-        'surface_area_volume': {1, 2, 3},
+        ch: {1, 2, 3},
       },
     );
-    expect(state.isUnlocked('surface_area_volume', 4), isTrue);
-    expect(state.isUnlocked('surface_area_volume', 5), isFalse);
+    expect(state.isUnlocked(ch, previousLevelInList: 3), isTrue);
+    expect(state.isUnlocked(ch, previousLevelInList: 4), isFalse);
   });
 
   test('completion is not assumed contiguous — level 10 complete does not unlock level 3', () {
     const state = LevelProgressState(
       completedLevels: {
-        'surface_area_volume': {10},
+        ch: {10},
       },
     );
-    expect(state.isUnlocked('surface_area_volume', 3), isFalse);
-    expect(state.isUnlocked('surface_area_volume', 11), isTrue);
+    // Level 3's predecessor (level 2) is not complete.
+    expect(state.isUnlocked(ch, previousLevelInList: 2), isFalse);
+    // Level 11's predecessor (level 10) is complete.
+    expect(state.isUnlocked(ch, previousLevelInList: 10), isTrue);
   });
 
-  test('a chapter with no progress rows unlocks only level 1', () {
+  test('gapped list: predecessor is the previous LOADED level, not level - 1', () {
+    // Loaded levels {2, 3, 5}: level 5's predecessor is 3 — level 4 never
+    // loaded, so it must not be required.
+    const state = LevelProgressState(
+      completedLevels: {
+        ch: {2, 3},
+      },
+    );
+    expect(state.isUnlocked(ch, previousLevelInList: 3), isTrue);
+  });
+
+  test('a chapter with no progress rows unlocks only the first loaded level', () {
     const state = LevelProgressState(completedLevels: {});
-    expect(state.isUnlocked('any_chapter', 1), isTrue);
-    for (var lvl = 2; lvl <= 62; lvl++) {
-      expect(state.isUnlocked('any_chapter', lvl), isFalse);
+    expect(state.isUnlocked('any_chapter', previousLevelInList: null), isTrue);
+    for (var prev = 1; prev < 62; prev++) {
+      expect(state.isUnlocked('any_chapter', previousLevelInList: prev), isFalse);
     }
   });
 
   test('isCompleted reflects completedLevels', () {
     const state = LevelProgressState(
       completedLevels: {
-        'surface_area_volume': {1, 2},
+        ch: {1, 2},
       },
     );
-    expect(state.isCompleted('surface_area_volume', 1), isTrue);
-    expect(state.isCompleted('surface_area_volume', 3), isFalse);
+    expect(state.isCompleted(ch, 1), isTrue);
+    expect(state.isCompleted(ch, 3), isFalse);
   });
 }

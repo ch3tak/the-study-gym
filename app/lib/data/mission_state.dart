@@ -10,12 +10,23 @@ class LevelProgressState {
   bool isCompleted(String chapterId, int level) =>
       completedLevels[chapterId]?.contains(level) ?? false;
 
-  /// Level 1 is always unlocked. Level N (N > 1) is unlocked iff level N-1
-  /// is in the completed set — completion is never assumed contiguous, so a
-  /// completed level 10 with no level 3 row does not unlock level 3.
-  bool isUnlocked(String chapterId, int level) {
-    if (level <= 1) return true;
-    return completedLevels[chapterId]?.contains(level - 1) ?? false;
+  /// Whether a level is playable, given the level that comes immediately
+  /// before it in the list of levels the app actually loaded for [chapterId].
+  ///
+  /// Unlocking is positional, not arithmetic: the loaded list can have gaps
+  /// (only `status = 'live'` questions reach the client, so an unverified
+  /// level 1 or level 4 is simply absent). The first loaded level
+  /// ([previousLevelInList] == null) is always unlocked; every other level
+  /// is unlocked iff its predecessor *in that list* is in the completed set.
+  /// Completion is never assumed contiguous — a completed level 10 does not
+  /// unlock anything except the level that directly follows 10 in the list.
+  ///
+  /// This class deliberately has no view of what content loaded, so the
+  /// caller (MissionScreen, which owns the sorted list) supplies the
+  /// predecessor.
+  bool isUnlocked(String chapterId, {required int? previousLevelInList}) {
+    if (previousLevelInList == null) return true;
+    return isCompleted(chapterId, previousLevelInList);
   }
 
   LevelProgressState copyWith({Map<String, Set<int>>? completedLevels}) {
