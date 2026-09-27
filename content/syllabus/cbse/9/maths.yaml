@@ -1119,6 +1119,9 @@ chapters:
           - id: c9.sav.cub.forgets_2
             description: "Leaves out the factor 2 in the surface area"
             detect: "answer = correct/2"
+          - id: c9.sav.units.area_as_volume
+            description: "Reports an answer in the wrong unit type (e.g. cm² for a volume, or vice versa)"
+            detect: "distractor"
       - id: c9.sav.cylinder
         name: Right circular cylinders
         description: "Curved surface 2πrh, total surface 2πr(r + h), volume πr²h."
@@ -1177,6 +1180,12 @@ chapters:
           - id: c9.sav.units.m3_cm3
             description: "Converts m³ to cm³ by multiplying by 100"
             detect: "answer off by 10^4"
+          - id: c9.sav.combo.wrong_solid_id
+            description: "Misidentifies which solid(s) a composite or real-world object decomposes into (e.g. treats a tent as a cylinder instead of cylinder+cone)"
+            detect: "distractor"
+          - id: c9.sav.combo.double_counts_shared_face
+            description: "In a composite solid, includes the internal shared face in the total surface area instead of excluding it"
+            detect: "distractor"
 
   # ---------------------------------------------------------------------------
   - id: statistics

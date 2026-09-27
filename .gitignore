@@ -30,3 +30,6 @@ backend/supabase/.branches/
 .DS_Store
 Thumbs.db
 .idea/
+
+# Claude Code worktrees
+.claude/

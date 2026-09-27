@@ -11,7 +11,7 @@ void main() {
       final notifier = container.read(studentProvider.notifier);
       const conceptId = 'c9.seq.ap_nth_term';
 
-      notifier.recordAttempt(conceptId: conceptId, correct: true);
+      notifier.recordAttempt(questionId: 'q_ap_nth_1', conceptId: conceptId, correct: true);
 
       final mastery = container.read(studentProvider).mastery[conceptId]!;
       expect(mastery.masteryPercent, greaterThan(0));
@@ -25,7 +25,7 @@ void main() {
       final notifier = container.read(studentProvider.notifier);
       const conceptId = 'c9.seq.ap_nth_term';
 
-      notifier.recordAttempt(conceptId: conceptId, correct: false);
+      notifier.recordAttempt(questionId: 'q_ap_nth_1', conceptId: conceptId, correct: false);
 
       final mastery = container.read(studentProvider).mastery[conceptId]!;
       expect(mastery.masteryPercent, 0);

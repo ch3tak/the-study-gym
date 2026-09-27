@@ -7,9 +7,10 @@ import '../../shared/widgets/chunky_button.dart';
 
 /// S1. Welcome — docs/PLAN.md §3.
 ///
-/// There is no separate diagnostic screen anymore: it added a whole extra
-/// flow just to ask questions we can infer from normal practice instead.
-/// Every path from here lands straight on the main dashboard (AppShell) and
+/// There is no separate diagnostic screen (deliberately dropped — see
+/// docs/PLAN.md's "Alpha scope" decision log): it added a whole extra flow
+/// just to ask questions we can infer from normal practice instead. Every
+/// path from here lands straight on the main dashboard (AppShell) and
 /// mastery starts at its seeded baseline, filling in as the student works
 /// through real workouts.
 class WelcomeScreen extends StatelessWidget {

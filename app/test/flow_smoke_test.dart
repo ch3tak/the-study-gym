@@ -4,14 +4,21 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'package:study_gym/main.dart';
 
+import 'test_content.dart';
+
 /// End-to-end smoke test of the POC's golden path:
 /// Welcome -> Today -> Workout -> complete.
-/// There is no Quick Setup step and no diagnostic anymore: every path from
-/// Welcome lands straight on the main dashboard, and mastery fills in as the
-/// student works through real workouts instead of a separate up-front quiz.
-/// This is the same check the `run` skill calls for: drive the app to where
-/// a user would actually see something, on every screen in scope.
+/// There is no Quick Setup step and no diagnostic (deliberately dropped —
+/// see welcome_screen.dart): every path from Welcome lands straight on the
+/// main dashboard, and mastery fills in as the student works through real
+/// workouts instead of a separate up-front quiz. This is the same check the
+/// `run` skill calls for: drive the app to where a user would actually see
+/// something, on every screen in scope.
 void main() {
+  setUp(() {
+    StudyGymApp.contentLoader = fakeContentLoader;
+  });
+
   testWidgets('welcome -> today -> workout flow renders without exceptions', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: StudyGymApp()));
     await tester.pumpAndSettle();

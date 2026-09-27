@@ -128,6 +128,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
     // a retry is practice, not a do-over of the record.
     if (isFirstAttempt) {
       ref.read(studentProvider.notifier).recordAttempt(
+            questionId: item.question.id,
             conceptId: item.question.conceptId,
             correct: correct,
             hintsUsed: item.hintsRevealed,
@@ -392,28 +393,31 @@ class _FeedbackPanel extends StatelessWidget {
             ),
           ],
           const SizedBox(height: 10),
-          ExpansionTile(
-            tilePadding: EdgeInsets.zero,
-            title: Text(
-              'Show solution',
-              style: TextStyle(color: darkColor, fontWeight: FontWeight.w800, fontSize: 13),
-            ),
-            iconColor: darkColor,
-            collapsedIconColor: darkColor,
-            children: [
-              Align(
-                alignment: Alignment.centerLeft,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: question.solutionSteps
-                      .map((s) => Padding(
-                            padding: const EdgeInsets.only(bottom: 6),
-                            child: Text('• $s', style: TextStyle(color: darkColor)),
-                          ))
-                      .toList(),
-                ),
+          Material(
+            color: Colors.transparent,
+            child: ExpansionTile(
+              tilePadding: EdgeInsets.zero,
+              title: Text(
+                'Show solution',
+                style: TextStyle(color: darkColor, fontWeight: FontWeight.w800, fontSize: 13),
               ),
-            ],
+              iconColor: darkColor,
+              collapsedIconColor: darkColor,
+              children: [
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: question.solutionSteps
+                        .map((s) => Padding(
+                              padding: const EdgeInsets.only(bottom: 6),
+                              child: Text('• $s', style: TextStyle(color: darkColor)),
+                            ))
+                        .toList(),
+                  ),
+                ),
+              ],
+            ),
           ),
         ],
       ),

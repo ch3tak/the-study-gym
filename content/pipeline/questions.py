@@ -23,10 +23,14 @@ MAX_CASE_STEM_CHARS = 1500
 NEAR_DUPLICATE_RATIO = 0.95
 
 _COMMON_REQUIRED = {"id", "concepts", "difficulty", "type", "marks", "stem", "solution_steps"}
-_COMMON_OPTIONAL = {"cbse_section", "figure", "hints", "verification", "review", "quality", "status"}
+_COMMON_OPTIONAL = {
+    "cbse_section", "figure", "hints", "verification", "review", "quality", "status",
+    "level", "stage", "purpose", "why_after_previous", "prepares_for",
+}
 _PART_REQUIRED = {"type", "marks", "stem"}
 _PART_OPTIONAL = {"id", "concepts", "difficulty", "hints", "solution_steps", "verification", "figure"}
 _VERIFICATION_KEYS = {"sympy", "option_values", "tolerance", "status", "note"}
+STAGES = {"FOUNDATION", "GUIDED_PRACTICE", "SKILL_BUILDING", "APPLICATION", "MASTERY"}
 
 
 def validate_question(q: dict, syl: Syllabus, issues: Issues, *, where: str,
@@ -70,6 +74,12 @@ def validate_question(q: dict, syl: Syllabus, issues: Issues, *, where: str,
         issues.error(where, f"cbse_section: must be one of {sorted(SECTIONS)}")
     if "status" in q and q["status"] not in STATUSES:
         issues.error(where, f"status: must be one of {sorted(STATUSES)}")
+    if "level" in q and (not isinstance(q["level"], int) or q["level"] < 1):
+        issues.error(where, "level: must be a positive integer")
+    if "stage" in q and q["stage"] not in STAGES:
+        issues.error(where, f"stage: must be one of {sorted(STAGES)}")
+    if "purpose" in q and (not isinstance(q["purpose"], list) or not q["purpose"]):
+        issues.error(where, "purpose: must be a non-empty list of tags")
 
     ctx = Context(where=where, issues=issues, syllabus=syl, concepts=list(concepts))
     stem = q.get("stem")
@@ -142,6 +152,18 @@ def validate_bank(questions: list[tuple[str, dict]], syl: Syllabus, issues: Issu
                 issues.warn(qwhere, f"near-duplicate of {other_id}")
                 break
         by_concept.setdefault(primary, []).append((qid, key))
+
+    levels = [(where, q["level"]) for where, q in questions if isinstance(q, dict) and "level" in q]
+    if levels:
+        seen_levels: dict[int, str] = {}
+        for where, level in levels:
+            if level in seen_levels:
+                issues.error(where, f"level {level} duplicated (also used by {seen_levels[level]})")
+            seen_levels[level] = where
+        expected = set(range(1, max(seen_levels) + 1))
+        missing = sorted(expected - set(seen_levels))
+        if missing:
+            issues.warn(questions[0][0], f"level sequence has gaps: missing {missing}")
 
 
 def _normalise(q: dict) -> str:
