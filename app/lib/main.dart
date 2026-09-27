@@ -7,6 +7,8 @@ import 'core/theme/app_theme.dart';
 import 'data/app_state.dart';
 import 'data/content.dart';
 import 'data/content_repository.dart';
+import 'data/level_progress_repository.dart';
+import 'data/mission_state.dart';
 import 'data/student_repository.dart';
 import 'features/onboarding/welcome_screen.dart';
 
@@ -35,6 +37,7 @@ Future<void> main() async {
   }
 
   StudentNotifier.repositoryOverride = StudentRepository(Supabase.instance.client);
+  LevelProgressNotifier.repositoryOverride = LevelProgressRepository(Supabase.instance.client);
   StudyGymApp.contentLoader = () => ContentRepository(Supabase.instance.client).fetchAll();
 
   runApp(const ProviderScope(child: StudyGymApp()));

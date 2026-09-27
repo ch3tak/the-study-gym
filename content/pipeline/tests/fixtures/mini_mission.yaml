@@ -1,0 +1,37 @@
+questions:
+  - id: q_mini_l001
+    concepts: [c9.sav.cuboid_cube]
+    difficulty: 1
+    type: mcq
+    marks: 1
+    level: 1
+    stage: FOUNDATION
+    stem: "Which edge is the breadth?"
+    options: ["A", "B", "C", "D"]
+    answer: 0
+    hints: ["hint one"]
+    solution_steps: ["step one"]
+
+  - id: q_mini_l002
+    concepts: [c9.sav.cuboid_cube]
+    difficulty: 2
+    type: case_based
+    marks: 2
+    level: 2
+    stage: FOUNDATION
+    stem: "A cube has side 6 cm. Answer both parts."
+    parts:
+      - type: numeric
+        marks: 1
+        stem: "Find the volume."
+        answers: ["216"]
+        unit: "cm^3"
+        solution_steps: ["Volume = 216 cm^3"]
+      - type: numeric
+        marks: 1
+        stem: "Find the surface area."
+        answers: ["216"]
+        unit: "cm^2"
+        solution_steps: ["TSA = 216 cm^2"]
+        verification:
+          sympy: "6*6**2"
