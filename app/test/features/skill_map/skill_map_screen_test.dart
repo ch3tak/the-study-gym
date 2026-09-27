@@ -58,6 +58,22 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Start Mission'), findsOneWidget);
+    // Verify "Start Mission" button appears under the mission chapter (surface_area_volume)
+    expect(
+      find.descendant(
+        of: find.widgetWithText(Container, 'Mensuration: Surface Area and Volume'),
+        matching: find.text('Start Mission'),
+      ),
+      findsOneWidget,
+    );
+
+    // Verify "Start Mission" button does NOT appear under the non-mission chapter (sequences_progressions)
+    expect(
+      find.descendant(
+        of: find.widgetWithText(Container, 'Sequences and Progressions'),
+        matching: find.text('Start Mission'),
+      ),
+      findsNothing,
+    );
   });
 }
