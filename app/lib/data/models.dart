@@ -63,6 +63,7 @@ class Question {
     this.options = const [],
     this.correctIndex,
     this.numericAnswer,
+    this.tolerance,
     this.unit,
     this.assertion,
     this.reason,
@@ -89,6 +90,10 @@ class Question {
 
   // numeric
   final String? numericAnswer;
+
+  /// Accepted absolute error for a numeric answer (e.g. `0.1` accepts
+  /// 487.6–487.77 for an answer of 487.67). Null means exact match.
+  final double? tolerance;
   final String? unit;
 
   // assertion_reason

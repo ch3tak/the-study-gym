@@ -74,4 +74,63 @@ void main() {
     expect(question.stage, isNull);
     expect(question.parts, isEmpty);
   });
+
+  test('tolerance parses onto top-level numeric questions and case_based parts', () {
+    final repo = ContentRepository.forTesting();
+    final numeric = repo.questionFromRowForTesting(
+      id: 'q_tol',
+      conceptId: 'c9.sav.cylinder',
+      type: 'numeric',
+      difficulty: 3,
+      marks: 2,
+      body: {'stem': 's', 'numericAnswer': '487.67', 'tolerance': 0.1, 'solutionSteps': <String>[]},
+    );
+    expect(numeric.tolerance, 0.1);
+
+    final noTol = repo.questionFromRowForTesting(
+      id: 'q_exact',
+      conceptId: 'c9.sav.cylinder',
+      type: 'numeric',
+      difficulty: 1,
+      marks: 1,
+      body: {'stem': 's', 'numericAnswer': '216', 'solutionSteps': <String>[]},
+    );
+    expect(noTol.tolerance, isNull);
+
+    final caseBased = repo.questionFromRowForTesting(
+      id: 'q_case',
+      conceptId: 'c9.sav.cylinder',
+      type: 'case_based',
+      difficulty: 3,
+      marks: 2,
+      body: {
+        'stem': 's',
+        'parts': [
+          {'type': 'numeric', 'marks': 2, 'stem': 'p', 'numericAnswer': '309.37', 'tolerance': 1},
+        ],
+      },
+    );
+    // An integer JSON tolerance still parses as a double.
+    expect(caseBased.parts.single.tolerance, 1.0);
+  });
+
+  test('a case_based row with empty or missing parts is rejected, not parsed as 0-part', () {
+    final repo = ContentRepository.forTesting();
+    for (final body in [
+      {'stem': 's', 'parts': <Object>[]},
+      {'stem': 's'},
+    ]) {
+      expect(
+        () => repo.questionFromRowForTesting(
+          id: 'q_bad',
+          conceptId: 'c9.sav.cylinder',
+          type: 'case_based',
+          difficulty: 2,
+          marks: 2,
+          body: body,
+        ),
+        throwsFormatException,
+      );
+    }
+  });
 }

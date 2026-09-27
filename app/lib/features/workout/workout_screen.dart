@@ -8,6 +8,7 @@ import '../../data/content.dart';
 import '../../data/mission_state.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/chunky_button.dart';
+import 'numeric_grading.dart';
 import 'question_card.dart';
 import 'workout_complete_screen.dart';
 
@@ -141,8 +142,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
       for (var i = 0; i < q.parts.length; i++) {
         final part = q.parts[i];
         if (part.type == QuestionType.numeric) {
-          final input = item.partNumericControllers[i]?.text.trim().replaceAll(' ', '') ?? '';
-          if (input != part.numericAnswer) return false;
+          if (!isNumericAnswerCorrect(part, item.partNumericControllers[i]?.text ?? '')) return false;
         } else {
           if (item.partSelections[i] != part.correctIndex) return false;
         }
@@ -150,8 +150,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
       return q.parts.isNotEmpty;
     }
     if (q.type == QuestionType.numeric) {
-      final input = item.numericController.text.trim().replaceAll(' ', '');
-      return input == q.numericAnswer;
+      return isNumericAnswerCorrect(q, item.numericController.text);
     }
     return item.selectedIndex == q.correctIndex;
   }
@@ -199,12 +198,21 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
     final singleLevel = widget.singleLevelQuestion;
     if (singleLevel != null) {
       final item = _items.first;
-      final chapter = Content.chapterOf(singleLevel.conceptId);
-      ref.read(levelProgressProvider.notifier).completeLevel(
-            chapterId: chapter.id,
-            level: singleLevel.level!,
-            score: (item.firstAttemptCorrect ?? false) ? 1.0 : 0.0,
-          );
+      // A level is passed only by a correct answer. The latest attempt
+      // counts for *progression* (so getting it right on the practice retry
+      // still passes the level), while the recorded score stays exam-style
+      // and reflects the first attempt only — a retry never rewrites the
+      // record, it just stops the student being stuck. A wrong answer pops
+      // back without completing, so the level stays open for another go and
+      // the next level stays locked.
+      if (item.wasCorrect ?? false) {
+        final chapter = Content.chapterOf(singleLevel.conceptId);
+        ref.read(levelProgressProvider.notifier).completeLevel(
+              chapterId: chapter.id,
+              level: singleLevel.level!,
+              score: (item.firstAttemptCorrect ?? false) ? 1.0 : 0.0,
+            );
+      }
       Navigator.of(context).pop();
       return;
     }
@@ -244,7 +252,10 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
     final item = _current;
     final canSubmit = switch (item.question.type) {
       QuestionType.numeric => item.numericController.text.trim().isNotEmpty,
-      QuestionType.caseBased => item.question.parts.asMap().entries.every((e) {
+      // `every` over an empty list is vacuously true, so a malformed
+      // case_based item with no parts must be explicitly non-submittable.
+      QuestionType.caseBased => item.question.parts.isNotEmpty &&
+          item.question.parts.asMap().entries.every((e) {
           final i = e.key;
           final part = e.value;
           if (part.type == QuestionType.numeric) {
@@ -421,6 +432,34 @@ class _FeedbackPanel extends StatelessWidget {
     return match.isNotEmpty ? match.first.explanation : null;
   }
 
+  List<Widget> _steps(List<String> steps, Color color) => steps
+      .map((s) => Padding(
+            padding: const EdgeInsets.only(bottom: 6),
+            child: Text('• $s', style: TextStyle(color: color)),
+          ))
+      .toList();
+
+  /// A case_based question's own hints/solutionSteps are empty — the real
+  /// worked solution lives on each part — so group each part's steps under
+  /// a "Part N" heading (matching `_CaseBasedParts`' labelling). A part
+  /// with no solution steps falls back to showing its hints.
+  List<Widget> _caseBasedSolution(Color color) {
+    final widgets = <Widget>[..._steps(question.solutionSteps, color)];
+    for (var i = 0; i < question.parts.length; i++) {
+      final part = question.parts[i];
+      final hasSteps = part.solutionSteps.isNotEmpty;
+      if (!hasSteps && part.hints.isEmpty) continue;
+      widgets.add(Padding(
+        padding: const EdgeInsets.only(top: 4, bottom: 4),
+        child: Text('Part ${i + 1}', style: TextStyle(color: color, fontWeight: FontWeight.w800, fontSize: 12)),
+      ));
+      widgets.addAll(hasSteps
+          ? _steps(part.solutionSteps, color)
+          : _steps(part.hints.map((h) => 'Hint: $h').toList(), color));
+    }
+    return widgets;
+  }
+
   @override
   Widget build(BuildContext context) {
     final color = correct ? AppColors.mastered : AppColors.weak;
@@ -483,12 +522,9 @@ class _FeedbackPanel extends StatelessWidget {
                   alignment: Alignment.centerLeft,
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
-                    children: question.solutionSteps
-                        .map((s) => Padding(
-                              padding: const EdgeInsets.only(bottom: 6),
-                              child: Text('• $s', style: TextStyle(color: darkColor)),
-                            ))
-                        .toList(),
+                    children: question.type == QuestionType.caseBased
+                        ? _caseBasedSolution(darkColor)
+                        : _steps(question.solutionSteps, darkColor),
                   ),
                 ),
               ],

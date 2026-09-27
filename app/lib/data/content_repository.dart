@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show visibleForTesting;
+import 'package:flutter/foundation.dart' show debugPrint, visibleForTesting;
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'models.dart';
@@ -87,17 +87,23 @@ class ContentRepository {
       final conceptIds = (row['concept_ids'] as List).cast<String>();
       if (!conceptIds.any(validConceptIds.contains)) continue;
       final body = row['body'] as Map<String, dynamic>;
-      questions.add(_questionFromRow(
-        id: row['id'] as String,
-        conceptId: conceptIds.first,
-        type: row['type'] as String,
-        difficulty: row['difficulty'] as int,
-        marks: (row['marks'] as num).round(),
-        body: body,
-        level: row['level'] as int?,
-        stage: row['stage'] as String?,
-        allConceptIds: conceptIds,
-      ));
+      try {
+        questions.add(_questionFromRow(
+          id: row['id'] as String,
+          conceptId: conceptIds.first,
+          type: row['type'] as String,
+          difficulty: row['difficulty'] as int,
+          marks: (row['marks'] as num).round(),
+          body: body,
+          level: row['level'] as int?,
+          stage: row['stage'] as String?,
+          allConceptIds: conceptIds,
+        ));
+      } on FormatException catch (e) {
+        // One malformed row (e.g. a case_based question with no parts) is
+        // skipped rather than failing the whole content load.
+        debugPrint('Skipping malformed question ${row['id']}: ${e.message}');
+      }
     }
 
     return ContentSnapshot(chapters: chapters, questions: questions);
@@ -172,6 +178,12 @@ class ContentRepository {
         allConceptIds: partConceptIds,
       ));
     }
+    // A case_based question with no parts would have nothing to answer and
+    // must never be able to "complete" vacuously — reject it here so
+    // fetchAll skips the row.
+    if (questionType == QuestionType.caseBased && parts.isEmpty) {
+      throw FormatException('case_based question $id has no parts');
+    }
 
     return Question(
       id: id,
@@ -183,6 +195,7 @@ class ContentRepository {
       options: optionsRaw.cast<String>(),
       correctIndex: body['correctIndex'] as int?,
       numericAnswer: body['numericAnswer'] as String?,
+      tolerance: (body['tolerance'] as num?)?.toDouble(),
       unit: body['unit'] as String?,
       assertion: body['assertion'] as String?,
       reason: body['reason'] as String?,
