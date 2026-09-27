@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'core/config/env.dart';
 import 'core/theme/app_theme.dart';
+import 'core/theme/theme_mode.dart';
 import 'data/app_state.dart';
 import 'data/content.dart';
 import 'data/content_repository.dart';
@@ -43,10 +44,12 @@ Future<void> main() async {
   TheoryProgressNotifier.repositoryOverride = TheoryProgressRepository(Supabase.instance.client);
   StudyGymApp.contentLoader = () => ContentRepository(Supabase.instance.client).fetchAll();
 
+  ThemeModeNotifier.initial = await ThemeModeNotifier.loadSaved();
+
   runApp(const ProviderScope(child: StudyGymApp()));
 }
 
-class StudyGymApp extends StatelessWidget {
+class StudyGymApp extends ConsumerWidget {
   const StudyGymApp({super.key});
 
   /// How `_StartupGate` fetches content. Set by `main()` to the real
@@ -57,13 +60,13 @@ class StudyGymApp extends StatelessWidget {
       () => throw StateError('StudyGymApp.contentLoader was not set before running the app.');
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return MaterialApp(
       title: 'Study Gym',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light,
       darkTheme: AppTheme.dark,
-      themeMode: ThemeMode.system,
+      themeMode: ref.watch(themeModeProvider),
       home: const _StartupGate(),
     );
   }
