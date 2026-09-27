@@ -1,0 +1,129 @@
+# Theory lessons for Surface Areas & Volumes (CBSE Class 9 Maths) — the
+# Theory-tab pilot. One lesson per concept, matching the chapter's 7
+# concepts in content/syllabus/cbse/9/maths.yaml. Seeded via
+# content/pipeline/seed_theory.py into backend/supabase/seed/005_....sql.
+
+lessons:
+  - id: t_c9_sav_cuboid_cube
+    concept_id: c9.sav.cuboid_cube
+    title: "Cuboids & Cubes"
+    body: >-
+      A cuboid is a box shape: two matching ends, four flat sides, every
+      corner a right angle. A cube is just a cuboid where all three
+      sides — length, breadth, height — are equal.
+    hook_kind: real_world
+    hook: >-
+      Every cardboard box starts as a flat sheet that gets folded up. To
+      know how big that sheet must be, packaging designers add up the
+      areas of the box's six faces — its total surface area.
+    try_it: >-
+      A shoebox is 30 cm long, 20 cm wide and 15 cm tall. Roughly how
+      much cardboard wraps around it?
+    sort_order: 1
+
+  - id: t_c9_sav_cylinder
+    concept_id: c9.sav.cylinder
+    title: "Right Circular Cylinders"
+    body: >-
+      A cylinder is two identical circles joined by a curved side, like
+      a tin can. "Curved surface" means just the tube part; "total
+      surface" adds the two circular ends.
+    hook_kind: real_world
+    hook: >-
+      Fizzy-drink cans are cylinders partly because a round wall spreads
+      the gas pressure evenly. A box-shaped can would bulge at its flat
+      sides and need thicker, heavier metal to stay in shape.
+    try_it: >-
+      A can is 10 cm tall with a 3.5 cm radius. Is more metal used for
+      the curved side or the two circular ends?
+    sort_order: 2
+
+  - id: t_c9_sav_cone
+    concept_id: c9.sav.cone
+    title: "Right Circular Cones"
+    body: >-
+      A cone comes to a point above a circular base. Its "slant height"
+      is the distance along the sloped surface from the tip to the edge
+      of the base — not the same as the straight-up height through the
+      middle.
+    hook_kind: real_world
+    hook: >-
+      A cone holds exactly one-third as much as a cylinder with the same
+      base and the same height. That's why a cone of ice cream holds less
+      than it looks — most of the space is near the wide top.
+    try_it: >-
+      An ice-cream cone stands 12 cm tall with a 2.5 cm radius. Which
+      distance — height or slant height — would you measure to know how
+      much wafer covers the outside?
+    sort_order: 3
+
+  - id: t_c9_sav_pyramid
+    concept_id: c9.sav.pyramid
+    title: "Pyramids"
+    body: >-
+      A pyramid has a flat base and triangular faces that meet at one
+      point (the apex). Its volume is one-third of the base area times
+      the height — always a third, whatever the base shape.
+    hook_kind: historical
+    hook: >-
+      An Egyptian scroll from about 1850 BCE, the Moscow Mathematical
+      Papyrus, correctly works out the volume of a pyramid with its top
+      cut off — one of the oldest volume calculations known. The first
+      proof of the one-third rule is credited to the Greek mathematician
+      Eudoxus, about 1,500 years later.
+    sort_order: 4
+
+  - id: t_c9_sav_sphere_hemisphere
+    concept_id: c9.sav.sphere_hemisphere
+    title: "Spheres & Hemispheres"
+    body: >-
+      A sphere is a perfectly round ball; a hemisphere is exactly half
+      of one, like a bowl. A hemisphere's total surface counts the
+      curved half plus the flat circular top — easy to forget the flat
+      part.
+    hook_kind: real_world
+    hook: >-
+      Soap bubbles are round because the soap film pulls itself as tight
+      as it can, and of all shapes holding the same amount of air, a
+      sphere has the smallest surface area.
+    try_it: >-
+      A bowl is half of a sphere with radius 7 cm. Does its total
+      surface area include the flat circular rim on top, or just the
+      curved inside?
+    sort_order: 5
+
+  - id: t_c9_sav_scaling
+    concept_id: c9.sav.scaling
+    title: "Changing Dimensions"
+    body: >-
+      Double every side of a shape and its surface area does not just
+      double — it becomes four times as much, because area scales by
+      the square of the size change. Volume becomes eight times as
+      much, scaling by the cube.
+    hook_kind: historical
+    hook: >-
+      In 1638 Galileo pointed out that an animal can't simply be scaled
+      up. Double its size and its weight (set by volume) grows 8 times,
+      but the strength of its bones (set by their cross-section area)
+      grows only 4 times. That's why big animals need much thicker bones.
+    try_it: >-
+      A cube's side is doubled. Its old surface area was 24 cm². What's
+      the new surface area?
+    sort_order: 6
+
+  - id: t_c9_sav_units
+    concept_id: c9.sav.units
+    title: "Units & Conversions"
+    body: >-
+      Area is measured in square units (cm²) and volume in cube units
+      (cm³) — they are never interchangeable. For volume, 1 litre
+      equals exactly 1000 cm³, which is the conversion used to move
+      between everyday measurements and geometry.
+    hook_kind: real_world
+    hook: >-
+      A 1-litre milk carton holds exactly as much as a hollow cube 10 cm
+      on each side, because 1 litre is defined as 1000 cm³ and
+      10 × 10 × 10 = 1000.
+    try_it: >-
+      A tank holds 5000 cm³ of water. How many litres is that?
+    sort_order: 7
