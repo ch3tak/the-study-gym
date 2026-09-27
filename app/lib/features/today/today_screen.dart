@@ -75,7 +75,11 @@ class TodayScreen extends ConsumerWidget {
   List<Concept> _pickWorkoutConcepts(StudentState student) {
     final entries = student.mastery.values.toList()
       ..sort((a, b) => a.masteryPercent.compareTo(b.masteryPercent));
-    final picked = entries.take(3).map((m) => Content.conceptById(m.conceptId)).toList();
+    final picked = entries
+        .map((m) => Content.conceptOrNull(m.conceptId))
+        .whereType<Concept>()
+        .take(3)
+        .toList();
     if (picked.isEmpty) {
       return Content.chapters.first.concepts.take(3).toList();
     }

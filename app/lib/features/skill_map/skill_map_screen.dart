@@ -12,8 +12,7 @@ import '../workout/workout_screen.dart';
 import '../mission/mission_screen.dart';
 
 /// S8. Skill Map tab — docs/PLAN.md §3: chapters with a mastery ring,
-/// expandable concept list with status chips, "Practice" CTA. Subject
-/// switcher pill row per §3.
+/// expandable concept list with status chips, "Practice" CTA.
 class SkillMapScreen extends ConsumerStatefulWidget {
   const SkillMapScreen({super.key});
 
@@ -22,12 +21,11 @@ class SkillMapScreen extends ConsumerStatefulWidget {
 }
 
 class _SkillMapScreenState extends ConsumerState<SkillMapScreen> {
-  Subject _subject = Subject.maths;
   String? _expandedChapterId;
 
   @override
   Widget build(BuildContext context) {
-    final chapters = Content.forSubject(_subject);
+    final chapters = Content.chapters;
 
     return Scaffold(
       body: SafeArea(
@@ -39,17 +37,6 @@ class _SkillMapScreenState extends ConsumerState<SkillMapScreen> {
                 children: [
                   Text('Skill Map', style: Theme.of(context).textTheme.headlineLarge),
                 ],
-              ),
-            ),
-            const SizedBox(height: AppTheme.space16),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: AppTheme.space20),
-              child: _SubjectSwitcher(
-                selected: _subject,
-                onChanged: (s) => setState(() {
-                  _subject = s;
-                  _expandedChapterId = null;
-                }),
               ),
             ),
             const SizedBox(height: AppTheme.space16),
@@ -77,61 +64,6 @@ class _SkillMapScreenState extends ConsumerState<SkillMapScreen> {
             ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class _SubjectSwitcher extends StatelessWidget {
-  const _SubjectSwitcher({required this.selected, required this.onChanged});
-  final Subject selected;
-  final ValueChanged<Subject> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return Container(
-      padding: const EdgeInsets.all(4),
-      decoration: BoxDecoration(
-        color: colors.notStartedLight,
-        borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-      ),
-      child: Row(
-        children: Subject.values.map((s) {
-          final isSelected = s == selected;
-          final accent = s == Subject.maths ? colors.mathsAccent : colors.scienceAccent;
-          return Expanded(
-            child: GestureDetector(
-              onTap: () => onChanged(s),
-              child: AnimatedContainer(
-                duration: const Duration(milliseconds: 150),
-                padding: const EdgeInsets.symmetric(vertical: 10),
-                decoration: BoxDecoration(
-                  color: isSelected ? accent : Colors.transparent,
-                  borderRadius: BorderRadius.circular(AppTheme.radiusPill),
-                ),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    Icon(
-                      s == Subject.maths ? Icons.calculate_rounded : Icons.science_rounded,
-                      size: 18,
-                      color: isSelected ? colors.accentInk : colors.inkFaint,
-                    ),
-                    const SizedBox(width: 6),
-                    Text(
-                      s.label,
-                      style: TextStyle(
-                        color: isSelected ? colors.accentInk : colors.inkFaint,
-                        fontWeight: FontWeight.w800,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        }).toList(),
       ),
     );
   }

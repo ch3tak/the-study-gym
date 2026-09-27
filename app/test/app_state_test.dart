@@ -2,6 +2,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:study_gym/data/app_state.dart';
+import 'package:study_gym/data/content.dart';
+import 'package:study_gym/data/content_repository.dart';
+import 'package:study_gym/data/models.dart';
 
 void main() {
   group('StudentNotifier.recordAttempt', () {
@@ -64,5 +67,13 @@ void main() {
       notifier.togglePro();
       expect(container.read(studentProvider).isPro, isFalse);
     });
+  });
+
+  test('weakConcepts skips mastery rows for concepts that are no longer loaded', () {
+    Content.load(const ContentSnapshot(chapters: [], questions: []));
+    final state = StudentState(mastery: {
+      'c9.motion.speed': ConceptMastery(conceptId: 'c9.motion.speed', masteryPercent: 10, attempts: 2),
+    });
+    expect(state.weakConcepts, isEmpty);
   });
 }

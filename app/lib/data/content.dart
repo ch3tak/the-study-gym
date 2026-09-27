@@ -2,7 +2,7 @@ import 'content_repository.dart';
 import 'models.dart';
 
 /// Curriculum content cache. Historically this held hardcoded CBSE Class 9
-/// Maths+Science data; it now holds a snapshot fetched from Supabase once at
+/// Maths data; it now holds a snapshot fetched from Supabase once at
 /// startup (see `content_repository.dart` and `main.dart`'s loading gate),
 /// but every other screen keeps reading `Content.chapters` etc. synchronously
 /// so this phase's backend switch didn't require rewriting the UI screens.
@@ -36,7 +36,14 @@ class Content {
   static Concept conceptById(String id) =>
       chapters.expand((c) => c.concepts).firstWhere((c) => c.id == id);
 
-  static List<Chapter> forSubject(Subject s) => chapters.where((c) => c.subject == s).toList();
+  /// Null when [id] isn't in the loaded content — e.g. an old mastery row
+  /// for a concept whose subject is no longer served.
+  static Concept? conceptOrNull(String id) {
+    for (final c in chapters.expand((c) => c.concepts)) {
+      if (c.id == id) return c;
+    }
+    return null;
+  }
 
   static List<Question> forConcept(String conceptId) =>
       questions.where((q) => q.conceptId == conceptId).toList();

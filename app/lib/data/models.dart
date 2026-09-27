@@ -4,13 +4,6 @@
 /// porting this to Supabase-backed data later is a rename, not a redesign.
 library;
 
-enum Subject { maths, science }
-
-extension SubjectX on Subject {
-  String get label => this == Subject.maths ? 'Maths' : 'Science';
-  String get code => this == Subject.maths ? 'maths' : 'science';
-}
-
 enum MasteryState { notStarted, learning, practising, mastered, fading }
 
 enum QuestionType { mcq, numeric, assertionReason, caseBased, expression }
@@ -31,14 +24,12 @@ class Chapter {
   const Chapter({
     required this.id,
     required this.name,
-    required this.subject,
     required this.boardWeightMarks,
     required this.concepts,
   });
 
   final String id;
   final String name;
-  final Subject subject;
   final int boardWeightMarks;
   final List<Concept> concepts;
 }

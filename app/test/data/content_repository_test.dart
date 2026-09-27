@@ -3,6 +3,26 @@ import 'package:study_gym/data/content_repository.dart';
 import 'package:study_gym/data/models.dart';
 
 void main() {
+  Map<String, dynamic> chapterRow(String id, String subjectCode) => {
+        'id': id,
+        'name': id,
+        'board_weight': 6,
+        'sort_order': 1,
+        'subjects': {'class_id': 'cbse_9', 'code': subjectCode, 'status': 'live'},
+      };
+
+  test('a non-maths chapter row is dropped even if its subject is live', () {
+    final snapshot = ContentRepository.forTesting().buildSnapshot(
+      chapterRows: [chapterRow('surface_area_volume', 'maths'), chapterRow('motion', 'science')],
+      conceptRows: [
+        {'id': 'c9.sav.cuboid_cube', 'chapter_id': 'surface_area_volume', 'name': 'Cuboids'},
+        {'id': 'c9.motion.speed', 'chapter_id': 'motion', 'name': 'Speed'},
+      ],
+      questionRows: const [],
+    );
+    expect(snapshot.chapters.map((c) => c.id), ['surface_area_volume']);
+  });
+
   test('a case_based row round-trips into a Question with populated parts', () {
     final repo = ContentRepository.forTesting();
     final body = {

@@ -29,49 +29,20 @@ class ContentRepository {
   static const _classId = 'cbse_9';
 
   Future<ContentSnapshot> fetchAll() async {
-    // Only 'live' subjects load — Science is 'coming_soon' as of 27 Sep 2026
-    // (it hasn't had the same curriculum research pass Maths has; see
-    // docs/curriculum/class9_maths.md) so it's excluded here rather than
-    // shown with unreviewed placeholder content.
+    // Maths only, whatever a status flag says — the code filter is what
+    // keeps a non-maths subject out, not `status`.
     final chapterRows = await _client
         .from('chapters')
         .select('id, subject_id, name, board_weight, sort_order, subjects!inner(class_id, code, status)')
         .eq('subjects.class_id', _classId)
         .eq('subjects.status', 'live')
+        .eq('subjects.code', 'maths')
         .order('sort_order');
 
     final conceptRows = await _client
         .from('concepts')
         .select('id, chapter_id, name, sort_order')
         .order('sort_order');
-
-    final conceptsByChapter = <String, List<Concept>>{};
-    final validChapterIds = (chapterRows as List).map((r) => r['id'] as String).toSet();
-    for (final row in conceptRows as List) {
-      final chapterId = row['chapter_id'] as String;
-      conceptsByChapter.putIfAbsent(chapterId, () => []).add(Concept(
-            id: row['id'] as String,
-            name: row['name'] as String,
-            chapterId: chapterId,
-          ));
-    }
-    final validConceptIds = (conceptRows as List)
-        .where((r) => validChapterIds.contains(r['chapter_id']))
-        .map((r) => r['id'] as String)
-        .toSet();
-
-    final chapters = <Chapter>[];
-    for (final row in chapterRows) {
-      final subjectCode = (row['subjects'] as Map)['code'] as String;
-      final chapterId = row['id'] as String;
-      chapters.add(Chapter(
-        id: chapterId,
-        name: row['name'] as String,
-        subject: subjectCode == 'maths' ? Subject.maths : Subject.science,
-        boardWeightMarks: (row['board_weight'] as num).round(),
-        concepts: conceptsByChapter[chapterId] ?? const [],
-      ));
-    }
 
     // Filtered client-side against this class's concept ids rather than a
     // subject_id column, since a question can span concepts and the class
@@ -82,8 +53,52 @@ class ContentRepository {
         .select('id, concept_ids, difficulty, type, marks, body, level, stage')
         .eq('status', 'live');
 
+    return buildSnapshot(
+      chapterRows: chapterRows as List,
+      conceptRows: conceptRows as List,
+      questionRows: questionRows as List,
+    );
+  }
+
+  /// Turns raw rows into a snapshot. Pure (no network) so it's unit-tested
+  /// directly. Re-checks `subjects.code` client-side as well as in the query.
+  @visibleForTesting
+  ContentSnapshot buildSnapshot({
+    required List chapterRows,
+    required List conceptRows,
+    required List questionRows,
+  }) {
+    final mathsChapterRows =
+        chapterRows.where((r) => (r['subjects'] as Map)['code'] == 'maths').toList();
+    final validChapterIds = mathsChapterRows.map((r) => r['id'] as String).toSet();
+
+    final conceptsByChapter = <String, List<Concept>>{};
+    for (final row in conceptRows) {
+      final chapterId = row['chapter_id'] as String;
+      conceptsByChapter.putIfAbsent(chapterId, () => []).add(Concept(
+            id: row['id'] as String,
+            name: row['name'] as String,
+            chapterId: chapterId,
+          ));
+    }
+    final validConceptIds = conceptRows
+        .where((r) => validChapterIds.contains(r['chapter_id']))
+        .map((r) => r['id'] as String)
+        .toSet();
+
+    final chapters = <Chapter>[];
+    for (final row in mathsChapterRows) {
+      final chapterId = row['id'] as String;
+      chapters.add(Chapter(
+        id: chapterId,
+        name: row['name'] as String,
+        boardWeightMarks: (row['board_weight'] as num).round(),
+        concepts: conceptsByChapter[chapterId] ?? const [],
+      ));
+    }
+
     final questions = <Question>[];
-    for (final row in questionRows as List) {
+    for (final row in questionRows) {
       final conceptIds = (row['concept_ids'] as List).cast<String>();
       if (!conceptIds.any(validConceptIds.contains)) continue;
       final body = row['body'] as Map<String, dynamic>;

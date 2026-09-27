@@ -32,7 +32,6 @@ class AppColors extends ThemeExtension<AppColors> {
     required this.notStarted,
     required this.notStartedLight,
     required this.mathsAccent,
-    required this.scienceAccent,
     required this.streak,
     required this.xp,
   });
@@ -68,9 +67,8 @@ class AppColors extends ThemeExtension<AppColors> {
   final Color notStarted;
   final Color notStartedLight;
 
-  // Subject accents
+  // Subject accent
   final Color mathsAccent;
-  final Color scienceAccent;
 
   // Semantic
   final Color streak;
@@ -107,7 +105,6 @@ class AppColors extends ThemeExtension<AppColors> {
     notStarted: Color(0xFFB2A793),
     notStartedLight: Color(0xFFEFE7D8),
     mathsAccent: Color(0xFFB5541F),
-    scienceAccent: Color(0xFF3F6B7A),
     streak: Color(0xFFE07A1F),
     xp: Color(0xFFD1A017),
   );
@@ -137,7 +134,6 @@ class AppColors extends ThemeExtension<AppColors> {
     notStarted: Color(0xFF5A5850),
     notStartedLight: Color(0xFF242420),
     mathsAccent: Color(0xFFC8FF4D),
-    scienceAccent: Color(0xFF5EE7FF),
     streak: Color(0xFFFFB454),
     xp: Color(0xFFFFE066),
   );
@@ -168,7 +164,6 @@ class AppColors extends ThemeExtension<AppColors> {
     Color? notStarted,
     Color? notStartedLight,
     Color? mathsAccent,
-    Color? scienceAccent,
     Color? streak,
     Color? xp,
   }) {
@@ -197,7 +192,6 @@ class AppColors extends ThemeExtension<AppColors> {
       notStarted: notStarted ?? this.notStarted,
       notStartedLight: notStartedLight ?? this.notStartedLight,
       mathsAccent: mathsAccent ?? this.mathsAccent,
-      scienceAccent: scienceAccent ?? this.scienceAccent,
       streak: streak ?? this.streak,
       xp: xp ?? this.xp,
     );
@@ -232,7 +226,6 @@ class AppColors extends ThemeExtension<AppColors> {
       notStarted: c(notStarted, other.notStarted),
       notStartedLight: c(notStartedLight, other.notStartedLight),
       mathsAccent: c(mathsAccent, other.mathsAccent),
-      scienceAccent: c(scienceAccent, other.scienceAccent),
       streak: c(streak, other.streak),
       xp: c(xp, other.xp),
     );

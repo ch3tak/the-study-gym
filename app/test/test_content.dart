@@ -1,7 +1,7 @@
 import 'package:study_gym/data/content_repository.dart';
 import 'package:study_gym/data/models.dart';
 
-/// A small, in-memory Class 9 Maths+Science fixture, used by widget tests so
+/// A small, in-memory Class 9 Maths fixture, used by widget tests so
 /// they don't need a live Supabase fetch (see `StudyGymApp.contentLoader` in
 /// main.dart). This is not the full seed data from
 /// backend/supabase/seed/001_cbse_9_maths_science.sql — just enough for the
@@ -11,19 +11,17 @@ Future<ContentSnapshot> fakeContentLoader() async {
     Chapter(
       id: 'sequences_progressions',
       name: 'Sequences and Progressions',
-      subject: Subject.maths,
       boardWeightMarks: 6,
       concepts: [
         Concept(id: 'c9.seq.ap_nth_term', name: 'nth term of an AP', chapterId: 'sequences_progressions'),
       ],
     ),
     Chapter(
-      id: 'motion',
-      name: 'Motion',
-      subject: Subject.science,
-      boardWeightMarks: 7,
+      id: 'surface_area_volume',
+      name: 'Surface Areas and Volumes',
+      boardWeightMarks: 6,
       concepts: [
-        Concept(id: 'c9.motion.speed_velocity', name: 'Speed and velocity', chapterId: 'motion'),
+        Concept(id: 'c9.sav.cuboid_cube', name: 'Cuboids and cubes', chapterId: 'surface_area_volume'),
       ],
     ),
   ];
@@ -41,15 +39,15 @@ Future<ContentSnapshot> fakeContentLoader() async {
       solutionSteps: const ['aₙ = a + (n − 1)d', 'aₙ = 5 + (11)(3) = 38'],
     ),
     Question(
-      id: 'q_speed_1',
-      conceptId: 'c9.motion.speed_velocity',
+      id: 'q_cube_1',
+      conceptId: 'c9.sav.cuboid_cube',
       type: QuestionType.numeric,
       difficulty: 1,
       marks: 1,
-      stem: 'A car covers 150 km in 3 hours. Find its average speed.',
-      numericAnswer: '50',
-      unit: 'km/h',
-      solutionSteps: const ['Speed = 150 / 3 = 50 km/h'],
+      stem: 'A cube has side 6 cm. Find its volume.',
+      numericAnswer: '216',
+      unit: 'cm^3',
+      solutionSteps: const ['V = 6 × 6 × 6 = 216 cm³'],
     ),
   ];
 

@@ -14,14 +14,12 @@ void main() {
         Chapter(
           id: 'surface_area_volume',
           name: 'Mensuration: Surface Area and Volume',
-          subject: Subject.maths,
           boardWeightMarks: 6,
           concepts: [Concept(id: 'c9.sav.cuboid_cube', name: 'Cuboids and cubes', chapterId: 'surface_area_volume')],
         ),
         Chapter(
           id: 'sequences_progressions',
           name: 'Sequences and Progressions',
-          subject: Subject.maths,
           boardWeightMarks: 6,
           concepts: [Concept(id: 'c9.seq.ap_nth_term', name: 'nth term of an AP', chapterId: 'sequences_progressions')],
         ),

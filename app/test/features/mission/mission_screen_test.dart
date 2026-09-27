@@ -32,7 +32,6 @@ void _loadLevels(Iterable<int> levels) {
       Chapter(
         id: _chapterId,
         name: 'Mensuration: Surface Area and Volume',
-        subject: Subject.maths,
         boardWeightMarks: 6,
         concepts: [Concept(id: 'c9.sav.cuboid_cube', name: 'Cuboids and cubes', chapterId: _chapterId)],
       ),

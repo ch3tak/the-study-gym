@@ -9,8 +9,7 @@ import '../../data/models.dart';
 import '../../shared/widgets/chunky_button.dart';
 import '../workout/workout_screen.dart';
 
-/// Custom test builder — the student picks any chapters (across subjects)
-/// and we assemble a quiz from them. Pro-only: a free user can browse and
+/// Custom test builder — the student picks any chapters and we assemble a quiz from them. Pro-only: a free user can browse and
 /// select, but generating the test shows an upgrade sheet instead of a
 /// silent block, so the feature still demonstrates its value.
 class CustomTestBuilderScreen extends ConsumerStatefulWidget {
@@ -71,25 +70,20 @@ class _CustomTestBuilderScreenState extends ConsumerState<CustomTestBuilderScree
                 padding: const EdgeInsets.all(AppTheme.space20),
                 children: [
                   Text(
-                    'Pick the chapters you want to be tested on — from Maths, Science, or both.',
+                    'Pick the chapters you want to be tested on.',
                     style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkSoft),
                   ),
                   const SizedBox(height: AppTheme.space20),
-                  for (final subject in Subject.values) ...[
-                    Text(subject.label, style: Theme.of(context).textTheme.titleLarge),
-                    const SizedBox(height: AppTheme.space12),
-                    ...Content.forSubject(subject).map((chapter) {
-                      final selected = _selectedChapterIds.contains(chapter.id);
-                      return _ChapterCheckTile(
-                        chapter: chapter,
-                        selected: selected,
-                        onTap: () => setState(() {
-                          selected ? _selectedChapterIds.remove(chapter.id) : _selectedChapterIds.add(chapter.id);
-                        }),
-                      );
-                    }),
-                    const SizedBox(height: AppTheme.space20),
-                  ],
+                  ...Content.chapters.map((chapter) {
+                    final selected = _selectedChapterIds.contains(chapter.id);
+                    return _ChapterCheckTile(
+                      chapter: chapter,
+                      selected: selected,
+                      onTap: () => setState(() {
+                        selected ? _selectedChapterIds.remove(chapter.id) : _selectedChapterIds.add(chapter.id);
+                      }),
+                    );
+                  }),
                 ],
               ),
             ),
@@ -204,7 +198,7 @@ class _UpgradeSheet extends StatelessWidget {
           Text('Custom tests are a Pro feature', style: Theme.of(context).textTheme.headlineMedium, textAlign: TextAlign.center),
           const SizedBox(height: AppTheme.space8),
           Text(
-            'Build unlimited tests from any chapter, across Maths and Science, whenever you want to check yourself.',
+            'Build unlimited tests from any chapter, whenever you want to check yourself.',
             textAlign: TextAlign.center,
             style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint),
           ),

@@ -60,7 +60,11 @@ class StudentState {
   List<Concept> get weakConcepts {
     final entries = mastery.values.where((m) => m.attempts > 0).toList()
       ..sort((a, b) => a.masteryPercent.compareTo(b.masteryPercent));
-    return entries.take(3).map((m) => Content.conceptById(m.conceptId)).toList();
+    return entries
+        .map((m) => Content.conceptOrNull(m.conceptId))
+        .whereType<Concept>()
+        .take(3)
+        .toList();
   }
 
   StudentState copyWith({

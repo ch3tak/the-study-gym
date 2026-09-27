@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,7 +35,6 @@ void main() {
     await tester.tap(find.text('Skill Map').last);
     await tester.pumpAndSettle();
     expect(find.text('Skill Map'), findsWidgets);
-    expect(find.text('Maths'), findsWidgets);
   });
 
   testWidgets('"I already have an account" also lands directly on the dashboard', (tester) async {
@@ -64,11 +62,9 @@ void main() {
     await tester.tap(find.text('Create a custom test'));
     await tester.pumpAndSettle();
     expect(find.text('Custom test'), findsOneWidget);
-    expect(find.text('Maths'), findsOneWidget);
-
-    // Science's section header may be off the initial viewport since Maths
-    // lists many chapters first.
-    await tester.scrollUntilVisible(find.text('Science'), 300, scrollable: find.byType(Scrollable).first);
-    expect(find.text('Science'), findsOneWidget);
+    expect(find.text('Maths'), findsNothing);
+    expect(find.text('Science'), findsNothing);
+    expect(find.text('Sequences and Progressions'), findsOneWidget);
+    expect(find.text('Surface Areas and Volumes'), findsOneWidget);
   });
 }
