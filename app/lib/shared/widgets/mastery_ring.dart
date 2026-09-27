@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
 
-/// A circular progress ring used for chapter mastery in the Skill Map, and
+/// A circular progress ring used for chapter progress on Mission and Theory, and
 /// for the Board-Readiness-style gauge on Today. Color follows mastery
 /// banding so it never depends on a legend.
 class MasteryRing extends StatelessWidget {

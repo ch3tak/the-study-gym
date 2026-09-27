@@ -9,18 +9,19 @@ import '../../data/models.dart';
 import '../../shared/widgets/mastery_ring.dart';
 import '../../shared/widgets/chunky_button.dart';
 import '../workout/workout_screen.dart';
-import '../mission/mission_screen.dart';
+import 'mission_screen.dart';
 
-/// S8. Skill Map tab — docs/PLAN.md §3: chapters with a mastery ring,
-/// expandable concept list with status chips, "Practice" CTA.
-class SkillMapScreen extends ConsumerStatefulWidget {
-  const SkillMapScreen({super.key});
+/// Mission tab (was "Skill Map", docs/PLAN.md §3): chapters with a mastery
+/// ring, expandable concept list with status chips, "Practice" and "Start
+/// Mission" CTAs.
+class MissionListScreen extends ConsumerStatefulWidget {
+  const MissionListScreen({super.key});
 
   @override
-  ConsumerState<SkillMapScreen> createState() => _SkillMapScreenState();
+  ConsumerState<MissionListScreen> createState() => _MissionListScreenState();
 }
 
-class _SkillMapScreenState extends ConsumerState<SkillMapScreen> {
+class _MissionListScreenState extends ConsumerState<MissionListScreen> {
   String? _expandedChapterId;
 
   @override
@@ -35,7 +36,7 @@ class _SkillMapScreenState extends ConsumerState<SkillMapScreen> {
               padding: const EdgeInsets.fromLTRB(AppTheme.space20, AppTheme.space16, AppTheme.space20, 0),
               child: Row(
                 children: [
-                  Text('Skill Map', style: Theme.of(context).textTheme.headlineLarge),
+                  Text('Mission', style: Theme.of(context).textTheme.headlineLarge),
                 ],
               ),
             ),

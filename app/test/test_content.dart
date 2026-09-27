@@ -5,7 +5,7 @@ import 'package:study_gym/data/models.dart';
 /// they don't need a live Supabase fetch (see `StudyGymApp.contentLoader` in
 /// main.dart). This is not the full seed data from
 /// backend/supabase/seed/001_cbse_9_maths_science.sql — just enough for the
-/// screens under test (Today, Skill Map, Workout, Tests) to render.
+/// screens under test (Today, Theory, Mission, Workout, Tests) to render.
 Future<ContentSnapshot> fakeContentLoader() async {
   const chapters = <Chapter>[
     Chapter(
@@ -51,5 +51,17 @@ Future<ContentSnapshot> fakeContentLoader() async {
     ),
   ];
 
-  return ContentSnapshot(chapters: chapters, questions: questions);
+  const lessons = <Lesson>[
+    Lesson(
+      id: 't_c9_sav_cuboid_cube',
+      conceptId: 'c9.sav.cuboid_cube',
+      title: 'Cuboids & Cubes',
+      body: 'A cube is a cuboid with all sides equal.',
+      hookKind: HookKind.realWorld,
+      hook: 'Every cardboard box is a cuboid.',
+      sortOrder: 1,
+    ),
+  ];
+
+  return ContentSnapshot(chapters: chapters, questions: questions, lessons: lessons);
 }

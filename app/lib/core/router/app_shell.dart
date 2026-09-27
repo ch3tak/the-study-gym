@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
-import '../../features/skill_map/skill_map_screen.dart';
+import '../../features/me/me_screen.dart';
+import '../../features/mission/mission_list_screen.dart';
 import '../../features/tests/tests_screen.dart';
+import '../../features/theory/theory_screen.dart';
 import '../../features/today/today_screen.dart';
 
-/// The 4-tab bottom nav shell from docs/PLAN.md §3 ("Today · Skill Map ·
-/// Tests · Me"). Me is stubbed for this mockup; Tests now hosts mock papers
-/// and the custom test builder.
+/// The 5-tab bottom nav shell: Today · Theory · Mission · Tests · Me.
+/// Tests hosts mock papers and the custom test builder; Me holds settings.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -20,7 +21,8 @@ class _AppShellState extends State<AppShell> {
 
   static const _tabs = [
     _TabDef('Today', Icons.wb_sunny_rounded, Icons.wb_sunny_outlined),
-    _TabDef('Skill Map', Icons.grid_view_rounded, Icons.grid_view_outlined),
+    _TabDef('Theory', Icons.menu_book_rounded, Icons.menu_book_outlined),
+    _TabDef('Mission', Icons.flag_rounded, Icons.outlined_flag_rounded),
     _TabDef('Tests', Icons.assignment_rounded, Icons.assignment_outlined),
     _TabDef('Me', Icons.person_rounded, Icons.person_outline_rounded),
   ];
@@ -33,9 +35,10 @@ class _AppShellState extends State<AppShell> {
         index: _index,
         children: const [
           TodayScreen(),
-          SkillMapScreen(),
+          TheoryScreen(),
+          MissionListScreen(),
           TestsScreen(),
-          _ComingSoonTab(title: 'Me', subtitle: 'Profile, streak history and settings.'),
+          MeScreen(),
         ],
       ),
       bottomNavigationBar: DecoratedBox(
@@ -88,36 +91,4 @@ class _TabDef {
   final String label;
   final IconData activeIcon;
   final IconData icon;
-}
-
-class _ComingSoonTab extends StatelessWidget {
-  const _ComingSoonTab({required this.title, required this.subtitle});
-  final String title;
-  final String subtitle;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = context.colors;
-    return SafeArea(
-      child: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(32),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.construction_rounded, size: 48, color: colors.inkFaint),
-              const SizedBox(height: 16),
-              Text(title, style: Theme.of(context).textTheme.headlineMedium),
-              const SizedBox(height: 8),
-              Text(
-                subtitle,
-                textAlign: TextAlign.center,
-                style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: colors.inkFaint),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
 }
