@@ -77,19 +77,20 @@ lessons:
     concept_id: c9.sav.sphere_hemisphere
     title: "Spheres & Hemispheres"
     body: >-
-      A sphere is a perfectly round ball; a hemisphere is exactly half
-      of one, like a bowl. A hemisphere's total surface counts the
-      curved half plus the flat circular top — easy to forget the flat
-      part.
+      A sphere is a perfectly round ball; a hemisphere is a solid ball
+      cut exactly in half. A solid hemisphere's total surface counts the
+      curved half plus the flat circle where it was cut — easy to forget
+      the flat part. An open bowl is different: it has only the curved
+      surface.
     hook_kind: real_world
     hook: >-
       Soap bubbles are round because the soap film pulls itself as tight
       as it can, and of all shapes holding the same amount of air, a
       sphere has the smallest surface area.
     try_it: >-
-      A bowl is half of a sphere with radius 7 cm. Does its total
-      surface area include the flat circular rim on top, or just the
-      curved inside?
+      A glass paperweight is a solid hemisphere with radius 7 cm. If you
+      painted all of it, would you paint the flat circular base as well
+      as the curved top?
     sort_order: 5
 
   - id: t_c9_sav_scaling
@@ -115,7 +116,7 @@ lessons:
     concept_id: c9.sav.units
     title: "Units & Conversions"
     body: >-
-      Area is measured in square units (cm²) and volume in cube units
+      Area is measured in square units (cm²) and volume in cubic units
       (cm³) — they are never interchangeable. For volume, 1 litre
       equals exactly 1000 cm³, which is the conversion used to move
       between everyday measurements and geometry.
