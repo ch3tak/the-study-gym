@@ -35,7 +35,7 @@ class WelcomeScreen extends StatelessWidget {
               ),
               const SizedBox(height: AppTheme.space12),
               Text(
-                "We find exactly what you're weak at in Maths,\ntrain it, and show your real progress.",
+                "We find exactly what you're weak at in Maths, train it, and show your real progress.",
                 textAlign: TextAlign.center,
                 style: Theme.of(context).textTheme.bodyLarge?.copyWith(color: colors.inkSoft),
               ),
