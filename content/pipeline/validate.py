@@ -18,6 +18,7 @@ from .issues import Issues
 from .questions import QUESTIONS_ROOT, load_file, validate_bank
 from .syllabus import CONTENT_ROOT, SYLLABUS_ROOT, Syllabus, check_cross_references, load, syllabus_path
 from .types import REGISTRY
+from .types.lesson import validate_lesson
 
 REPO_ROOT = CONTENT_ROOT.parent
 
@@ -58,6 +59,38 @@ def load_all_syllabi(issues: Issues) -> dict[tuple[str, int, str], Syllabus]:
     return result
 
 
+THEORY_ROOT = QUESTIONS_ROOT  # theory files live alongside question files, named *_theory.yaml
+
+
+def validate_theory_files(syllabi: dict[tuple[str, int, str], Syllabus], issues: Issues) -> int:
+    total = 0
+    # One set across every file: lessons.id is a table-wide primary key.
+    seen_ids: dict[str, str] = {}
+    for path in sorted(THEORY_ROOT.glob("*/*/*/**/*_theory.yaml")):
+        key = subject_of(path)
+        if key is None or key not in syllabi:
+            issues.error(rel(path), "can't resolve subject for theory file (expected board/class/subject layout)")
+            continue
+        data = yaml.safe_load(path.read_text(encoding="utf-8")) or {}
+        lessons = data.get("lessons") if isinstance(data, dict) else None
+        if not isinstance(lessons, list):
+            issues.error(rel(path), "theory file must have a top-level 'lessons:' list")
+            continue
+        for lesson in lessons:
+            if not isinstance(lesson, dict):
+                issues.error(rel(path), f"lesson entry is not a mapping: {lesson!r}")
+                continue
+            lesson_id = lesson.get("id", "<no id>")
+            where = f"{rel(path)}:{lesson_id}"
+            if lesson_id in seen_ids:
+                issues.error(where, f"duplicate lesson id '{lesson_id}' (first seen in {seen_ids[lesson_id]})")
+            else:
+                seen_ids[lesson_id] = rel(path)
+            validate_lesson(lesson, syllabi[key], issues, where)
+            total += 1
+    return total
+
+
 def subject_of(question_file: Path) -> tuple[str, int, str] | None:
     """content/questions/{board}/{class}/{subject}/<file>.yaml -> (board, class, subject)."""
     try:
@@ -78,7 +111,9 @@ def main(argv: list[str] | None = None) -> int:
     syllabi = load_all_syllabi(issues)
     validate_class_files(issues)
 
-    files = args.files or sorted(QUESTIONS_ROOT.glob("*/*/*/**/*.yaml"))
+    files = args.files or sorted(
+        p for p in QUESTIONS_ROOT.glob("*/*/*/**/*.yaml") if not p.name.endswith("_theory.yaml")
+    )
     groups: dict[tuple[str, int, str], list[tuple[str, dict]]] = {}
     for f in files:
         if args.subject:
@@ -98,13 +133,14 @@ def main(argv: list[str] | None = None) -> int:
     for key, questions in groups.items():
         total += len(questions)
         validate_bank(questions, syllabi[key], issues)
+    lessons = validate_theory_files(syllabi, issues)
 
     shown = issues.errors if args.quiet else issues.items
     for issue in shown:
         print(issue)
     concepts = sum(len(s.concepts) for s in syllabi.values())
     print(
-        f"\n{len(syllabi)} syllabi ({concepts} concepts), {total} questions: "
+        f"\n{len(syllabi)} syllabi ({concepts} concepts), {total} questions, {lessons} lessons: "
         f"{len(issues.errors)} errors, {len(issues.warnings)} warnings"
     )
     return 1 if issues.errors else 0
