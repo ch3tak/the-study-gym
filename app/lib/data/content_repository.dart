@@ -3,7 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import 'models.dart';
 
-/// Fetches curriculum content (subjects → chapters → concepts → questions)
+/// Fetches curriculum content (subjects → chapters → concepts → questions,
+/// plus theory lessons)
 /// from Supabase. Called once at app startup; results are handed to
 /// `Content.load()` so the rest of the app can keep reading `Content.*`
 /// synchronously (see docs/PLAN.md §6 for the table shapes).
@@ -53,10 +54,23 @@ class ContentRepository {
         .select('id, concept_ids, difficulty, type, marks, body, level, stage')
         .eq('status', 'live');
 
+    // Lessons are optional: a database without the lessons table (or a
+    // failed fetch) gives an empty Theory tab, not a failed app start.
+    List lessonRows = const [];
+    try {
+      lessonRows = await _client
+          .from('lessons')
+          .select('id, concept_id, title, body, hook_kind, hook, try_it, sort_order')
+          .order('sort_order') as List;
+    } on PostgrestException catch (e) {
+      debugPrint('Lessons unavailable: ${e.message}');
+    }
+
     return buildSnapshot(
       chapterRows: chapterRows as List,
       conceptRows: conceptRows as List,
       questionRows: questionRows as List,
+      lessonRows: lessonRows,
     );
   }
 
@@ -67,6 +81,7 @@ class ContentRepository {
     required List chapterRows,
     required List conceptRows,
     required List questionRows,
+    List lessonRows = const [],
   }) {
     final mathsChapterRows =
         chapterRows.where((r) => (r['subjects'] as Map)['code'] == 'maths').toList();
@@ -121,7 +136,31 @@ class ContentRepository {
       }
     }
 
-    return ContentSnapshot(chapters: chapters, questions: questions);
+    final lessons = <Lesson>[];
+    for (final row in lessonRows) {
+      if (!validConceptIds.contains(row['concept_id'])) continue;
+      final hookKind = switch (row['hook_kind']) {
+        'historical' => HookKind.historical,
+        'real_world' => HookKind.realWorld,
+        _ => null,
+      };
+      if (hookKind == null) {
+        debugPrint('Skipping lesson ${row['id']}: unknown hook_kind ${row['hook_kind']}');
+        continue;
+      }
+      lessons.add(Lesson(
+        id: row['id'] as String,
+        conceptId: row['concept_id'] as String,
+        title: row['title'] as String,
+        body: row['body'] as String,
+        hookKind: hookKind,
+        hook: row['hook'] as String,
+        tryIt: row['try_it'] as String?,
+        sortOrder: (row['sort_order'] as num).toInt(),
+      ));
+    }
+
+    return ContentSnapshot(chapters: chapters, questions: questions, lessons: lessons);
   }
 
   @visibleForTesting
@@ -232,8 +271,9 @@ class ContentRepository {
 
 /// Plain data holder passed from the repository to `Content.load()`.
 class ContentSnapshot {
-  const ContentSnapshot({required this.chapters, required this.questions});
+  const ContentSnapshot({required this.chapters, required this.questions, this.lessons = const []});
 
   final List<Chapter> chapters;
   final List<Question> questions;
+  final List<Lesson> lessons;
 }

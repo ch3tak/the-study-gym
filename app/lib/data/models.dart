@@ -107,6 +107,32 @@ class Question {
   final List<String> conceptIds;
 }
 
+enum HookKind { historical, realWorld }
+
+/// A short theory lesson for one concept — mirrors the `lessons` table
+/// (20260930000000_theory_lessons.sql).
+class Lesson {
+  const Lesson({
+    required this.id,
+    required this.conceptId,
+    required this.title,
+    required this.body,
+    required this.hookKind,
+    required this.hook,
+    this.tryIt,
+    required this.sortOrder,
+  });
+
+  final String id;
+  final String conceptId;
+  final String title;
+  final String body;
+  final HookKind hookKind;
+  final String hook;
+  final String? tryIt;
+  final int sortOrder;
+}
+
 /// Per-student, per-concept mastery — mirrors the `concept_mastery` table.
 class ConceptMastery {
   ConceptMastery({

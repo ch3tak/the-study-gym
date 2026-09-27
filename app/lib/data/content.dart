@@ -15,6 +15,7 @@ class Content {
 
   static List<Chapter> _chapters = const [];
   static List<Question> _questions = const [];
+  static List<Lesson> _lessons = const [];
   static bool _loaded = false;
 
   static bool get isLoaded => _loaded;
@@ -24,11 +25,13 @@ class Content {
   static void load(ContentSnapshot snapshot) {
     _chapters = snapshot.chapters;
     _questions = snapshot.questions;
+    _lessons = snapshot.lessons;
     _loaded = true;
   }
 
   static List<Chapter> get chapters => _chapters;
   static List<Question> get questions => _questions;
+  static List<Lesson> get lessons => _lessons;
 
   static Chapter chapterOf(String conceptId) =>
       chapters.firstWhere((c) => c.concepts.any((k) => k.id == conceptId));
@@ -51,5 +54,17 @@ class Content {
   static List<Question> forChapter(String chapterId) {
     final ids = chapters.firstWhere((c) => c.id == chapterId).concepts.map((c) => c.id).toSet();
     return questions.where((q) => ids.contains(q.conceptId)).toList();
+  }
+
+  /// The chapter's lessons, ordered by `sortOrder`. Empty for an unknown
+  /// chapter or one with no lessons.
+  static List<Lesson> lessonsForChapter(String chapterId) {
+    final conceptIds = chapters
+        .where((c) => c.id == chapterId)
+        .expand((c) => c.concepts)
+        .map((c) => c.id)
+        .toSet();
+    return lessons.where((l) => conceptIds.contains(l.conceptId)).toList()
+      ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
   }
 }

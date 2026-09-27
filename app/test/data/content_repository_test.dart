@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:study_gym/data/content.dart';
 import 'package:study_gym/data/content_repository.dart';
 import 'package:study_gym/data/models.dart';
 
@@ -21,6 +22,75 @@ void main() {
       questionRows: const [],
     );
     expect(snapshot.chapters.map((c) => c.id), ['surface_area_volume']);
+  });
+
+  Map<String, dynamic> lessonRow(String id, String conceptId,
+          {String hookKind = 'real_world', String? tryIt, int sortOrder = 1}) =>
+      {
+        'id': id,
+        'concept_id': conceptId,
+        'title': 'Title $id',
+        'body': 'Body with \$x^2\$.',
+        'hook_kind': hookKind,
+        'hook': 'Hook $id',
+        'try_it': tryIt,
+        'sort_order': sortOrder,
+      };
+
+  ContentSnapshot snapshotWithLessons(List<Map<String, dynamic>> lessonRows) =>
+      ContentRepository.forTesting().buildSnapshot(
+        chapterRows: [chapterRow('surface_area_volume', 'maths')],
+        conceptRows: [
+          {'id': 'c9.sav.cuboid_cube', 'chapter_id': 'surface_area_volume', 'name': 'Cuboids'},
+        ],
+        questionRows: const [],
+        lessonRows: lessonRows,
+      );
+
+  test('a lessons row parses into a Lesson', () {
+    final s = snapshotWithLessons([
+      lessonRow('t_a', 'c9.sav.cuboid_cube', hookKind: 'historical', tryIt: 'Try this', sortOrder: 3),
+    ]);
+    final l = s.lessons.single;
+    expect(l.id, 't_a');
+    expect(l.conceptId, 'c9.sav.cuboid_cube');
+    expect(l.title, 'Title t_a');
+    expect(l.body, r'Body with $x^2$.');
+    expect(l.hookKind, HookKind.historical);
+    expect(l.hook, 'Hook t_a');
+    expect(l.tryIt, 'Try this');
+    expect(l.sortOrder, 3);
+  });
+
+  test('try_it is optional and real_world maps to HookKind.realWorld', () {
+    final l = snapshotWithLessons([lessonRow('t_a', 'c9.sav.cuboid_cube')]).lessons.single;
+    expect(l.tryIt, isNull);
+    expect(l.hookKind, HookKind.realWorld);
+  });
+
+  test('a lesson whose concept is not loaded is dropped', () {
+    final s = snapshotWithLessons([
+      lessonRow('t_a', 'c9.sav.cuboid_cube'),
+      lessonRow('t_ghost', 'c9.motion.speed'),
+    ]);
+    expect(s.lessons.map((l) => l.id), ['t_a']);
+  });
+
+  test('a lesson with an unknown hook_kind is skipped, not fatal', () {
+    final s = snapshotWithLessons([
+      lessonRow('t_a', 'c9.sav.cuboid_cube'),
+      lessonRow('t_bad', 'c9.sav.cuboid_cube', hookKind: 'fun_fact'),
+    ]);
+    expect(s.lessons.map((l) => l.id), ['t_a']);
+  });
+
+  test('lessonsForChapter orders by sortOrder', () {
+    Content.load(snapshotWithLessons([
+      lessonRow('t_b', 'c9.sav.cuboid_cube', sortOrder: 2),
+      lessonRow('t_a', 'c9.sav.cuboid_cube', sortOrder: 1),
+    ]));
+    expect(Content.lessonsForChapter('surface_area_volume').map((l) => l.id), ['t_a', 't_b']);
+    expect(Content.lessonsForChapter('no_such_chapter'), isEmpty);
   });
 
   test('a case_based row round-trips into a Question with populated parts', () {
