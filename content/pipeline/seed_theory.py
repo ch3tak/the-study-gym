@@ -77,7 +77,13 @@ def generate_sql(theory_path: Path, syllabus_path: Path) -> str:
                 str(lesson["sort_order"]),
             ]) + ")"
         )
-    lines.append(",\n".join(rows) + ";")
+    lines.append(",\n".join(rows))
+    # Upsert, not a plain insert: once students have read a lesson,
+    # theory_progress references it, so a wording fix must update the row
+    # in place rather than delete-and-reinsert.
+    lines.append("on conflict (id) do update set")
+    cols = ["concept_id", "title", "body", "hook_kind", "hook", "try_it", "sort_order"]
+    lines.append(",\n".join(f"  {c} = excluded.{c}" for c in cols) + ";")
     lines.append("")
     lines.append("commit;")
     lines.append("")

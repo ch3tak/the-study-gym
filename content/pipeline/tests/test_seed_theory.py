@@ -51,3 +51,12 @@ def test_real_theory_file_generates_seven_lessons():
     # Count row openers, not "(" — the column list and lesson prose
     # (e.g. "(the apex)") contain parentheses too.
     assert sql.count("\n  ('t_") == 7
+
+
+def test_reseeding_updates_existing_lessons_instead_of_failing():
+    sql = generate_sql(FIXTURE_YAML, FIXTURE_SYLLABUS)
+    assert "on conflict (id) do update set" in sql
+    for col in ("concept_id", "title", "body", "hook_kind", "hook", "try_it", "sort_order"):
+        assert f"{col} = excluded.{col}" in sql
+    # One statement: the conflict clause closes the values list.
+    assert sql.count(";") == 3  # begin; <insert…>; commit;
