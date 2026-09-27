@@ -5,14 +5,16 @@ import 'package:study_gym/data/content_repository.dart';
 import 'package:study_gym/data/models.dart';
 import 'package:study_gym/data/theory_progress_repository.dart';
 
-/// In-memory stand-in for the Supabase-backed repository. [fetchGate], when
-/// set, holds `fetchAll()` open until the test completes it.
+/// In-memory stand-in for the Supabase-backed repository. [fetchGate] and
+/// [writeGate], when set, hold `fetchAll()` / `markRead()` open until the
+/// test completes them.
 class FakeTheoryRepo implements TheoryProgressRepository {
   FakeTheoryRepo({Set<String>? initial, this.failWrites = false}) : _initial = initial ?? {};
   final Set<String> _initial;
   final bool failWrites;
   final writes = <String>[];
   Completer<Set<String>>? fetchGate;
+  Completer<void>? writeGate;
 
   @override
   Future<Set<String>> fetchAll() => fetchGate?.future ?? Future.value(_initial);
@@ -21,6 +23,7 @@ class FakeTheoryRepo implements TheoryProgressRepository {
   Future<void> markRead(String lessonId) async {
     if (failWrites) throw Exception('offline');
     writes.add(lessonId);
+    await writeGate?.future;
   }
 }
 
