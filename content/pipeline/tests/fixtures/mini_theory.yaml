@@ -1,0 +1,9 @@
+lessons:
+  - id: t_mini_cuboid_cube
+    concept_id: c9.sav.cuboid_cube
+    title: "Cuboids & Cubes"
+    body: "A cuboid is a box shape with six rectangular faces."
+    hook_kind: historical
+    hook: "Surveyors in ancient Egypt measured land areas after each Nile flood."
+    try_it: "A shoebox is 30 cm long. Roughly how much cardboard covers it?"
+    sort_order: 1
