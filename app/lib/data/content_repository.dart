@@ -40,6 +40,27 @@ class ContentRepository {
         .eq('subjects.code', 'maths')
         .order('sort_order');
 
+    // Units (20261001000000_units_nodes_trial_meta.sql) are optional in the
+    // same way lessons are: a database without that migration gives one
+    // ungrouped chapter list on Learn, not a failed start.
+    List unitRows = const [];
+    List chapterUnitRows = const [];
+    try {
+      final chapterList = chapterRows as List;
+      final subjectIds = chapterList.map((r) => r['subject_id'] as String).toSet().toList();
+      unitRows = await _client
+          .from('units')
+          .select('id, name, marks, sort_order')
+          .inFilter('subject_id', subjectIds)
+          .order('sort_order') as List;
+      chapterUnitRows = await _client
+          .from('chapters')
+          .select('id, unit_id')
+          .inFilter('id', chapterList.map((r) => r['id'] as String).toList()) as List;
+    } on PostgrestException catch (e) {
+      debugPrint('Units unavailable: ${e.message}');
+    }
+
     final conceptRows = await _client
         .from('concepts')
         .select('id, chapter_id, name, sort_order')
@@ -71,6 +92,8 @@ class ContentRepository {
       conceptRows: conceptRows as List,
       questionRows: questionRows as List,
       lessonRows: lessonRows,
+      unitRows: unitRows,
+      chapterUnitRows: chapterUnitRows,
     );
   }
 
@@ -82,6 +105,8 @@ class ContentRepository {
     required List conceptRows,
     required List questionRows,
     List lessonRows = const [],
+    List unitRows = const [],
+    List chapterUnitRows = const [],
   }) {
     final mathsChapterRows =
         chapterRows.where((r) => (r['subjects'] as Map)['code'] == 'maths').toList();
@@ -101,6 +126,10 @@ class ContentRepository {
         .map((r) => r['id'] as String)
         .toSet();
 
+    final unitByChapter = <String, String?>{
+      for (final r in chapterUnitRows) r['id'] as String: r['unit_id'] as String?,
+    };
+
     final chapters = <Chapter>[];
     for (final row in mathsChapterRows) {
       final chapterId = row['id'] as String;
@@ -109,6 +138,7 @@ class ContentRepository {
         name: row['name'] as String,
         boardWeightMarks: (row['board_weight'] as num).round(),
         concepts: conceptsByChapter[chapterId] ?? const [],
+        unitId: unitByChapter[chapterId],
       ));
     }
 
@@ -160,7 +190,17 @@ class ContentRepository {
       ));
     }
 
-    return ContentSnapshot(chapters: chapters, questions: questions, lessons: lessons);
+    final units = <Unit>[
+      for (final r in unitRows)
+        Unit(
+          id: r['id'] as String,
+          name: r['name'] as String,
+          marks: (r['marks'] as num?)?.round(),
+          sortOrder: (r['sort_order'] as num).toInt(),
+        ),
+    ];
+
+    return ContentSnapshot(chapters: chapters, questions: questions, lessons: lessons, units: units);
   }
 
   @visibleForTesting
@@ -265,15 +305,23 @@ class ContentRepository {
       stage: stage,
       parts: parts,
       conceptIds: allConceptIds,
+      node: TopicNode.fromDb(body['node']),
+      whyAfterPrevious: body['whyAfterPrevious'] as String?,
     );
   }
 }
 
 /// Plain data holder passed from the repository to `Content.load()`.
 class ContentSnapshot {
-  const ContentSnapshot({required this.chapters, required this.questions, this.lessons = const []});
+  const ContentSnapshot({
+    required this.chapters,
+    required this.questions,
+    this.lessons = const [],
+    this.units = const [],
+  });
 
   final List<Chapter> chapters;
   final List<Question> questions;
   final List<Lesson> lessons;
+  final List<Unit> units;
 }

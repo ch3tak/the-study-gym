@@ -16,6 +16,7 @@ class Content {
   static List<Chapter> _chapters = const [];
   static List<Question> _questions = const [];
   static List<Lesson> _lessons = const [];
+  static List<Unit> _units = const [];
   static bool _loaded = false;
 
   static bool get isLoaded => _loaded;
@@ -26,6 +27,7 @@ class Content {
     _chapters = snapshot.chapters;
     _questions = snapshot.questions;
     _lessons = snapshot.lessons;
+    _units = snapshot.units;
     _loaded = true;
   }
 
@@ -66,5 +68,45 @@ class Content {
         .toSet();
     return lessons.where((l) => conceptIds.contains(l.conceptId)).toList()
       ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+  }
+
+  static List<Unit> get units => _units;
+
+  /// A unit's chapters, in syllabus order (chapters load sorted by sort_order).
+  static List<Chapter> chaptersInUnit(String unitId) =>
+      chapters.where((c) => c.unitId == unitId).toList();
+
+  /// The lesson that teaches [conceptId] (a topic's Learn node), if any.
+  static Lesson? lessonForConcept(String conceptId) {
+    final matches = lessons.where((l) => l.conceptId == conceptId).toList()
+      ..sort((a, b) => a.sortOrder.compareTo(b.sortOrder));
+    return matches.isEmpty ? null : matches.first;
+  }
+
+  /// The chapter's Trial levels in level order. Only live levels load, so
+  /// the list can have gaps and be shorter than the 62 designed.
+  static List<Question> trialLevels(String chapterId) {
+    if (!chapters.any((c) => c.id == chapterId)) return const [];
+    return forChapter(chapterId).where((q) => q.level != null).toList()
+      ..sort((a, b) => a.level!.compareTo(b.level!));
+  }
+
+  /// Questions tagged for one node of a topic. Trial levels never count.
+  static List<Question> nodeQuestions(String conceptId, TopicNode node) =>
+      questions.where((q) => q.conceptId == conceptId && q.level == null && q.node == node).toList();
+
+  /// Whether any node of this topic has questions. False turns on the
+  /// interim rule: the topic is finished once its lesson is read.
+  static bool hasTopicQuestions(String conceptId) =>
+      questions.any((q) => q.conceptId == conceptId && q.level == null && q.node != null);
+
+  /// A concept's practice pool: every question except Trial levels.
+  static List<Question> practiceQuestions(String conceptId) =>
+      questions.where((q) => q.conceptId == conceptId && q.level == null).toList();
+
+  /// Whether a chapter has anything to open. Learn shows the rest as "Soon".
+  static bool hasContent(String chapterId) {
+    if (!chapters.any((c) => c.id == chapterId)) return false;
+    return lessonsForChapter(chapterId).isNotEmpty || forChapter(chapterId).isNotEmpty;
   }
 }

@@ -26,12 +26,51 @@ class Chapter {
     required this.name,
     required this.boardWeightMarks,
     required this.concepts,
+    this.unitId,
   });
 
   final String id;
   final String name;
   final int boardWeightMarks;
   final List<Concept> concepts;
+
+  /// The syllabus unit this chapter belongs to (`units.id`). Null when the
+  /// database predates 20261001000000_units_nodes_trial_meta.sql.
+  final String? unitId;
+}
+
+/// A syllabus unit ("Geometry · 25 marks") — mirrors the `units` table,
+/// generated from content/syllabus/<board>/<class>/<subject>.yaml.
+class Unit {
+  const Unit({required this.id, required this.name, required this.sortOrder, this.marks});
+
+  final String id;
+  final String name;
+
+  /// Exam marks for the unit. Null for a course with no exam.
+  final int? marks;
+  final int sortOrder;
+}
+
+/// A topic's four question nodes, in path order (spec: "The chapter screen").
+enum TopicNode {
+  guided('guided', 'Guided'),
+  practice('practice', 'Practice'),
+  spotTheMistake('spot_the_mistake', 'Spot the mistake'),
+  challenge('challenge', 'Challenge');
+
+  const TopicNode(this.dbValue, this.label);
+
+  /// The value in a question body's `node` field and in `node_progress.node`.
+  final String dbValue;
+  final String label;
+
+  static TopicNode? fromDb(Object? value) {
+    for (final n in values) {
+      if (n.dbValue == value) return n;
+    }
+    return null;
+  }
 }
 
 /// A single misconception-mapped distractor, used to generate the coach's
@@ -64,6 +103,8 @@ class Question {
     this.level,
     this.stage,
     this.parts = const [],
+    this.node,
+    this.whyAfterPrevious,
     List<String>? conceptIds,
   }) : conceptIds = conceptIds ?? [conceptId];
 
@@ -100,6 +141,15 @@ class Question {
 
   // case_based
   final List<Question> parts;
+
+  /// The topic node this question belongs to, from the body's `node` tag.
+  /// Null for Trial levels and plain practice questions — only tagged
+  /// questions count as "topic questions" (spec: the interim rule).
+  final TopicNode? node;
+
+  /// Trial levels only: why this level follows the previous one, shown in
+  /// the level preview sheet.
+  final String? whyAfterPrevious;
 
   /// All concepts this question touches — plural counterpart to [conceptId].
   /// Defaults to `[conceptId]` when not supplied, so every existing
