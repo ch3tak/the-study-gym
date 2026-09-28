@@ -67,8 +67,8 @@ Mockups from the brainstorm (private links, for reference):
     for finishing, Platinum for 90% right first time with no solutions
     viewed.
 11. **History is a night-time world map.** Places glow as their stories are
-    read. Coastlines only, no country borders. Ancient names first, modern
-    names in brackets.
+    read. Coastlines only, no country borders. Maps show ancient names only;
+    the story text gives the modern name.
 
 ## Onboarding
 
@@ -225,9 +225,10 @@ History always uses its own night look, in both app themes.
   wherever facts are uncertain, "You'll meet this in" linking to the exact
   chapter, and a source line.
 - **Map rules:** coastlines only, drawn in the app from Natural Earth
-  (public domain), no country borders. Place names are ancient first with
-  the modern name in brackets, for example "Syene (Aswan, Egypt)". On maps
-  the modern name is a second, smaller line.
+  (public domain), no country borders.
+- **Place names:** maps, the timeline and era lists show only the ancient
+  name ("Kusumapura"). The story text gives the modern name the first time
+  the place comes up, in the form "Kusumapura (modern-day Patna)".
 - **Worldwide from the start:** the first stories include China and the
   Maya, not only the Mediterranean and India.
 - **Accuracy:** every story cites its source and gets checked before it
