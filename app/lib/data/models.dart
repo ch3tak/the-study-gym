@@ -191,6 +191,8 @@ class ConceptMastery {
     this.attempts = 0,
     this.correct = 0,
     this.state = MasteryState.notStarted,
+    this.lastPracticed,
+    this.halfLifeDays = 2,
   });
 
   final String conceptId;
@@ -198,6 +200,12 @@ class ConceptMastery {
   int attempts;
   int correct;
   MasteryState state;
+
+  /// When this concept was last practised (`concept_mastery.last_practiced`).
+  DateTime? lastPracticed;
+
+  /// Retention half-life in days (PLAN.md §5.1; starts at 2).
+  double halfLifeDays;
 }
 
 /// Per-student, per-level completion — mirrors the `level_progress` table.

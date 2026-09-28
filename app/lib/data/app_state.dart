@@ -160,6 +160,8 @@ class StudentNotifier extends Notifier<StudentState> {
       attempts: newAttempts,
       correct: newCorrect,
       state: newState,
+      lastPracticed: DateTime.now(),
+      halfLifeDays: current.halfLifeDays,
     );
 
     final newMastery = Map<String, ConceptMastery>.from(state.mastery);

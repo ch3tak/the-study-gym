@@ -25,7 +25,7 @@ class StudentRepository {
 
     final masteryRows = await _client
         .from('concept_mastery')
-        .select('concept_id, theta, attempts, correct')
+        .select('concept_id, theta, attempts, correct, last_practiced, half_life_days')
         .eq('user_id', userId);
 
     final mastery = <String, ConceptMastery>{};
@@ -37,6 +37,8 @@ class StudentRepository {
         attempts: row['attempts'] as int? ?? 0,
         correct: row['correct'] as int? ?? 0,
         state: _stateFor(percent),
+        lastPracticed: row['last_practiced'] == null ? null : DateTime.parse(row['last_practiced'] as String).toLocal(),
+        halfLifeDays: (row['half_life_days'] as num?)?.toDouble() ?? 2,
       );
     }
 
