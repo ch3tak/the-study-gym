@@ -8,6 +8,7 @@ import '../../data/content.dart';
 import '../../data/daily_state.dart';
 import '../../data/mission_state.dart';
 import '../../data/models.dart';
+import '../../data/node_progress_state.dart';
 import '../../shared/widgets/chunky_button.dart';
 import '../../shared/widgets/math_text.dart';
 import 'numeric_grading.dart';
@@ -66,13 +67,27 @@ class WorkoutScreen extends ConsumerStatefulWidget {
     required this.concepts,
     this.kind = WorkoutKind.practice,
     this.exclude = const {},
-  }) : singleLevelQuestion = null;
+  })  : singleLevelQuestion = null,
+        nodeConcept = null,
+        node = null;
 
   const WorkoutScreen.singleLevel(Question level, {super.key})
       : concepts = const [],
         kind = WorkoutKind.practice,
         exclude = const {},
-        singleLevelQuestion = level;
+        singleLevelQuestion = level,
+        nodeConcept = null,
+        node = null;
+
+  /// One node of a topic (Guided, Practice, Spot the mistake, Challenge).
+  /// A wrong answer comes back at the end; the node is passed once every
+  /// question has been answered right, and the screen pops with `true`.
+  const WorkoutScreen.node({super.key, required Concept concept, required TopicNode this.node})
+      : concepts = const [],
+        kind = WorkoutKind.practice,
+        exclude = const {},
+        singleLevelQuestion = null,
+        nodeConcept = concept;
 
   final List<Concept> concepts;
 
@@ -82,6 +97,9 @@ class WorkoutScreen extends ConsumerStatefulWidget {
   /// Question ids already served today, kept out of a Keep going batch.
   final Set<String> exclude;
   final Question? singleLevelQuestion;
+  final Concept? nodeConcept;
+  final TopicNode? node;
+  bool get isNodeSession => node != null;
 
   @override
   ConsumerState<WorkoutScreen> createState() => _WorkoutScreenState();
@@ -92,6 +110,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
   final DateTime _startedAt = DailyNotifier.clock();
   int _index = 0;
   bool _usedRetry = false;
+  final Set<String> _recordedQuestionIds = {};
   late final AnimationController _shakeController;
 
   @override
@@ -121,6 +140,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
     final singleLevel = widget.singleLevelQuestion;
     if (singleLevel != null) {
       return [_WorkoutItem(question: singleLevel, section: WorkoutSection.strength)];
+    }
+
+    final node = widget.node;
+    if (node != null) {
+      return Content.nodeQuestions(widget.nodeConcept!.id, node)
+          .map((q) => _WorkoutItem(question: q, section: WorkoutSection.strength))
+          .toList();
     }
 
     final count = widget.kind == WorkoutKind.practice ? practiceWorkoutSize : dailyWorkoutSize;
@@ -166,7 +192,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
 
     // Only the first attempt counts toward mastery and mistake-tracking —
     // a retry is practice, not a do-over of the record.
-    if (isFirstAttempt) {
+    // Only a question's first attempt ever counts, even when a node session
+    // brings it back at the end.
+    if (isFirstAttempt && _recordedQuestionIds.add(item.question.id)) {
       for (final conceptId in item.question.conceptIds) {
         ref.read(studentProvider.notifier).recordAttempt(
               questionId: item.question.id,
@@ -209,6 +237,22 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
             );
       }
       Navigator.of(context).pop();
+      return;
+    }
+
+    final item = _current;
+    if (widget.isNodeSession && !(item.wasCorrect ?? false)) {
+      // A wrong question comes back at the end of the node.
+      final again = _WorkoutItem(question: item.question, section: item.section);
+      again.numericController.addListener(() => setState(() {}));
+      for (final c in again.partNumericControllers.values) {
+        c.addListener(() => setState(() {}));
+      }
+      _items.add(again);
+    }
+    if (widget.isNodeSession && _index == _items.length - 1) {
+      ref.read(nodeProgressProvider.notifier).passNode(widget.nodeConcept!.id, widget.node!);
+      Navigator.of(context).pop(true);
       return;
     }
 
@@ -275,7 +319,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
         ),
         title: Column(
           children: [
-            _SectionBadge(section: item.section),
+            widget.node != null
+                ? Text(widget.node!.label, style: Theme.of(context).textTheme.bodyMedium)
+                : _SectionBadge(section: item.section),
             const SizedBox(height: 6),
             ClipRRect(
               borderRadius: BorderRadius.circular(AppTheme.radiusPill),
@@ -344,6 +390,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
                 item: item,
                 canSubmit: canSubmit,
                 usedRetry: _usedRetry,
+                allowRetry: !widget.isNodeSession,
                 onHint: () => setState(() {
                   if (item.hintsRevealed < item.question.hints.length) item.hintsRevealed++;
                 }),
@@ -544,6 +591,7 @@ class _BottomBar extends StatelessWidget {
     required this.item,
     required this.canSubmit,
     required this.usedRetry,
+    required this.allowRetry,
     required this.onHint,
     required this.onSubmit,
     required this.onRetry,
@@ -554,6 +602,10 @@ class _BottomBar extends StatelessWidget {
   final _WorkoutItem item;
   final bool canSubmit;
   final bool usedRetry;
+
+  /// False in node sessions, where a wrong question comes back at the end
+  /// instead.
+  final bool allowRetry;
   final VoidCallback onHint;
   final VoidCallback onSubmit;
   final VoidCallback onRetry;
@@ -564,7 +616,7 @@ class _BottomBar extends StatelessWidget {
   Widget build(BuildContext context) {
     final colors = context.colors;
     if (item.submitted) {
-      if (!(item.wasCorrect ?? false) && !usedRetry) {
+      if (!(item.wasCorrect ?? false) && !usedRetry && allowRetry) {
         return Row(
           children: [
             Expanded(
