@@ -277,6 +277,44 @@ void main() {
       expect(container.read(levelProgressProvider).isCompleted(_chapterId, 8), isTrue);
     });
 
+    testWidgets('a level failed, left and replayed is not right first time', (tester) async {
+      final container = await pushLevel(tester, _mcqLevel());
+      await tester.tap(find.text('wrong'));
+      await submit(tester);
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+      expect(container.read(levelProgressProvider).isCompleted(_chapterId, 4), isFalse);
+
+      await tester.tap(find.text('open level'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('right'));
+      await submit(tester);
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      final r = container.read(levelProgressProvider).resultFor(_chapterId, 4)!;
+      expect(r.score, 0, reason: 'the first try was wrong');
+    });
+
+    testWidgets('a solution opened on a failed visit still counts when the level is passed later', (tester) async {
+      final container = await pushLevel(tester, _mcqLevel());
+      await tester.tap(find.text('wrong'));
+      await submit(tester);
+      await tapVisible(tester, find.text('Show solution'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.text('open level'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('right'));
+      await submit(tester);
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+
+      expect(container.read(levelProgressProvider).resultFor(_chapterId, 4)!.solutionViewed, isTrue);
+    });
+
     testWidgets('opening the solution is recorded on the level', (tester) async {
       final container = await pushLevel(tester, _mcqLevel());
       await tester.tap(find.text('right'));

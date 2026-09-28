@@ -74,6 +74,23 @@ class LevelProgressNotifier extends Notifier<LevelProgressState> {
     );
   }
 
+  // Levels answered wrong first, or whose solution was opened, on a visit
+  // that didn't complete them (this run). The completion that follows keeps
+  // that record, so leaving and replaying can't make a level "right first
+  // time" for Platinum.
+  final _failedBeforeCompletion = <(String, int)>{};
+  final _solutionSeenBeforeCompletion = <(String, int)>{};
+
+  /// A Trial level's first answer on a visit was wrong.
+  void noteWrongFirstAttempt({required String chapterId, required int level}) {
+    if (!state.isCompleted(chapterId, level)) _failedBeforeCompletion.add((chapterId, level));
+  }
+
+  /// A Trial level's solution was opened.
+  void noteSolutionViewed({required String chapterId, required int level}) {
+    if (!state.isCompleted(chapterId, level)) _solutionSeenBeforeCompletion.add((chapterId, level));
+  }
+
   /// Marks a level complete. The first completion's result stands: a replay
   /// can't turn a right-first-time level into a wrong one, or the reverse.
   void completeLevel({
@@ -83,6 +100,11 @@ class LevelProgressNotifier extends Notifier<LevelProgressState> {
     bool solutionViewed = false,
   }) {
     if (state.isCompleted(chapterId, level)) return;
+    final key = (chapterId, level);
+    final failedBefore = _failedBeforeCompletion.remove(key);
+    final seenBefore = _solutionSeenBeforeCompletion.remove(key);
+    score = failedBefore ? 0 : score;
+    solutionViewed = solutionViewed || seenBefore;
     final result = LevelResult(score: score, solutionViewed: solutionViewed);
     state = state.copyWith(
       completedLevels: {

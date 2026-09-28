@@ -192,11 +192,19 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
     if (!correct) {
       _shakeController.forward(from: 0);
     }
+    final level = widget.singleLevelQuestion;
+    if (level != null && isFirstAttempt && !correct) {
+      // Remembered past this visit: passing the level later is not "right
+      // first time".
+      ref
+          .read(levelProgressProvider.notifier)
+          .noteWrongFirstAttempt(chapterId: Content.chapterOf(level.conceptId).id, level: level.level!);
+    }
 
     // Only the first attempt counts toward mastery and mistake-tracking —
-    // a retry is practice, not a do-over of the record.
-    // Only a question's first attempt ever counts, even when a node session
-    // brings it back at the end.
+    // a retry is practice, not a do-over of the record — and only a
+    // question's first attempt ever counts, even when a node session brings
+    // it back at the end.
     if (isFirstAttempt && _recordedQuestionIds.add(item.question.id)) {
       for (final conceptId in item.question.conceptIds) {
         ref.read(studentProvider.notifier).recordAttempt(
@@ -209,6 +217,16 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
       if (correct) {
         ref.read(studentProvider.notifier).addXp(item.question.marks * 5);
       }
+    }
+  }
+
+  void _onSolutionOpened() {
+    _solutionViewed = true;
+    final level = widget.singleLevelQuestion;
+    if (level != null) {
+      ref
+          .read(levelProgressProvider.notifier)
+          .noteSolutionViewed(chapterId: Content.chapterOf(level.conceptId).id, level: level.level!);
     }
   }
 
@@ -382,7 +400,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
                             question: item.question,
                             selectedIndex: item.selectedIndex,
                             isRetryAttempt: _usedRetry,
-                            onSolutionOpened: () => _solutionViewed = true,
+                            onSolutionOpened: _onSolutionOpened,
                           ),
                         ],
                       ],
