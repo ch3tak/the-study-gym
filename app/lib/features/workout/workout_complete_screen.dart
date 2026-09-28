@@ -8,6 +8,7 @@ import '../../core/router/app_shell.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/app_state.dart';
+import '../../data/daily_state.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/chunky_button.dart';
 import '../../shared/widgets/mastery_ring.dart';
@@ -94,7 +95,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                       _StatPill(
                         icon: Icons.local_fire_department_rounded,
                         color: colors.streak,
-                        label: '${student.streak} day streak',
+                        label: '${ref.watch(dailyProvider).streakOn(DailyNotifier.clock())} day streak',
                       ),
                     ],
                   ),

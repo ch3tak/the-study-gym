@@ -4,7 +4,8 @@ import 'package:uuid/uuid.dart';
 import 'models.dart';
 
 /// Reads/writes the per-student tables from docs/PLAN.md §6:
-/// `concept_mastery`, `streaks`, `attempts`, `sessions`. RLS scopes every
+/// `concept_mastery` and `attempts` (workouts and the streak are in
+/// daily_repository.dart). RLS scopes every
 /// row to `auth.uid()`, so all calls here run as the signed-in user
 /// (anonymous or real — see main.dart).
 class StudentRepository {
@@ -27,12 +28,6 @@ class StudentRepository {
         .select('concept_id, theta, attempts, correct')
         .eq('user_id', userId);
 
-    final streakRows = await _client
-        .from('streaks')
-        .select('current, longest')
-        .eq('user_id', userId)
-        .maybeSingle();
-
     final mastery = <String, ConceptMastery>{};
     for (final row in masteryRows as List) {
       final percent = ((row['theta'] as num?) ?? 0).toDouble().clamp(0.0, 100.0);
@@ -45,10 +40,7 @@ class StudentRepository {
       );
     }
 
-    return StudentSnapshot(
-      mastery: mastery,
-      streak: streakRows?['current'] as int? ?? 0,
-    );
+    return StudentSnapshot(mastery: mastery);
   }
 
   static MasteryState _stateFor(double percent) {
@@ -92,20 +84,10 @@ class StudentRepository {
       'updated_at': DateTime.now().toUtc().toIso8601String(),
     });
   }
-
-  Future<void> setStreak(int current, {int? longest}) async {
-    await _client.from('streaks').upsert({
-      'user_id': _userId,
-      'current': current,
-      if (longest != null) 'longest': longest,
-      'last_active_date': DateTime.now().toUtc().toIso8601String().split('T').first,
-    });
-  }
 }
 
 class StudentSnapshot {
-  const StudentSnapshot({required this.mastery, required this.streak});
+  const StudentSnapshot({required this.mastery});
 
   final Map<String, ConceptMastery> mastery;
-  final int streak;
 }

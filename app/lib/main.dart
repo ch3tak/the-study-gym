@@ -8,6 +8,8 @@ import 'core/theme/theme_mode.dart';
 import 'data/app_state.dart';
 import 'data/content.dart';
 import 'data/content_repository.dart';
+import 'data/daily_repository.dart';
+import 'data/daily_state.dart';
 import 'data/level_progress_repository.dart';
 import 'data/mission_state.dart';
 import 'data/student_repository.dart';
@@ -42,6 +44,7 @@ Future<void> main() async {
   StudentNotifier.repositoryOverride = StudentRepository(Supabase.instance.client);
   LevelProgressNotifier.repositoryOverride = LevelProgressRepository(Supabase.instance.client);
   TheoryProgressNotifier.repositoryOverride = TheoryProgressRepository(Supabase.instance.client);
+  DailyNotifier.repositoryOverride = DailyRepository(Supabase.instance.client);
   StudyGymApp.contentLoader = () => ContentRepository(Supabase.instance.client).fetchAll();
 
   ThemeModeNotifier.initial = await ThemeModeNotifier.loadSaved();

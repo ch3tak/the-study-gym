@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
@@ -111,14 +113,11 @@ class _Dot extends StatelessWidget {
           child: Icon(Icons.close_rounded, color: colors.inkFaint, size: 16),
         );
       case DayState.today:
-        return Container(
+        // Dashed until today's workout is done (spec: Home's week row).
+        return SizedBox(
           width: dim,
           height: dim,
-          decoration: BoxDecoration(
-            color: colors.surface,
-            shape: BoxShape.circle,
-            border: Border.all(color: colors.brand, width: 2.5),
-          ),
+          child: CustomPaint(painter: _DashedRingPainter(color: colors.brand)),
         );
       case DayState.future:
         return Container(
@@ -132,4 +131,26 @@ class _Dot extends StatelessWidget {
         );
     }
   }
+}
+
+class _DashedRingPainter extends CustomPainter {
+  _DashedRingPainter({required this.color});
+  final Color color;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final paint = Paint()
+      ..color = color
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5;
+    final rect = (Offset.zero & size).deflate(1.25);
+    const dashes = 12;
+    const sweep = 2 * math.pi / dashes;
+    for (var i = 0; i < dashes; i++) {
+      canvas.drawArc(rect, i * sweep, sweep * 0.6, false, paint);
+    }
+  }
+
+  @override
+  bool shouldRepaint(_DashedRingPainter oldDelegate) => oldDelegate.color != color;
 }

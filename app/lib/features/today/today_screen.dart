@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/app_state.dart';
+import '../../data/daily_state.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/mastery_ring.dart';
 import '../../shared/widgets/streak_flame.dart';
@@ -18,6 +19,7 @@ class TodayScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final student = ref.watch(studentProvider);
+    final streak = ref.watch(dailyProvider).streakOn(DailyNotifier.clock());
     final weak = student.weakConcepts;
     final workoutConcepts = pickWorkoutConcepts(student);
 
@@ -41,7 +43,7 @@ class TodayScreen extends ConsumerWidget {
                       children: [
                         _DailyGoalRing(progress: student.dailyGoalProgress, met: student.dailyGoalMet),
                         const SizedBox(width: 14),
-                        StreakFlame(count: student.streak),
+                        StreakFlame(count: streak),
                       ],
                     ),
                   ],
@@ -56,7 +58,7 @@ class TodayScreen extends ConsumerWidget {
                   const SizedBox(height: AppTheme.space20),
                   _DailyGoalCard(xpToday: student.xpToday, goal: student.dailyXpGoal),
                   const SizedBox(height: AppTheme.space20),
-                  _StreakCard(streak: student.streak),
+                  _StreakCard(streak: streak),
                   const SizedBox(height: AppTheme.space20),
                   if (weak.isNotEmpty) ...[
                     _ReviewDueCard(concepts: weak),

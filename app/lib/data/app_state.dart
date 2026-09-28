@@ -4,14 +4,14 @@ import 'content.dart';
 import 'models.dart';
 import 'student_repository.dart';
 
-/// All the mutable "student" state for the app: mastery, streak, XP.
-/// Backed by Supabase's `concept_mastery` / `streaks` / `attempts` tables
+/// All the mutable "student" state for the app: mastery, XP, the Pro flag.
+/// The streak lives in `DailyState` (daily_state.dart).
+/// Backed by Supabase's `concept_mastery` / `attempts` tables
 /// (docs/PLAN.md §6) via `StudentRepository`. Loaded once at startup
 /// (see main.dart's `_StartupGate`) and kept in sync on every attempt.
 class StudentState {
   StudentState({
     this.mastery = const {},
-    this.streak = 0,
     this.xpToday = 0,
     this.dailyXpGoal = 50,
     this.onboardingDone = false,
@@ -19,7 +19,6 @@ class StudentState {
   });
 
   final Map<String, ConceptMastery> mastery;
-  final int streak;
   final int xpToday;
 
   /// Daily activity target (docs/PLAN.md §2's daily-workout framing, made
@@ -69,7 +68,6 @@ class StudentState {
 
   StudentState copyWith({
     Map<String, ConceptMastery>? mastery,
-    int? streak,
     int? xpToday,
     int? dailyXpGoal,
     bool? onboardingDone,
@@ -77,7 +75,6 @@ class StudentState {
   }) {
     return StudentState(
       mastery: mastery ?? this.mastery,
-      streak: streak ?? this.streak,
       xpToday: xpToday ?? this.xpToday,
       dailyXpGoal: dailyXpGoal ?? this.dailyXpGoal,
       onboardingDone: onboardingDone ?? this.onboardingDone,
@@ -112,7 +109,7 @@ class StudentNotifier extends Notifier<StudentState> {
 
   Future<void> _hydrate() async {
     final snapshot = await _repo!.fetchAll();
-    state = state.copyWith(mastery: snapshot.mastery, streak: snapshot.streak);
+    state = state.copyWith(mastery: snapshot.mastery);
   }
 
   void completeOnboarding() {
