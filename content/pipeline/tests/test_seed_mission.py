@@ -46,3 +46,11 @@ def test_real_mission_sql_has_tolerances_and_no_fraction_answers():
     assert '"numericAnswer": "487.67", "tolerance": 0.1' in sql
     assert '"numericAnswer": "85.33", "tolerance": 0.05' in sql
     assert not re.search(r'"numericAnswer": "-?\d+/\d+"', sql)
+
+
+def test_why_after_previous_is_carried_into_body():
+    sql = generate_sql(REAL_MISSION_YAML, REAL_SYLLABUS_YAML)
+    assert (
+        '"whyAfterPrevious": "First level of the mission: establishes the l/b/h labelling '
+        'every later formula depends on."'
+    ) in sql

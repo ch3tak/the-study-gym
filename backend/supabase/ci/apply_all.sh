@@ -20,6 +20,10 @@ FILES=(
   migrations/20260930000000_theory_lessons.sql
   seed/005_surface_area_volume_theory.sql
   seed/006_maths_only.sql
+  migrations/20261001000000_units_nodes_trial_meta.sql
+  seed/007_course_structure.sql
+  seed/007_course_structure.sql   # twice on purpose: proves it's idempotent
+  ci/checks.sql
 )
 
 for f in "${FILES[@]}"; do

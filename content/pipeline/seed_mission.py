@@ -141,6 +141,8 @@ def _body_for_question(question: dict) -> dict:
         body["parts"] = [_body_for_part(p, question) for p in question["parts"]]
     body["hints"] = question.get("hints", [])
     body["solutionSteps"] = question.get("solution_steps", [])
+    if question.get("why_after_previous"):
+        body["whyAfterPrevious"] = question["why_after_previous"]
     return body
 
 
