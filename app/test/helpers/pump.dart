@@ -6,15 +6,20 @@ import 'package:study_gym/data/app_state.dart';
 
 /// Both themes, so each screen test can run in light and dark (spec:
 /// "Everything renders in both light and dark themes").
-final themes = <String, ThemeData>{'light': AppTheme.light, 'dark': AppTheme.dark};
+///
+/// Brightness, not ThemeData: tests loop over this in main(), and building
+/// AppTheme there (outside a test) makes google_fonts fail the whole file.
+/// [pumpScreen] turns it into AppTheme.light or AppTheme.dark.
+const themes = <String, Brightness>{'light': Brightness.light, 'dark': Brightness.dark};
 
 /// Pumps [home] in a tall viewport (long lists stay on screen) inside a
-/// MaterialApp and the given (or a fresh) ProviderContainer, and returns the
+/// MaterialApp themed with AppTheme.light or AppTheme.dark ([theme], light by
+/// default) and the given (or a fresh) ProviderContainer, and returns the
 /// container so tests can read and drive state.
 Future<ProviderContainer> pumpScreen(
   WidgetTester tester,
   Widget home, {
-  ThemeData? theme,
+  Brightness? theme,
   ProviderContainer? container,
 }) async {
   tester.view.physicalSize = const Size(1080, 2400);
@@ -25,7 +30,7 @@ Future<ProviderContainer> pumpScreen(
   await tester.pumpWidget(
     UncontrolledProviderScope(
       container: c,
-      child: MaterialApp(theme: theme ?? AppTheme.light, home: home),
+      child: MaterialApp(theme: theme == Brightness.dark ? AppTheme.dark : AppTheme.light, home: home),
     ),
   );
   await tester.pumpAndSettle();
