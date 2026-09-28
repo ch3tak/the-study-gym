@@ -12,8 +12,7 @@ import '../../shared/widgets/math_text.dart';
 import 'numeric_grading.dart';
 import 'question_card.dart';
 import 'workout_complete_screen.dart';
-
-enum _Section { warmUp, strength, challenge }
+import 'workout_selector.dart';
 
 class _WorkoutItem {
   _WorkoutItem({required this.question, required this.section}) {
@@ -25,7 +24,7 @@ class _WorkoutItem {
   }
 
   final Question question;
-  final _Section section;
+  final WorkoutSection section;
   int hintsRevealed = 0;
   bool submitted = false;
   bool? wasCorrect;
@@ -61,13 +60,26 @@ class _WorkoutItem {
 /// works — you don't get to silently redo a wrong answer and have it count
 /// as right — while still letting the student learn from a second attempt.
 class WorkoutScreen extends ConsumerStatefulWidget {
-  const WorkoutScreen({super.key, required this.concepts}) : singleLevelQuestion = null;
+  const WorkoutScreen({
+    super.key,
+    required this.concepts,
+    this.kind = WorkoutKind.practice,
+    this.exclude = const {},
+  }) : singleLevelQuestion = null;
 
   const WorkoutScreen.singleLevel(Question level, {super.key})
       : concepts = const [],
+        kind = WorkoutKind.practice,
+        exclude = const {},
         singleLevelQuestion = level;
 
   final List<Concept> concepts;
+
+  /// Daily and Keep going runs are recorded as workouts (Task 7).
+  final WorkoutKind kind;
+
+  /// Question ids already served today, kept out of a Keep going batch.
+  final Set<String> exclude;
   final Question? singleLevelQuestion;
 
   @override
@@ -106,33 +118,13 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
   List<_WorkoutItem> _buildWorkout() {
     final singleLevel = widget.singleLevelQuestion;
     if (singleLevel != null) {
-      return [_WorkoutItem(question: singleLevel, section: _Section.strength)];
+      return [_WorkoutItem(question: singleLevel, section: WorkoutSection.strength)];
     }
 
-    final all = <_WorkoutItem>[];
-    final pool = widget.concepts.expand((c) => Content.forConcept(c.id)).toList();
-    if (pool.isEmpty) return all;
-
-    final warmUp = pool.where((q) => q.difficulty == 1).take(3).toList();
-    final strength = pool.where((q) => q.difficulty == 2).take(5).toList();
-    final challenge = pool.where((q) => q.difficulty >= 2).skip(strength.length).take(2).toList();
-
-    // Fallback: if a bucket is thin (small mock content set), backfill from
-    // the full pool so the workout always has something to show.
-    final used = <String>{};
-    void addAll(List<Question> qs, _Section s) {
-      for (final q in qs) {
-        if (used.add(q.id)) all.add(_WorkoutItem(question: q, section: s));
-      }
-    }
-
-    addAll(warmUp, _Section.warmUp);
-    addAll(strength, _Section.strength);
-    addAll(challenge, _Section.challenge);
-    if (all.length < 5) {
-      addAll(pool, _Section.strength);
-    }
-    return all.take(10).toList();
+    final count = widget.kind == WorkoutKind.practice ? practiceWorkoutSize : dailyWorkoutSize;
+    return selectWorkout(widget.concepts, count: count, exclude: widget.exclude)
+        .map((s) => _WorkoutItem(question: s.question, section: s.section))
+        .toList();
   }
 
   _WorkoutItem get _current => _items[_index];
@@ -363,14 +355,14 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
 
 class _SectionBadge extends StatelessWidget {
   const _SectionBadge({required this.section});
-  final _Section section;
+  final WorkoutSection section;
 
   @override
   Widget build(BuildContext context) {
     final (label, emoji) = switch (section) {
-      _Section.warmUp => ('Warm-up', '🔥'),
-      _Section.strength => ('Strength', '💪'),
-      _Section.challenge => ('Challenge', '🧠'),
+      WorkoutSection.warmUp => ('Warm-up', '🔥'),
+      WorkoutSection.strength => ('Strength', '💪'),
+      WorkoutSection.challenge => ('Challenge', '🧠'),
     };
     return Text('$emoji $label', style: Theme.of(context).textTheme.bodyMedium);
   }

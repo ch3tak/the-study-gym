@@ -40,7 +40,7 @@ class Chapter {
 }
 
 /// A syllabus unit ("Geometry · 25 marks") — mirrors the `units` table,
-/// generated from content/syllabus/<board>/<class>/<subject>.yaml.
+/// generated from `content/syllabus/<board>/<class>/<subject>.yaml`.
 class Unit {
   const Unit({required this.id, required this.name, required this.sortOrder, this.marks});
 

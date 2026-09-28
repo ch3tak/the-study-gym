@@ -4,11 +4,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/app_state.dart';
-import '../../data/content.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/mastery_ring.dart';
 import '../../shared/widgets/streak_flame.dart';
 import '../workout/workout_screen.dart';
+import '../workout/workout_selector.dart';
 
 /// S5. Today tab — docs/PLAN.md §3: hero workout card, streak + week dots,
 /// review-due nudge, Board-Readiness mini-gauge.
@@ -19,7 +19,7 @@ class TodayScreen extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final student = ref.watch(studentProvider);
     final weak = student.weakConcepts;
-    final workoutConcepts = _pickWorkoutConcepts(student);
+    final workoutConcepts = pickWorkoutConcepts(student);
 
     return Scaffold(
       body: SafeArea(
@@ -70,20 +70,6 @@ class TodayScreen extends ConsumerWidget {
         ),
       ),
     );
-  }
-
-  List<Concept> _pickWorkoutConcepts(StudentState student) {
-    final entries = student.mastery.values.toList()
-      ..sort((a, b) => a.masteryPercent.compareTo(b.masteryPercent));
-    final picked = entries
-        .map((m) => Content.conceptOrNull(m.conceptId))
-        .whereType<Concept>()
-        .take(3)
-        .toList();
-    if (picked.isEmpty) {
-      return Content.chapters.first.concepts.take(3).toList();
-    }
-    return picked;
   }
 }
 
