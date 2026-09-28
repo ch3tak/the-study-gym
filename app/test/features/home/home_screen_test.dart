@@ -88,6 +88,42 @@ void main() {
     expect(find.descendant(of: find.byKey(const ValueKey('workout_done_row')), matching: find.text('Keep going')), findsOneWidget);
   });
 
+  testWidgets('reopening the app on a new day brings the workout hero back', (tester) async {
+    final c = _container();
+    _workoutOn(c, today);
+    await pumpScreen(tester, const HomeScreen(), container: c);
+    expect(find.byKey(const ValueKey('continue_card')), findsOneWidget);
+
+    // Background overnight, then foreground: the platform reports each step.
+    for (final s in [AppLifecycleState.inactive, AppLifecycleState.hidden, AppLifecycleState.paused]) {
+      tester.binding.handleAppLifecycleStateChanged(s);
+    }
+    DailyNotifier.clock = () => today.add(const Duration(days: 1));
+    for (final s in [AppLifecycleState.hidden, AppLifecycleState.inactive, AppLifecycleState.resumed]) {
+      tester.binding.handleAppLifecycleStateChanged(s);
+    }
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('workout_hero')), findsOneWidget);
+    expect(find.text('Keep your 1-day streak going'), findsOneWidget);
+    expect(_week(tester)[3], DayState.today);
+  });
+
+  testWidgets('left open past midnight, Home moves to the new day', (tester) async {
+    final lateEvening = DateTime(2026, 9, 30, 23, 50);
+    final c = _container();
+    _workoutOn(c, lateEvening);
+    DailyNotifier.clock = () => lateEvening;
+    await pumpScreen(tester, const HomeScreen(), container: c);
+    expect(find.byKey(const ValueKey('continue_card')), findsOneWidget);
+
+    DailyNotifier.clock = () => DateTime(2026, 10, 1, 0, 1);
+    await tester.pump(const Duration(minutes: 11));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('workout_hero')), findsOneWidget);
+  });
+
   testWidgets('no chapter started: suggests the first chapter and opens it', (tester) async {
     final c = _container();
     _workoutOn(c, today);

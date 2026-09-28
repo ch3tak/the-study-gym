@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -18,11 +20,49 @@ import '../workout/workout_selector.dart';
 
 /// Home: one big next step (spec: "Home"). Before today's workout the hero
 /// is the Daily Workout; after it, Continue your chapter.
-class HomeScreen extends ConsumerWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends ConsumerState<HomeScreen> {
+  // Home stays mounted in the tab shell, so "today" is re-read when the app
+  // comes back to the foreground and at local midnight; otherwise a
+  // workout done yesterday would still hide today's.
+  late final AppLifecycleListener _lifecycle = AppLifecycleListener(onResume: _newDayCheck);
+  Timer? _midnight;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle; // start listening
+    _scheduleMidnight();
+  }
+
+  @override
+  void dispose() {
+    _midnight?.cancel();
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  void _newDayCheck() {
+    if (!mounted) return;
+    setState(() {});
+    _scheduleMidnight();
+  }
+
+  void _scheduleMidnight() {
+    _midnight?.cancel();
+    final now = DailyNotifier.clock();
+    final nextDay = DateTime(now.year, now.month, now.day + 1);
+    _midnight = Timer(nextDay.difference(now) + const Duration(seconds: 1), _newDayCheck);
+  }
+
+  @override
+  Widget build(BuildContext context) {
     final now = DailyNotifier.clock();
     final daily = ref.watch(dailyProvider);
     final student = ref.watch(studentProvider);
