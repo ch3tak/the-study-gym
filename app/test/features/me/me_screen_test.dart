@@ -4,7 +4,10 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:study_gym/core/theme/app_theme.dart';
 import 'package:study_gym/core/theme/theme_mode.dart';
+import 'package:study_gym/data/app_state.dart';
 import 'package:study_gym/features/me/me_screen.dart';
+
+import '../../helpers/pump.dart';
 
 void main() {
   setUp(() {
@@ -45,5 +48,13 @@ void main() {
   testWidgets('renders in dark theme', (tester) async {
     await pumpMe(tester, dark: true);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the Pro demo switch lives in Me', (tester) async {
+    final container = await pumpScreen(tester, const MeScreen());
+    expect(container.read(studentProvider).isPro, isFalse);
+    await tester.tap(find.byKey(const ValueKey('pro_demo_switch')));
+    await tester.pumpAndSettle();
+    expect(container.read(studentProvider).isPro, isTrue);
   });
 }

@@ -35,8 +35,8 @@ class LevelProgressState {
   /// unlock anything except the level that directly follows 10 in the list.
   ///
   /// This class deliberately has no view of what content loaded, so the
-  /// caller (MissionScreen, which owns the sorted list) supplies the
-  /// predecessor.
+  /// caller (the Trial screen and chapter_progress.dart, which own the
+  /// sorted list) supplies the predecessor.
   bool isUnlocked(String chapterId, {required int? previousLevelInList}) {
     if (previousLevelInList == null) return true;
     return isCompleted(chapterId, previousLevelInList);

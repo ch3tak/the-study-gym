@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../../core/theme/app_colors.dart';
+import '../../features/history/history_screen.dart';
+import '../../features/home/home_screen.dart';
+import '../../features/learn/learn_screen.dart';
 import '../../features/me/me_screen.dart';
-import '../../features/mission/mission_list_screen.dart';
-import '../../features/tests/tests_screen.dart';
-import '../../features/theory/theory_screen.dart';
-import '../../features/today/today_screen.dart';
 
-/// The 5-tab bottom nav shell: Today · Theory · Mission · Tests · Me.
-/// Tests hosts mock papers and the custom test builder; Me holds settings.
+/// The 4-tab bottom nav shell: Home · Learn · History · Me.
 class AppShell extends StatefulWidget {
   const AppShell({super.key});
 
@@ -20,10 +18,9 @@ class _AppShellState extends State<AppShell> {
   int _index = 0;
 
   static const _tabs = [
-    _TabDef('Today', Icons.wb_sunny_rounded, Icons.wb_sunny_outlined),
-    _TabDef('Theory', Icons.menu_book_rounded, Icons.menu_book_outlined),
-    _TabDef('Mission', Icons.flag_rounded, Icons.outlined_flag_rounded),
-    _TabDef('Tests', Icons.assignment_rounded, Icons.assignment_outlined),
+    _TabDef('Home', Icons.home_rounded, Icons.home_outlined),
+    _TabDef('Learn', Icons.school_rounded, Icons.school_outlined),
+    _TabDef('History', Icons.auto_stories_rounded, Icons.auto_stories_outlined),
     _TabDef('Me', Icons.person_rounded, Icons.person_outline_rounded),
   ];
 
@@ -33,13 +30,7 @@ class _AppShellState extends State<AppShell> {
     return Scaffold(
       body: IndexedStack(
         index: _index,
-        children: const [
-          TodayScreen(),
-          TheoryScreen(),
-          MissionListScreen(),
-          TestsScreen(),
-          MeScreen(),
-        ],
+        children: const [HomeScreen(), LearnScreen(), HistoryScreen(), MeScreen()],
       ),
       bottomNavigationBar: DecoratedBox(
         decoration: BoxDecoration(

@@ -105,7 +105,7 @@ void main() {
     );
   }
 
-  /// Pushes the workout from a host page (as MissionScreen does) so that
+  /// Pushes the workout from a host page (as the Trial screen does) so that
   /// Continue's pop has somewhere to return to.
   Future<ProviderContainer> pushLevel(WidgetTester tester, Question level) async {
     final container = ProviderContainer();

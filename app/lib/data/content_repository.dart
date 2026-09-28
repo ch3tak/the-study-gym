@@ -76,7 +76,7 @@ class ContentRepository {
         .eq('status', 'live');
 
     // Lessons are optional: a database without the lessons table (or a
-    // failed fetch) gives an empty Theory tab, not a failed app start.
+    // failed fetch) gives chapters with no lessons, not a failed app start.
     List lessonRows = const [];
     try {
       lessonRows = await _client

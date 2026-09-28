@@ -6,10 +6,10 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:study_gym/core/theme/theme_mode.dart';
 import 'package:study_gym/main.dart';
 
-import 'test_content.dart';
+import 'fixtures/slice1_content.dart';
 
 /// End-to-end smoke test of the POC's golden path:
-/// Welcome -> Today, then every tab (Today · Theory · Mission · Tests · Me).
+/// Welcome -> Home, then every tab (Home · Learn · History · Me).
 /// There is no Quick Setup step and no diagnostic (deliberately dropped —
 /// see welcome_screen.dart): every path from Welcome lands straight on the
 /// main dashboard, and mastery fills in as the student works through real
@@ -18,7 +18,7 @@ import 'test_content.dart';
 /// something, on every screen in scope.
 void main() {
   setUp(() {
-    StudyGymApp.contentLoader = fakeContentLoader;
+    StudyGymApp.contentLoader = () async => slice1Snapshot();
     SharedPreferences.setMockInitialValues({});
     ThemeModeNotifier.initial = ThemeMode.system;
   });
@@ -37,40 +37,29 @@ void main() {
     expect(Theme.of(tester.element(find.text('Appearance'))).brightness, Brightness.dark);
   });
 
-  testWidgets('welcome -> today -> workout flow renders without exceptions', (tester) async {
+  testWidgets('welcome -> home, then every tab', (tester) async {
     await tester.pumpWidget(const ProviderScope(child: StudyGymApp()));
     await tester.pumpAndSettle();
-
-    // S1. Welcome -> straight into the app, no setup step and no diagnostic.
-    expect(find.text('Get started'), findsOneWidget);
     await tester.tap(find.text('Get started'));
     await tester.pumpAndSettle();
 
-    // Today tab (app shell)
-    expect(find.text('Today'), findsWidgets);
-    expect(find.text("Today's workout"), findsOneWidget);
+    expect(find.text('Start workout'), findsOneWidget);
 
-    // Every tab shows its own screen.
-    await tester.tap(find.text('Theory').last);
+    await tester.tap(find.text('Learn').last);
     await tester.pumpAndSettle();
-    expect(find.text('1 lesson'), findsOneWidget);
+    expect(find.text('Sequences and Progressions'), findsWidgets);
 
-    await tester.tap(find.text('Mission').last);
+    await tester.tap(find.text('History').last);
     await tester.pumpAndSettle();
-    expect(find.text('Sequences and Progressions'), findsOneWidget);
-    expect(find.text('Start Mission'), findsNothing);
-
-    await tester.tap(find.text('Tests').last);
-    await tester.pumpAndSettle();
-    expect(find.text('Create a custom test'), findsOneWidget);
+    expect(find.text('History'), findsWidgets);
 
     await tester.tap(find.text('Me').last);
     await tester.pumpAndSettle();
     expect(find.text('Appearance'), findsOneWidget);
 
-    await tester.tap(find.text('Today').last);
+    await tester.tap(find.text('Home').last);
     await tester.pumpAndSettle();
-    expect(find.text("Today's workout"), findsOneWidget);
+    expect(find.text('Start workout'), findsOneWidget);
   });
 
   testWidgets('"I already have an account" also lands directly on the dashboard', (tester) async {
@@ -80,7 +69,7 @@ void main() {
     await tester.tap(find.text('I already have an account'));
     await tester.pumpAndSettle();
 
-    expect(find.text("Today's workout"), findsOneWidget);
+    expect(find.text('Start workout'), findsOneWidget);
   });
 
   testWidgets('custom test builder is reachable and shows a Pro lock for free users', (tester) async {
@@ -89,7 +78,12 @@ void main() {
 
     await tester.tap(find.text('I already have an account'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('Tests').last);
+    await tester.tap(find.text('Learn').last);
+    await tester.pumpAndSettle();
+    await tester.scrollUntilVisible(find.text('Create a custom test'), 300);
+    // scrollUntilVisible stops once the card is built, which can leave it
+    // under the bottom tabs; bring it fully on screen before tapping.
+    await tester.ensureVisible(find.text('Create a custom test'));
     await tester.pumpAndSettle();
 
     expect(find.text('Create a custom test'), findsOneWidget);
@@ -101,6 +95,6 @@ void main() {
     expect(find.text('Maths'), findsNothing);
     expect(find.text('Science'), findsNothing);
     expect(find.text('Sequences and Progressions'), findsOneWidget);
-    expect(find.text('Surface Areas and Volumes'), findsOneWidget);
+    expect(find.text('Surface Area and Volume'), findsOneWidget);
   });
 }

@@ -5,7 +5,7 @@ import 'package:study_gym/data/models.dart';
 /// they don't need a live Supabase fetch (see `StudyGymApp.contentLoader` in
 /// main.dart). This is not the full seed data from
 /// backend/supabase/seed/001_cbse_9_maths_science.sql — just enough for the
-/// screens under test (Today, Theory, Mission, Workout, Tests) to render.
+/// app's start-up test (widget_test.dart) to render.
 Future<ContentSnapshot> fakeContentLoader() async {
   const chapters = <Chapter>[
     Chapter(

@@ -4,8 +4,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../core/theme/theme_mode.dart';
+import '../../data/app_state.dart';
 
-/// Me tab. Only Appearance for now; profile and streak history come later.
+/// Me tab. Appearance and the Pro demo switch for now; profile and streak
+/// history come later.
 class MeScreen extends ConsumerWidget {
   const MeScreen({super.key});
 
@@ -14,6 +16,7 @@ class MeScreen extends ConsumerWidget {
     final colors = context.colors;
     final textTheme = Theme.of(context).textTheme;
     final mode = ref.watch(themeModeProvider);
+    final isPro = ref.watch(studentProvider).isPro;
 
     return Scaffold(
       body: SafeArea(
@@ -64,6 +67,24 @@ class MeScreen extends ConsumerWidget {
                     ),
                   ),
                 ],
+              ),
+            ),
+            const SizedBox(height: AppTheme.space16),
+            // A Material, not a coloured Container: a ListTile's ink must
+            // paint on the Material that carries the background.
+            Material(
+              color: colors.surface,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(AppTheme.radiusLg),
+                side: BorderSide(color: colors.border),
+              ),
+              clipBehavior: Clip.antiAlias,
+              child: SwitchListTile(
+                key: const ValueKey('pro_demo_switch'),
+                title: Text('Study Gym Pro (demo)', style: textTheme.titleMedium),
+                subtitle: const Text('Payments are not built yet. This switch shows the Pro experience.'),
+                value: isPro,
+                onChanged: (_) => ref.read(studentProvider.notifier).togglePro(),
               ),
             ),
             const SizedBox(height: AppTheme.space16),
