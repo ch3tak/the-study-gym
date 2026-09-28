@@ -19,4 +19,38 @@ jobs:
       - name: Validate syllabi and question bank
         run: python -m content.pipeline.validate
 
-  # app: flutter analyze + flutter test get added once app/ is scaffolded.
+  # Applies every migration and seed to a real Postgres, so SQL that only
+  # "looks right" as a string (the 27 Sep seed_mission escaping bug) fails
+  # here instead of in manual QA.
+  sql:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: postgres
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+    env:
+      DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
+    steps:
+      - uses: actions/checkout@v4
+      - name: Apply every migration and seed
+        run: bash backend/supabase/ci/apply_all.sh
+
+  app:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: app
+    steps:
+      - uses: actions/checkout@v4
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+      - run: flutter analyze --no-fatal-infos
+      - run: flutter test
