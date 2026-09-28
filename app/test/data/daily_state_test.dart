@@ -36,6 +36,19 @@ class _SlowDailyRepo extends FakeDailyRepo {
   Future<DailySnapshot> fetch({int days = 14}) => _fetch;
 }
 
+/// Fails its first load; later loads return [snapshot] plus every workout
+/// saved so far (as the server would once the insert lands).
+class _FlakyDailyRepo extends FakeDailyRepo {
+  _FlakyDailyRepo(DailySnapshot snapshot) : super(snapshot: snapshot);
+  var _calls = 0;
+
+  @override
+  Future<DailySnapshot> fetch({int days = 14}) async {
+    if (_calls++ == 0) throw StateError('offline');
+    return DailySnapshot(workouts: [...snapshot.workouts, ...saved], streak: snapshot.streak);
+  }
+}
+
 void main() {
   tearDown(() {
     DailyNotifier.clock = DateTime.now;
@@ -186,6 +199,33 @@ void main() {
       expect(repo.streaks, isEmpty);
       expect(repo.saved, hasLength(1), reason: 'the workout itself is still saved');
       expect(container.read(dailyProvider).workoutDoneOn(tue), isTrue);
+    });
+
+    test('after a failed first load, the next workout loads the saved streak and continues it', () async {
+      final repo = _FlakyDailyRepo(DailySnapshot(
+        workouts: const [],
+        streak: StreakRecord(current: 7, longest: 7, lastActiveDate: mon),
+      ));
+      DailyNotifier.repositoryOverride = repo;
+      DailyNotifier.clock = () => tue;
+      final container = ProviderContainer();
+      addTearDown(container.dispose);
+      container.read(dailyProvider);
+      await Future<void>.delayed(Duration.zero);
+      expect(container.read(dailyProvider).streakOn(tue), 0, reason: 'first load failed');
+
+      container.read(dailyProvider.notifier).recordWorkout(
+            questionIds: ['a'],
+            correct: 1,
+            total: 1,
+            keepGoing: false,
+            startedAt: tue,
+          );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(container.read(dailyProvider).streakOn(tue), 8);
+      expect(repo.streaks.map((s) => s.current), [8]);
+      expect(container.read(dailyProvider).workouts, hasLength(1), reason: 'the saved session is not counted twice');
     });
 
     test('hydrates past workouts and the stored streak', () async {

@@ -108,24 +108,34 @@ class DailyNotifier extends Notifier<DailyState> {
   /// started from zero and must never be saved over the real one.
   bool _streakLoaded = false;
 
+  /// The load in flight, so a retry never starts a second one.
+  Future<void>? _loading;
+
   @override
   DailyState build() {
-    if (_repo != null) _hydrate();
+    if (_repo != null) _load();
     return const DailyState();
   }
+
+  void _load() => _loading ??= _hydrate().whenComplete(() => _loading = null);
 
   Future<void> _hydrate() async {
     try {
       final snap = await _repo!.fetch();
       // A workout finished while this fetch was in flight is already in
       // state: keep it, and replay it onto the saved streak so the streak
-      // continues rather than restarting at 1.
+      // continues rather than restarting at 1. The fetch may already
+      // include its saved session; don't count that twice.
+      final local = state.workouts;
       var streak = snap.streak;
-      for (final w in state.workouts) {
+      for (final w in local) {
         streak = streakAfterWorkout(streak, w.completedAt);
       }
       state = DailyState(
-        workouts: [...snap.workouts, ...state.workouts],
+        workouts: [
+          ...snap.workouts.where((w) => !local.any((l) => l.completedAt == w.completedAt)),
+          ...local,
+        ],
         streak: streak,
         servedQuestionIds: state.servedQuestionIds,
       );
@@ -156,8 +166,13 @@ class DailyNotifier extends Notifier<DailyState> {
     );
     _repo?.recordWorkout(record, startedAt: startedAt).catchError((Object e) => debugPrint('Could not save workout: $e'));
     // Before the saved streak has loaded, this one was counted from zero:
-    // saving it could wipe a real streak. _hydrate saves it once it lands.
-    if (_streakLoaded) _saveStreak(streak);
+    // saving it could wipe a real streak. Load it (again, if the first load
+    // failed); _hydrate replays this workout onto it and saves the result.
+    if (_streakLoaded) {
+      _saveStreak(streak);
+    } else if (_repo != null) {
+      _load();
+    }
   }
 }
 
