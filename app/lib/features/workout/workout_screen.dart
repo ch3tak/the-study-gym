@@ -110,6 +110,9 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
   final DateTime _startedAt = DailyNotifier.clock();
   int _index = 0;
   bool _usedRetry = false;
+
+  /// Whether a solution was opened (Trial levels: Platinum needs none).
+  bool _solutionViewed = false;
   final Set<String> _recordedQuestionIds = {};
   late final AnimationController _shakeController;
 
@@ -234,6 +237,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
               chapterId: chapter.id,
               level: singleLevel.level!,
               score: (item.firstAttemptCorrect ?? false) ? 1.0 : 0.0,
+              solutionViewed: _solutionViewed,
             );
       }
       Navigator.of(context).pop();
@@ -378,6 +382,7 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
                             question: item.question,
                             selectedIndex: item.selectedIndex,
                             isRetryAttempt: _usedRetry,
+                            onSolutionOpened: () => _solutionViewed = true,
                           ),
                         ],
                       ],
@@ -469,11 +474,13 @@ class _FeedbackPanel extends StatelessWidget {
     required this.question,
     required this.selectedIndex,
     this.isRetryAttempt = false,
+    this.onSolutionOpened,
   });
   final bool correct;
   final Question question;
   final int? selectedIndex;
   final bool isRetryAttempt;
+  final VoidCallback? onSolutionOpened;
 
   String? get _misconceptionNote {
     if (correct || selectedIndex == null) return null;
@@ -561,6 +568,9 @@ class _FeedbackPanel extends StatelessWidget {
             color: Colors.transparent,
             child: ExpansionTile(
               tilePadding: EdgeInsets.zero,
+              onExpansionChanged: (open) {
+                if (open) onSolutionOpened?.call();
+              },
               title: Text(
                 'Show solution',
                 style: TextStyle(color: darkColor, fontWeight: FontWeight.w800, fontSize: 13),

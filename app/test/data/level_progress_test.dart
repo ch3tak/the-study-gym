@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:study_gym/data/mission_state.dart';
 
@@ -59,5 +60,16 @@ void main() {
     );
     expect(state.isCompleted(ch, 1), isTrue);
     expect(state.isCompleted(ch, 3), isFalse);
+  });
+
+  test('the first completion stands: a replay does not overwrite its result', () {
+    final c = ProviderContainer();
+    addTearDown(c.dispose);
+    final n = c.read(levelProgressProvider.notifier);
+    n.completeLevel(chapterId: ch, level: 1, score: 1, solutionViewed: false);
+    n.completeLevel(chapterId: ch, level: 1, score: 0, solutionViewed: true);
+    final r = c.read(levelProgressProvider).resultFor(ch, 1)!;
+    expect(r.score, 1);
+    expect(r.solutionViewed, isFalse);
   });
 }

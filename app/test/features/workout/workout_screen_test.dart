@@ -276,6 +276,19 @@ void main() {
       await tester.pumpAndSettle();
       expect(container.read(levelProgressProvider).isCompleted(_chapterId, 8), isTrue);
     });
+
+    testWidgets('opening the solution is recorded on the level', (tester) async {
+      final container = await pushLevel(tester, _mcqLevel());
+      await tester.tap(find.text('right'));
+      await submit(tester);
+      await tapVisible(tester, find.text('Show solution'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Continue'));
+      await tester.pumpAndSettle();
+      final r = container.read(levelProgressProvider).resultFor(_chapterId, 4)!;
+      expect(r.score, 1);
+      expect(r.solutionViewed, isTrue);
+    });
   });
 
   testWidgets('a multi-concept question records mastery for every concept', (tester) async {
