@@ -12,6 +12,8 @@ import '../../data/daily_state.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/chunky_button.dart';
 import '../../shared/widgets/mastery_ring.dart';
+import 'keep_going.dart';
+import 'workout_selector.dart';
 
 class WorkoutResultItem {
   const WorkoutResultItem({required this.concept, required this.correct});
@@ -22,9 +24,12 @@ class WorkoutResultItem {
 /// S7. Workout complete — docs/PLAN.md §3: score, XP, streak update,
 /// per-concept mastery bars animating old → new, coach message, share/done.
 class WorkoutCompleteScreen extends ConsumerStatefulWidget {
-  const WorkoutCompleteScreen({super.key, required this.items});
+  const WorkoutCompleteScreen({super.key, required this.items, this.kind = WorkoutKind.practice});
 
   final List<WorkoutResultItem> items;
+
+  /// Daily and Keep going runs end with Keep going.
+  final WorkoutKind kind;
 
   @override
   ConsumerState<WorkoutCompleteScreen> createState() => _WorkoutCompleteScreenState();
@@ -39,7 +44,11 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
     _confetti = ConfettiController(duration: const Duration(seconds: 2));
     final correctCount = widget.items.where((i) => i.correct).length;
     if (correctCount >= widget.items.length * 0.6) {
-      WidgetsBinding.instance.addPostFrameCallback((_) => _confetti.play());
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        // Reduced motion (the platform's accessibility setting) skips the
+        // celebration.
+        if (mounted && !MediaQuery.disableAnimationsOf(context)) _confetti.play();
+      });
     }
   }
 
@@ -83,7 +92,7 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
               child: Column(
                 children: [
                   const SizedBox(height: AppTheme.space16),
-                  Text('$correctCount/$total', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 48)),
+                  Text('$correctCount / $total', style: Theme.of(context).textTheme.displayLarge?.copyWith(fontSize: 48)),
                   const SizedBox(height: 4),
                   Text('Workout complete!', style: Theme.of(context).textTheme.headlineMedium),
                   const SizedBox(height: AppTheme.space24),
@@ -145,6 +154,14 @@ class _WorkoutCompleteScreenState extends ConsumerState<WorkoutCompleteScreen> {
                     ),
                   ),
                   const SizedBox(height: AppTheme.space20),
+                  if (widget.kind != WorkoutKind.practice) ...[
+                    ChunkyButton(
+                      label: 'Keep going',
+                      icon: Icons.bolt_rounded,
+                      onPressed: () => startKeepGoing(context, ref, replace: true),
+                    ),
+                    const SizedBox(height: AppTheme.space12),
+                  ],
                   ChunkyButton(
                     label: 'Done',
                     color: colors.mastered,

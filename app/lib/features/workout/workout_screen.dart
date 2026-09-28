@@ -5,6 +5,7 @@ import '../../core/theme/app_colors.dart';
 import '../../core/theme/app_theme.dart';
 import '../../data/app_state.dart';
 import '../../data/content.dart';
+import '../../data/daily_state.dart';
 import '../../data/mission_state.dart';
 import '../../data/models.dart';
 import '../../shared/widgets/chunky_button.dart';
@@ -88,6 +89,7 @@ class WorkoutScreen extends ConsumerStatefulWidget {
 
 class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTickerProviderStateMixin {
   late final List<_WorkoutItem> _items;
+  final DateTime _startedAt = DailyNotifier.clock();
   int _index = 0;
   bool _usedRetry = false;
   late final AnimationController _shakeController;
@@ -211,19 +213,25 @@ class _WorkoutScreenState extends ConsumerState<WorkoutScreen> with SingleTicker
     }
 
     if (_index == _items.length - 1) {
+      final results = _items
+          .map((i) => WorkoutResultItem(
+                concept: Content.conceptById(i.question.conceptId),
+                // The score reflects the first attempt, exam-style — a
+                // later retry is practice and doesn't inflate it.
+                correct: i.firstAttemptCorrect ?? false,
+              ))
+          .toList();
+      if (widget.kind != WorkoutKind.practice) {
+        ref.read(dailyProvider.notifier).recordWorkout(
+              questionIds: _items.map((i) => i.question.id).toList(),
+              correct: results.where((r) => r.correct).length,
+              total: results.length,
+              keepGoing: widget.kind == WorkoutKind.keepGoing,
+              startedAt: _startedAt,
+            );
+      }
       Navigator.of(context).pushReplacement(
-        MaterialPageRoute(
-          builder: (_) => WorkoutCompleteScreen(
-            items: _items
-                .map((i) => WorkoutResultItem(
-                      concept: Content.conceptById(i.question.conceptId),
-                      // The score reflects the first attempt, exam-style —
-                      // a later retry is practice and doesn't inflate it.
-                      correct: i.firstAttemptCorrect ?? false,
-                    ))
-                .toList(),
-          ),
-        ),
+        MaterialPageRoute(builder: (_) => WorkoutCompleteScreen(items: results, kind: widget.kind)),
       );
     } else {
       setState(() {

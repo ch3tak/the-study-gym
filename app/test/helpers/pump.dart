@@ -25,6 +25,10 @@ Future<ProviderContainer> pumpScreen(
   tester.view.physicalSize = const Size(1080, 2400);
   tester.view.devicePixelRatio = 1;
   addTearDown(tester.view.reset);
+  // Reduced motion: the workout-done confetti times its particles by the
+  // wall clock, so under the test clock it never settles.
+  tester.platformDispatcher.accessibilityFeaturesTestValue = const FakeAccessibilityFeatures(disableAnimations: true);
+  addTearDown(tester.platformDispatcher.clearAccessibilityFeaturesTestValue);
   final c = container ?? ProviderContainer();
   if (container == null) addTearDown(c.dispose);
   await tester.pumpWidget(
